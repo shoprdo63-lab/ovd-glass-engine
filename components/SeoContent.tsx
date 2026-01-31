@@ -1,103 +1,170 @@
 import React from 'react';
+import { BookOpen, TrendingUp, Zap } from 'lucide-react';
 
 export const AdWidgetTop: React.FC = () => (
-  <div className="w-full max-w-4xl mx-auto mb-10 p-5 bg-[#050505] border border-slate-800 rounded-lg text-center flex flex-col md:flex-row items-center justify-between gap-4">
-    <div className="text-left">
-        <span className="text-[10px] font-bold text-cyan-500 tracking-wider uppercase mb-1 block">Trending</span>
-        <h3 className="text-slate-200 text-sm font-medium">
-            2026 UI Forecast: <strong>"Depth is the new Flat."</strong> 
+  <div className="w-full max-w-5xl mx-auto mb-12 p-6 bg-[#080808] border border-slate-800 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden group">
+    <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+    <div className="text-left relative z-10">
+        <div className="flex items-center gap-2 mb-2">
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-950 text-cyan-400 border border-cyan-900 tracking-wider uppercase">Design Trend 2026</span>
+            <span className="text-[10px] text-slate-500 font-mono">UPDATED TODAY</span>
+        </div>
+        <h3 className="text-slate-200 text-lg font-medium leading-tight">
+            UI Report: <strong className="text-white">Why "Spatial Glass" is replacing Flat Design</strong> in mobile operating systems.
         </h3>
+        <p className="text-xs text-slate-400 mt-2 max-w-2xl">
+            From visionOS to the latest Android updates, depth is making a comeback. Learn how to implement performant blur without draining battery life.
+        </p>
     </div>
-    <button className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs rounded border border-slate-700 transition-colors">
-        Read Report
+    <button className="flex-shrink-0 px-6 py-2.5 bg-slate-100 hover:bg-white text-black text-xs font-bold uppercase tracking-wider rounded-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,255,255,0.1)] relative z-10">
+        Read Analysis
     </button>
   </div>
 );
 
 export const AdWidgetSidebar: React.FC = () => (
-  <div className="mt-8 p-6 bg-[#050505] border border-slate-800 rounded-2xl">
-    <h4 className="text-sm font-bold text-white mb-4 border-b border-slate-800 pb-2">Ovd Design Tips</h4>
-    <ul className="space-y-4">
-        {[
-            "OLED Optimization: Use #000000 opacity layers for true battery savings on mobile.",
-            "Visual Hierarchy: Use saturation, not just opacity, to indicate active states.", 
-            "Border Physics: Light always comes from top-left (135deg) in standard western UI."
-        ].map((tip, i) => (
-            <li key={i} className="text-xs text-slate-400 flex gap-3">
-                <span className="text-cyan-500 font-bold">{i+1}.</span> 
-                <span className="leading-relaxed">{tip}</span>
-            </li>
-        ))}
-    </ul>
-    <div className="mt-6 pt-4 border-t border-slate-800 text-center">
-        <span className="text-[10px] text-slate-600 uppercase tracking-widest">Featured Partner</span>
+  <div className="p-6 bg-[#080808] border border-slate-800 rounded-2xl shadow-xl sticky top-6">
+    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+        <Zap className="w-3 h-3 text-yellow-500" />
+        Quick Tips
+    </h4>
+    <div className="space-y-6">
+        <div className="group cursor-pointer">
+            <h5 className="text-sm font-bold text-slate-200 group-hover:text-cyan-400 transition-colors mb-1">Performance First</h5>
+            <p className="text-xs text-slate-400 leading-relaxed">
+                Always use <code className="bg-slate-800 px-1 py-0.5 rounded text-cyan-200">transform: translateZ(0)</code> on glass elements to force GPU acceleration.
+            </p>
+        </div>
+        <div className="border-t border-slate-800/50"></div>
+        <div className="group cursor-pointer">
+            <h5 className="text-sm font-bold text-slate-200 group-hover:text-cyan-400 transition-colors mb-1">Accessibility</h5>
+            <p className="text-xs text-slate-400 leading-relaxed">
+                Don't rely on blur alone. Always add a semi-transparent solid fill (e.g. #000 at 40%) to ensure text contrast passes WCAG AA.
+            </p>
+        </div>
+        <div className="border-t border-slate-800/50"></div>
+        <div className="group cursor-pointer">
+            <h5 className="text-sm font-bold text-slate-200 group-hover:text-cyan-400 transition-colors mb-1">The "Noise" Trick</h5>
+            <p className="text-xs text-slate-400 leading-relaxed">
+                Add a subtle SVG noise overlay to your glass to reduce color banding on lower-quality displays.
+            </p>
+        </div>
+    </div>
+    <div className="mt-8 pt-6 border-t border-slate-800">
+        <div className="bg-gradient-to-br from-slate-900 to-slate-950 p-4 rounded-lg border border-slate-800 text-center">
+            <span className="text-[10px] text-slate-500 font-bold uppercase block mb-2">Sponsored Tool</span>
+            <p className="text-xs text-white font-medium mb-3">Need icons for your glass cards?</p>
+            <button className="w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-[10px] text-slate-300 font-bold uppercase transition-colors">Browse Icon Library</button>
+        </div>
     </div>
   </div>
 );
 
 export const SeoArticle: React.FC = () => (
-  <article className="mt-24 max-w-4xl mx-auto prose prose-invert prose-headings:text-slate-100 prose-p:text-slate-400 prose-a:text-cyan-400 prose-li:text-slate-400">
-    <div className="border-l-2 border-cyan-500 pl-6 mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-500 mb-4">
-            Ovd Design Guide: The Science of Glassmorphism and UI Layering in 2026
-        </h1>
-        <p className="text-lg text-slate-400 font-light">
-            Mastering transparency, refraction, and optical depth in the next generation of web interfaces.
-        </p>
+  <article className="mt-32 max-w-5xl mx-auto">
+    <div className="flex items-center gap-4 mb-12">
+        <div className="h-px bg-slate-800 flex-1"></div>
+        <span className="text-xs font-bold text-slate-500 uppercase tracking-[0.3em]">Documentation & Guide</span>
+        <div className="h-px bg-slate-800 flex-1"></div>
     </div>
-    
-    <p>
-        The flat design revolution of the 2010s served a purpose: it cleaned up the web. But as screens became higher definition (Retina, OLED, 120Hz), flatness began to feel... dead. <strong>Ovd Glass Engine</strong> was built on the premise that interfaces should feel like physical objects manipulation light. We call this "Visual Layering."
-    </p>
 
-    <h2 className="text-2xl font-semibold mt-12 mb-6">1. The Physics of Digital Glass</h2>
-    <p>
-        True Glassmorphism isn't just about `opacity: 0.5`. It mimics the physical properties of frosted glass (polycarbonate) or acrylic. To achieve a production-ready look in 2026, you must balance three variables:
-    </p>
-    <ul className="list-none pl-0 space-y-4 mb-8">
-        <li className="bg-slate-900/50 p-4 rounded-lg border border-slate-800">
-            <strong className="text-cyan-400 block mb-1">Refraction (Blur)</strong>
-            We interpret blur as distance. A higher `backdrop-filter: blur(20px)` implies the object behind the glass is further away. Ovd's engine allows up to 40px blur to simulate extreme depth.
-        </li>
-        <li className="bg-slate-900/50 p-4 rounded-lg border border-slate-800">
-            <strong className="text-purple-400 block mb-1">Luminance (Border)</strong>
-            Glass has thickness. When light hits the edge, it scatters. This is why a 1px solid border with low opacity (e.g., `rgba(255,255,255,0.4)`) is crucial. It defines the edge of the material.
-        </li>
-        <li className="bg-slate-900/50 p-4 rounded-lg border border-slate-800">
-            <strong className="text-pink-400 block mb-1">Chromaticity (Saturation)</strong>
-            Frosted glass scatters light, often intensifying colors. Using `saturate(150%)` in your backdrop filter creates that rich, "Apple-like" vibrancy that distinguishes premium UI from basic transparency.
-        </li>
-    </ul>
+    <div className="prose prose-invert prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-p:text-slate-400 prose-p:leading-8 prose-li:text-slate-400">
+        <header className="mb-16 text-center max-w-3xl mx-auto">
+            <h1 className="text-4xl md:text-6xl mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-slate-500">
+                Ovd Design Guide: Mastering Glassmorphism Dynamics in 2026
+            </h1>
+            <p className="text-xl text-slate-400 font-light leading-relaxed">
+                A comprehensive technical deep-dive into optical depth, refraction physics, and the architectural principles of modern "Spatial UI".
+            </p>
+        </header>
 
-    <h2 className="text-2xl font-semibold mt-12 mb-6">2. Accessibility in Transparent UI</h2>
-    <p>
-        The biggest criticism of glass UI is readability. The <strong>Ovd Engine</strong> presets are calibrated to ensure contrast ratios remain compliant.
-    </p>
-    <p>
-        <strong>The Rule of Tint:</strong> Never rely solely on the background image for contrast. Your glass pane must have its own tint. If your text is white, your glass background needs a white fill of at least 10-20% (`rgba(255,255,255,0.15)`), or a dark fill for dark mode.
-    </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+            <div className="bg-[#080808] p-8 rounded-2xl border border-slate-800">
+                <h3 className="text-2xl text-white mb-4 flex items-center gap-3">
+                    <BookOpen className="w-6 h-6 text-cyan-500" />
+                    The Evolution of Transparency
+                </h3>
+                <p>
+                    Glassmorphism isn't new. It appeared in Windows Vista (Aero) and iOS 7. However, the 2026 iteration—often called "Spatial Glass"—differs fundamentally in its implementation. Modern glass isn't just a static blur; it is a dynamic material that responds to light, proximity, and underlying content.
+                </p>
+                <p>
+                    The <strong>Ovd Engine</strong> was built to replicate these physics. Unlike simple CSS generators, Ovd calculates the relationship between <em>Saturation</em> and <em>Blur</em> to mimic how photons scatter through polycarbonate materials versus crystal glass.
+                </p>
+            </div>
+            <div className="bg-[#080808] p-8 rounded-2xl border border-slate-800">
+                <h3 className="text-2xl text-white mb-4 flex items-center gap-3">
+                    <TrendingUp className="w-6 h-6 text-purple-500" />
+                    Why "Dark Matter" UI?
+                </h3>
+                <p>
+                    With the prevalence of OLED screens, true black (#000000) pixels turn off completely, saving energy. However, pure black creates harsh contrast. "Dark Matter" UI solves this by using deep, translucent greys (#050505 to #121212) with high-gloss borders.
+                </p>
+                <p>
+                    This aesthetic creates a sense of "void" depth, where interface elements float in a deep space rather than sitting on a 2D plane. It is the dominant design language for high-performance dashboards and developer tools in 2026.
+                </p>
+            </div>
+        </div>
 
-    <h2 className="text-2xl font-semibold mt-12 mb-6">3. Performance: The Cost of Blur</h2>
-    <p>
-        CSS filters are computationally expensive. Ovd optimizes the generated code by using standard CSS properties that trigger hardware acceleration in modern browsers (Chrome, Safari, Edge).
-    </p>
-    <h3 className="text-xl font-medium mt-6 mb-2">Best Practices for 2026 Deployment:</h3>
-    <ul className="list-disc pl-5 space-y-2 mb-6">
-        <li><strong>Limit Nesting:</strong> Don't stack blur on top of blur. It causes exponential rendering cost.</li>
-        <li><strong>Static Backgrounds:</strong> While Ovd showcases animated blobs, in production apps with heavy data, keep the background element static or transform-only (GPU).</li>
-        <li><strong>Safari Webkit:</strong> Always include `-webkit-backdrop-filter`. Despite standards advancement, Safari on iOS still relies heavily on the prefix for optimal performance.</li>
-    </ul>
-
-    <h2 className="text-2xl font-semibold mt-12 mb-6">4. The Future: "Dark Matter" Aesthetics</h2>
-    <p>
-        As showcased in our "Dark Matter" presets, the trend is moving toward deep, void-like interfaces with high-gloss accents. This "Neo-Noir" aesthetic saves battery life on OLED screens and reduces eye strain. Ovd is the first generator to offer a dedicated suite of presets for this specific dark-mode sub-genre.
-    </p>
-
-    <div className="mt-16 p-8 bg-gradient-to-r from-cyan-900/20 to-purple-900/20 border border-slate-800 rounded-2xl text-center">
-        <h4 className="text-xl font-bold text-white mb-2">Ready to build?</h4>
-        <p className="text-slate-400 text-sm mb-0">
-            Use the <strong>Ovd Glass Engine</strong> above to export your CSS, then use our Wave Generator to add organic flow. The code is yours, royalty-free.
+        <h2 className="text-3xl text-white mt-20 mb-8 border-l-4 border-cyan-500 pl-6">1. The Mathematics of Optical Depth</h2>
+        <p>
+            To achieve a believable glass effect, one cannot simply apply `backdrop-filter: blur(10px)`. The perception of depth is governed by the <strong>Blur-Luminance Ratio</strong>. As an object moves further behind a frosted surface:
         </p>
+        <ul className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8 not-prose">
+            <li className="bg-[#0A0A0A] p-6 rounded-xl border border-slate-800">
+                <span className="text-4xl font-black text-slate-700 mb-2 block">01</span>
+                <strong className="text-white block mb-2">Blur Radius Increases</strong>
+                <p className="text-sm text-slate-400">The further the background, the higher the blur value. Ovd allows up to 40px to simulate extreme depth.</p>
+            </li>
+            <li className="bg-[#0A0A0A] p-6 rounded-xl border border-slate-800">
+                <span className="text-4xl font-black text-slate-700 mb-2 block">02</span>
+                <strong className="text-white block mb-2">Saturation Spikes</strong>
+                <p className="text-sm text-slate-400">Light scattering causes colors to appear more vibrant. We recommend 120-140% saturation.</p>
+            </li>
+            <li className="bg-[#0A0A0A] p-6 rounded-xl border border-slate-800">
+                <span className="text-4xl font-black text-slate-700 mb-2 block">03</span>
+                <strong className="text-white block mb-2">Contrast Drops</strong>
+                <p className="text-sm text-slate-400">Details are lost. You must compensate with a stronger overlay tint (opacity).</p>
+            </li>
+        </ul>
+
+        <h2 className="text-3xl text-white mt-20 mb-8 border-l-4 border-purple-500 pl-6">2. Implementing Glass in CSS: The Stack</h2>
+        <p>
+            Production-ready glassmorphism requires a specific CSS stacking context to avoid rendering artifacts. Here is the Ovd recommended stack:
+        </p>
+        <pre className="bg-[#050505] border border-slate-800 p-6 rounded-xl text-sm font-mono text-slate-300 overflow-x-auto">
+{`.glass-container {
+  /* 1. Hardware Acceleration */
+  transform: translate3d(0, 0, 0);
+  
+  /* 2. The Filter */
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  
+  /* 3. The Tint (Crucial for readability) */
+  background-color: rgba(17, 25, 40, 0.75);
+  
+  /* 4. The Edge (Simulates thickness) */
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}`}
+        </pre>
+
+        <h2 className="text-3xl text-white mt-20 mb-8 border-l-4 border-pink-500 pl-6">3. Common Pitfalls & Performance</h2>
+        <p>
+            <strong>The "Laggy Scroll" Issue:</strong> Overusing backdrop-filter can tank scrolling performance, especially on mobile devices with high refresh rates (120Hz). The browser has to repaint the blurred area every time the content behind it moves.
+        </p>
+        <p>
+            <strong>The Fix:</strong> Use glass sparingly. Do not make your entire background a moving video behind a full-screen glass panel. Use static backgrounds where possible, or limit the size of the glass elements. Ovd's generated code is optimized for modern engines, but architectural restraint is still required.
+        </p>
+
+        <div className="mt-20 p-10 bg-gradient-to-r from-slate-900 via-[#050505] to-slate-900 border border-slate-800 rounded-2xl text-center">
+            <h4 className="text-2xl font-bold text-white mb-4">Start Designing Today</h4>
+            <p className="text-slate-400 max-w-2xl mx-auto mb-8">
+                Ovd Glass Engine is free for commercial and personal use. Whether you are building a dashboard, a mobile app, or a portfolio, the code generated here is compliant with 2026 web standards.
+            </p>
+            <button className="px-8 py-3 bg-white text-black font-bold uppercase tracking-widest rounded hover:bg-slate-200 transition-colors" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+                Back to Generator
+            </button>
+        </div>
     </div>
   </article>
 );
