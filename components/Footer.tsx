@@ -58,6 +58,7 @@ const Footer: React.FC = () => {
                 <button onClick={() => setActiveModal('about')} className="hover:text-cyan-400 transition-colors">About Ovd</button>
                 <button onClick={() => setActiveModal('privacy')} className="hover:text-cyan-400 transition-colors">Privacy Policy</button>
                 <button onClick={() => setActiveModal('terms')} className="hover:text-cyan-400 transition-colors">Terms of Service</button>
+                <a href="mailto:magic.reviewsite@gmail.com" className="hover:text-cyan-400 transition-colors">Contact</a>
             </div>
             <p className="text-[10px] text-slate-700 uppercase tracking-widest">© 2026 Ovd Design. All rights reserved.</p>
         </div>
