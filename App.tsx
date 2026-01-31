@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
-  Menu, X, Wand2, Loader2, Share2, Shuffle, Search, Check, 
-  Copy, Terminal, Download, RefreshCw, BookOpen, TrendingUp, Zap, 
-  Shield, FileText, Info 
+  Menu, X, Share2, Shuffle, Search, Check, 
+  Copy, Terminal, Download, Zap, BookOpen, TrendingUp,
+  Shield, FileText, Info, Layers, Code, Star, Layout, Crown, ArrowRight
 } from 'lucide-react';
-import { generateGlassStyle } from './services/geminiService';
 
-// --- TYPES & CONSTANTS (Inlined for Safety) ---
-
+// --- TYPES ---
 interface GlassSettings {
   blur: number;
   transparency: number;
@@ -28,23 +26,15 @@ interface Preset {
   settings: GlassSettings;
 }
 
+type ViewState = 'generator' | 'docs' | 'showcase' | 'pro';
+
+// --- DATA: PRESETS ---
 const DEFAULT_SETTINGS: GlassSettings = {
-  blur: 16,
-  transparency: 0.25,
-  saturation: 110,
-  color: '#ffffff',
-  outlineOpacity: 0.3,
-  shadowBlur: 20,
-  shadowOpacity: 0.15,
-  lightAngle: 135,
-  borderRadius: 24,
+  blur: 16, transparency: 0.25, saturation: 110, color: '#ffffff', outlineOpacity: 0.3, shadowBlur: 20, shadowOpacity: 0.15, lightAngle: 135, borderRadius: 24,
 };
 
-// --- DATA: 50 PRESETS (Inlined) ---
 const createPreset = (name: string, category: any, updates: Partial<GlassSettings>): Preset => ({
-  name,
-  category,
-  settings: { ...DEFAULT_SETTINGS, ...updates }
+  name, category, settings: { ...DEFAULT_SETTINGS, ...updates }
 });
 
 const OVD_PRESETS: Preset[] = [
@@ -102,7 +92,6 @@ const OVD_PRESETS: Preset[] = [
 
 // --- COMPONENTS ---
 
-// 1. Background
 const Background: React.FC = () => (
   <div className="fixed inset-0 -z-10 overflow-hidden bg-slate-900 pointer-events-none">
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(76,29,149,0.2),rgba(15,23,42,1))]" />
@@ -112,52 +101,23 @@ const Background: React.FC = () => (
   </div>
 );
 
-// 2. Control Panel
 const Slider = ({ label, value, min, max, step = 1, onChange, unit = '' }: any) => (
   <div className="mb-4 group">
     <div className="flex justify-between mb-1.5 items-end">
       <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest group-hover:text-cyan-400 transition-colors">{label}</label>
       <span className="text-[10px] text-slate-600 font-mono group-hover:text-slate-300 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">{value}{unit}</span>
     </div>
-    <input
-      type="range"
-      min={min}
-      max={max}
-      step={step}
-      value={value}
-      onChange={(e) => onChange(parseFloat(e.target.value))}
-      className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer hover:bg-slate-700 transition-all accent-cyan-500"
-    />
+    <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(parseFloat(e.target.value))} className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer hover:bg-slate-700 transition-all accent-cyan-500" />
   </div>
 );
 
 const ControlPanel: React.FC<{ settings: GlassSettings; onChange: (s: GlassSettings) => void }> = ({ settings, onChange }) => {
   const [activeTab, setActiveTab] = useState<'controls' | 'library'>('library');
-  const [prompt, setPrompt] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<PresetCategory>('All');
 
-  const update = (key: keyof GlassSettings, value: string | number) => {
-    onChange({ ...settings, [key]: value });
-  };
-
-  const handleAIGenerate = async () => {
-    if (!prompt.trim()) return;
-    setIsGenerating(true);
-    setError(null);
-    try {
-      const newSettings = await generateGlassStyle(prompt);
-      onChange(newSettings as any);
-      setActiveTab('controls');
-    } catch (e) {
-      setError("Failed to generate. Try again.");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+  const update = (key: keyof GlassSettings, value: string | number) => onChange({ ...settings, [key]: value });
 
   const handleRandomize = () => {
     const randomPreset = OVD_PRESETS[Math.floor(Math.random() * OVD_PRESETS.length)];
@@ -219,22 +179,6 @@ const ControlPanel: React.FC<{ settings: GlassSettings; onChange: (s: GlassSetti
 
       {activeTab === 'controls' && (
         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-            <div className="p-3 bg-gradient-to-b from-slate-900 to-[#121212] rounded-lg border border-slate-800 relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-lg opacity-20 group-hover:opacity-40 transition-opacity blur duration-500"></div>
-                <div className="relative">
-                    <div className="flex items-center gap-2 mb-2">
-                        <Wand2 className="w-3 h-3 text-cyan-400" />
-                        <span className="text-[10px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-purple-200 uppercase tracking-widest">AI Generator</span>
-                    </div>
-                    <div className="flex gap-2">
-                        <input type="text" placeholder="Describe it..." value={prompt} onChange={(e) => setPrompt(e.target.value)} className="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-500/50" onKeyDown={(e) => e.key === 'Enter' && handleAIGenerate()} />
-                        <button onClick={handleAIGenerate} disabled={isGenerating || !prompt.trim()} className="bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 rounded px-2 flex items-center justify-center disabled:opacity-50">
-                            {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
-                        </button>
-                    </div>
-                    {error && <p className="text-red-500 text-[9px] mt-1.5">{error}</p>}
-                </div>
-            </div>
             <div className="space-y-4">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-800/50">
                     <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Parameters</h3>
@@ -271,19 +215,15 @@ const ControlPanel: React.FC<{ settings: GlassSettings; onChange: (s: GlassSetti
   );
 };
 
-// 3. Glass Preview
-const hexToRgb = (hex: string) => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 255, g: 255, b: 255 };
-};
-
 const GlassPreview: React.FC<{ settings: GlassSettings }> = ({ settings }) => {
   const { blur, transparency, saturation, color, outlineOpacity, shadowBlur, shadowOpacity, lightAngle, borderRadius } = settings;
-  const rgb = hexToRgb(color);
-  const calculateBorderGradient = useMemo(() => `linear-gradient(${lightAngle}deg, rgba(255, 255, 255, ${outlineOpacity}) 0%, rgba(255, 255, 255, ${outlineOpacity * 0.1}) 100%)`, [lightAngle, outlineOpacity]);
+  const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+  const r = rgb ? parseInt(rgb[1], 16) : 255;
+  const g = rgb ? parseInt(rgb[2], 16) : 255;
+  const b = rgb ? parseInt(rgb[3], 16) : 255;
   
   const glassStyle: React.CSSProperties = {
-    background: `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${transparency})`,
+    background: `rgba(${r}, ${g}, ${b}, ${transparency})`,
     backdropFilter: `blur(${blur}px) saturate(${saturation}%)`,
     WebkitBackdropFilter: `blur(${blur}px) saturate(${saturation}%)`,
     borderRadius: `${borderRadius}px`,
@@ -293,7 +233,7 @@ const GlassPreview: React.FC<{ settings: GlassSettings }> = ({ settings }) => {
   return (
     <div className="relative w-full max-w-md aspect-[4/3] flex items-center justify-center p-8 group">
        <div className="relative w-full h-full flex flex-col items-center justify-center p-8 transition-all duration-300 ease-out" style={glassStyle}>
-         <div className="absolute inset-0 pointer-events-none" style={{ borderRadius: `${borderRadius}px`, padding: '1px', background: calculateBorderGradient, mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', maskComposite: 'exclude', WebkitMaskComposite: 'xor', }} />
+         <div className="absolute inset-0 pointer-events-none" style={{ borderRadius: `${borderRadius}px`, padding: '1px', background: `linear-gradient(${lightAngle}deg, rgba(255, 255, 255, ${outlineOpacity}) 0%, rgba(255, 255, 255, ${outlineOpacity * 0.1}) 100%)`, mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)', maskComposite: 'exclude', WebkitMaskComposite: 'xor', }} />
          <div className="z-10 text-center select-none">
             <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-white/40 to-white/5 mb-4 mx-auto backdrop-blur-md shadow-lg flex items-center justify-center border border-white/20">
                <span className="text-3xl font-black text-white/90">O</span>
@@ -306,7 +246,6 @@ const GlassPreview: React.FC<{ settings: GlassSettings }> = ({ settings }) => {
   );
 };
 
-// 4. Code Output
 const CodeOutput: React.FC<{ settings: GlassSettings }> = ({ settings }) => {
   const [copied, setCopied] = useState(false);
   const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(settings.color);
@@ -327,7 +266,6 @@ const CodeOutput: React.FC<{ settings: GlassSettings }> = ({ settings }) => {
   );
 };
 
-// 5. Wave Generator
 const WaveGenerator: React.FC = () => {
   const [wSettings, setWSettings] = useState({ height: 150, frequency: 2, complexity: 3, color: '#00ffff', opacity: 1 });
   const [path, setPath] = useState('');
@@ -368,7 +306,6 @@ const WaveGenerator: React.FC = () => {
   );
 };
 
-// 6. SEO & Ads
 const AdWidgetTop: React.FC = () => (
   <div className="w-full max-w-5xl mx-auto mb-12 p-6 bg-[#080808] border border-slate-800 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden group">
     <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
@@ -423,7 +360,72 @@ const SeoArticle: React.FC = () => (
   </article>
 );
 
-// 7. Footer & Legal
+const DocsView = () => (
+    <div className="max-w-4xl mx-auto py-12 animate-in fade-in duration-500">
+        <h1 className="text-4xl font-black text-white mb-8">Documentation</h1>
+        <div className="space-y-8">
+            <section className="bg-[#0A0A0A] p-8 rounded-2xl border border-slate-800">
+                <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Layout className="w-5 h-5 text-cyan-400"/>Component Architecture</h2>
+                <p className="text-slate-400 leading-relaxed mb-4">The Ovd Glass Engine output is designed to be framework-agnostic. However, for React applications, we recommend creating a wrapper component to handle the stacking context efficiently.</p>
+                <div className="bg-[#050505] p-4 rounded border border-slate-800/50"><code className="text-sm font-mono text-cyan-200">{'<GlassCard blur={20} opacity={0.5}>Content</GlassCard>'}</code></div>
+            </section>
+            <section className="bg-[#0A0A0A] p-8 rounded-2xl border border-slate-800">
+                <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Zap className="w-5 h-5 text-yellow-400"/>Optimization Guide</h2>
+                <ul className="list-disc pl-5 space-y-2 text-slate-400">
+                    <li>Avoid using glass effects on top of video backgrounds on mobile.</li>
+                    <li>Limit blur radius to 40px maximum for 60fps scrolling.</li>
+                    <li>Use `will-change: backdrop-filter` sparingly.</li>
+                </ul>
+            </section>
+        </div>
+    </div>
+);
+
+const ShowcaseView = ({ onSelect }: { onSelect: (settings: GlassSettings) => void }) => (
+    <div className="max-w-6xl mx-auto py-12 animate-in fade-in duration-500">
+        <h1 className="text-4xl font-black text-white mb-2">Preset Showcase</h1>
+        <p className="text-slate-400 mb-8">Browse our collection of 50+ professionally tuned glassmorphism styles.</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {OVD_PRESETS.map((preset, i) => (
+                <button key={i} onClick={() => onSelect(preset.settings)} className="group relative aspect-square rounded-xl overflow-hidden border border-slate-800 bg-slate-900/50 hover:border-cyan-500/50 transition-all">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"/>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-lg backdrop-blur-md bg-white/10 border border-white/20 shadow-xl" style={{ backdropFilter: `blur(${preset.settings.blur}px) saturate(${preset.settings.saturation}%)`, backgroundColor: `${preset.settings.color}20` }} />
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-black/60 backdrop-blur-sm border-t border-slate-800">
+                        <p className="text-xs font-bold text-white truncate">{preset.name}</p>
+                        <p className="text-[9px] text-slate-400 uppercase tracking-wider">{preset.category}</p>
+                    </div>
+                </button>
+            ))}
+        </div>
+    </div>
+);
+
+const ProView = () => (
+    <div className="max-w-4xl mx-auto py-20 text-center animate-in zoom-in-95 duration-500">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/30 border border-cyan-800 text-cyan-400 text-xs font-bold uppercase tracking-widest mb-6">
+            <Crown className="w-3 h-3"/> Early Access
+        </div>
+        <h1 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter">Ovd <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">Pro</span></h1>
+        <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-12">Unlock the full potential of the Glass Engine. Figma plugins, VS Code extensions, and team collaboration features coming Q1 2026.</p>
+        <div className="grid md:grid-cols-3 gap-6 text-left mb-16">
+            {[
+                { title: "Figma Sync", desc: "One-click export from Ovd directly to your Figma artboards." },
+                { title: "React Component Library", desc: "Downloadable npm package with pre-built accessible components." },
+                { title: "Team Assets", desc: "Share preset libraries across your organization." }
+            ].map((feature, i) => (
+                <div key={i} className="bg-[#0A0A0A] p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition-colors">
+                    <div className="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center mb-4 border border-slate-800"><Star className="w-5 h-5 text-white"/></div>
+                    <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
+                    <p className="text-sm text-slate-400">{feature.desc}</p>
+                </div>
+            ))}
+        </div>
+        <button className="px-8 py-4 bg-white text-black font-bold text-sm uppercase tracking-widest rounded-lg hover:bg-slate-200 transition-colors">Join Waitlist</button>
+    </div>
+);
+
 const Modal = ({ title, icon, children, onClose }: any) => (
   <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200" onClick={onClose}>
     <div className="bg-[#050505] border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
@@ -436,9 +438,23 @@ const Modal = ({ title, icon, children, onClose }: any) => (
 const Footer: React.FC = () => {
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const renderContent = () => {
-    if (activeModal === 'about') return <div className="space-y-4"><p>Ovd Glass Engine is the industry standard for procedural CSS glassmorphism generation.</p></div>;
-    if (activeModal === 'privacy') return <div className="space-y-4"><h4 className="text-white font-bold">1. Data Collection</h4><p>We do not collect personal data. Ovd is a client-side application.</p></div>;
-    if (activeModal === 'terms') return <div className="space-y-4"><h4 className="text-white font-bold">1. License</h4><p>The code is Open Source (MIT License).</p></div>;
+    if (activeModal === 'about') return <div className="space-y-4"><p>Ovd Glass Engine is the industry standard for procedural CSS glassmorphism generation.</p><p>Built for the modern web, focused on performance and aesthetics.</p></div>;
+    if (activeModal === 'privacy') return (
+        <div className="space-y-4">
+            <h4 className="text-white font-bold">Privacy Policy</h4>
+            <p>Last updated: October 2025</p>
+            <p>1. <strong>No Personal Data Collection:</strong> Ovd is a client-side application. We do not store your designs, settings, or IP addresses on our servers. All state is held in your local browser memory.</p>
+            <p>2. <strong>Analytics:</strong> We use anonymous aggregate analytics to count visitor numbers. No PII is collected.</p>
+            <p>3. <strong>Cookies:</strong> We use local storage cookies solely to remember your last used settings for your convenience.</p>
+        </div>
+    );
+    if (activeModal === 'terms') return (
+        <div className="space-y-4">
+            <h4 className="text-white font-bold">Terms of Service</h4>
+            <p>1. <strong>License:</strong> The CSS and SVG code generated by this tool is licensed under MIT. You are free to use it in commercial and personal projects without attribution.</p>
+            <p>2. <strong>Disclaimer:</strong> The software is provided "as is", without warranty of any kind.</p>
+        </div>
+    );
   };
   return (
     <>
@@ -446,29 +462,34 @@ const Footer: React.FC = () => {
         <div className="container mx-auto px-4 text-center md:text-left flex flex-col md:flex-row justify-between gap-8">
             <div><h2 className="text-2xl font-black text-white">Ovd</h2><p className="text-slate-500 text-sm mt-2">Procedural Glass Engine.</p></div>
             <div className="flex flex-col gap-2">
-                <button onClick={() => setActiveModal('about')} className="text-sm text-slate-400 hover:text-white">About</button>
-                <button onClick={() => setActiveModal('privacy')} className="text-sm text-slate-400 hover:text-white">Privacy</button>
-                <button onClick={() => setActiveModal('terms')} className="text-sm text-slate-400 hover:text-white">Terms</button>
+                <button onClick={() => setActiveModal('about')} className="text-sm text-slate-400 hover:text-white transition-colors text-left">About</button>
+                <button onClick={() => setActiveModal('privacy')} className="text-sm text-slate-400 hover:text-white transition-colors text-left">Privacy Policy</button>
+                <button onClick={() => setActiveModal('terms')} className="text-sm text-slate-400 hover:text-white transition-colors text-left">Terms of Service</button>
             </div>
         </div>
       </footer>
-      {activeModal && <Modal title={activeModal.toUpperCase()} icon={<Info className="w-5 h-5" />} onClose={() => setActiveModal(null)}>{renderContent()}</Modal>}
+      {activeModal && <Modal title={activeModal === 'privacy' ? 'Privacy Policy' : activeModal === 'terms' ? 'Terms of Service' : 'About'} icon={<Info className="w-5 h-5 text-cyan-400" />} onClose={() => setActiveModal(null)}>{renderContent()}</Modal>}
     </>
   );
 };
 
-// --- MAIN APP COMPONENT ---
+// --- MAIN APP ---
 const App: React.FC = () => {
   const [settings, setSettings] = useState<GlassSettings>(DEFAULT_SETTINGS);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [view, setView] = useState<ViewState>('generator');
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const config = params.get('config');
-    if (config) {
-      try { const decoded = JSON.parse(atob(config)); setSettings({ ...DEFAULT_SETTINGS, ...decoded }); } catch (e) { console.error(e); }
-    }
+    if (config) { try { const decoded = JSON.parse(atob(config)); setSettings({ ...DEFAULT_SETTINGS, ...decoded }); } catch (e) { console.error(e); } }
   }, []);
+
+  const handleNav = (v: ViewState) => {
+    setView(v);
+    setSidebarOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="flex min-h-screen bg-page text-slate-200 font-sans selection:bg-cyan-500/30 selection:text-cyan-200 overflow-hidden">
@@ -477,14 +498,14 @@ const App: React.FC = () => {
       </button>
 
       <aside className={`fixed inset-y-0 left-0 z-40 w-[340px] bg-[#121212] border-r border-slate-800/80 transform transition-transform duration-300 ease-in-out flex flex-col ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:h-screen lg:flex-shrink-0`}>
-        <div className="p-6 pb-4 border-b border-slate-800/50 bg-[#121212] z-10">
+        <div className="p-6 pb-4 border-b border-slate-800/50 bg-[#121212] z-10 cursor-pointer" onClick={() => setView('generator')}>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.15)]"><span className="text-black font-black text-xl tracking-tighter">O</span></div>
             <div><h1 className="text-2xl font-black text-white tracking-tighter leading-none">Ovd</h1><div className="flex items-center gap-1.5 mt-1"><span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></span><p className="text-[9px] text-cyan-500 uppercase tracking-[0.2em] font-bold">Glass Engine</p></div></div>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 pt-2"><ControlPanel settings={settings} onChange={setSettings} /></div>
-        <div className="p-4 border-t border-slate-800/50 bg-[#0f0f0f]"><div className="text-[10px] text-slate-600 font-mono text-center mb-2">v2.4.0 • Ready</div></div>
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 pt-2"><ControlPanel settings={settings} onChange={(s) => { setSettings(s); setView('generator'); }} /></div>
+        <div className="p-4 border-t border-slate-800/50 bg-[#0f0f0f]"><div className="text-[10px] text-slate-600 font-mono text-center mb-2">v2.5.0 • Ready</div></div>
       </aside>
 
       <main className="flex-1 relative h-screen overflow-y-auto overflow-x-hidden scroll-smooth">
@@ -495,28 +516,37 @@ const App: React.FC = () => {
                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div><span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">System Online</span>
                 </div>
                 <nav className="flex items-center gap-8">
-                    {['Documentation', 'Showcase', 'Pro Version'].map((item) => <button key={item} className="text-[11px] font-bold text-slate-500 hover:text-white uppercase tracking-widest transition-colors duration-200">{item}</button>)}
+                    <button onClick={() => handleNav('docs')} className={`text-[11px] font-bold uppercase tracking-widest transition-colors duration-200 ${view === 'docs' ? 'text-white' : 'text-slate-500 hover:text-white'}`}>Documentation</button>
+                    <button onClick={() => handleNav('showcase')} className={`text-[11px] font-bold uppercase tracking-widest transition-colors duration-200 ${view === 'showcase' ? 'text-white' : 'text-slate-500 hover:text-white'}`}>Showcase</button>
+                    <button onClick={() => handleNav('pro')} className={`text-[11px] font-bold uppercase tracking-widest transition-colors duration-200 ${view === 'pro' ? 'text-white' : 'text-slate-500 hover:text-white'}`}>Pro Version</button>
                     <button className="px-5 py-2 bg-white text-black text-[10px] font-bold uppercase tracking-widest rounded hover:bg-slate-200 transition-colors">Export</button>
                 </nav>
             </header>
 
-            <AdWidgetTop />
-
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 mb-20">
-                <div className="xl:col-span-8 flex flex-col gap-6">
-                    <div className="bg-[#050505]/40 backdrop-blur-2xl border border-slate-800/60 rounded-3xl min-h-[500px] flex items-center justify-center relative overflow-hidden group shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                         <div className="absolute inset-0 bg-gradient-to-tr from-slate-900/20 via-transparent to-slate-900/20 pointer-events-none"></div>
-                         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`, backgroundSize: '32px 32px' }} />
-                         <GlassPreview settings={settings} />
-                         <div className="absolute bottom-6 left-8 right-8 flex justify-between items-end pointer-events-none"><div className="text-[10px] font-mono text-slate-600">W: 100% H: AUTO<br/>Z-INDEX: 10</div><div className="flex gap-2"><div className="w-1 h-1 bg-slate-600 rounded-full"></div><div className="w-1 h-1 bg-slate-600 rounded-full"></div><div className="w-1 h-1 bg-slate-600 rounded-full"></div></div></div>
+            {view === 'generator' && (
+                <>
+                    <AdWidgetTop />
+                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="xl:col-span-8 flex flex-col gap-6">
+                            <div className="bg-[#050505]/40 backdrop-blur-2xl border border-slate-800/60 rounded-3xl min-h-[500px] flex items-center justify-center relative overflow-hidden group shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+                                <div className="absolute inset-0 bg-gradient-to-tr from-slate-900/20 via-transparent to-slate-900/20 pointer-events-none"></div>
+                                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`, backgroundSize: '32px 32px' }} />
+                                <GlassPreview settings={settings} />
+                                <div className="absolute bottom-6 left-8 right-8 flex justify-between items-end pointer-events-none"><div className="text-[10px] font-mono text-slate-600">W: 100% H: AUTO<br/>Z-INDEX: 10</div><div className="flex gap-2"><div className="w-1 h-1 bg-slate-600 rounded-full"></div><div className="w-1 h-1 bg-slate-600 rounded-full"></div><div className="w-1 h-1 bg-slate-600 rounded-full"></div></div></div>
+                            </div>
+                            <CodeOutput settings={settings} />
+                            <WaveGenerator />
+                        </div>
+                        <div className="xl:col-span-4 space-y-6"><AdWidgetSidebar /></div>
                     </div>
-                    <CodeOutput settings={settings} />
-                    <WaveGenerator />
-                </div>
-                <div className="xl:col-span-4 space-y-6"><AdWidgetSidebar /></div>
-            </div>
+                    <SeoArticle />
+                </>
+            )}
 
-            <SeoArticle />
+            {view === 'docs' && <DocsView />}
+            {view === 'showcase' && <ShowcaseView onSelect={(s) => { setSettings(s); setView('generator'); }} />}
+            {view === 'pro' && <ProView />}
+
             <Footer />
         </div>
       </main>

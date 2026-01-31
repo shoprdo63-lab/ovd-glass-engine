@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ovd Glass Engine</title>
+    <title>Ovd Glass Engine | Professional CSS Generator</title>
+    <meta name="description" content="Generate high-performance CSS glassmorphism effects. Ovd is the industry standard for spatial UI design, featuring 50+ presets and exportable React code.">
     <!-- Tailwind CSS Play CDN for instant styling safety -->
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
@@ -32,62 +33,38 @@
         },
       }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <script type="importmap">
-    {
-      "imports": {
-        "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
-        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-        "react/": "https://esm.sh/react@^19.2.4/",
-        "react": "https://esm.sh/react@^19.2.4",
-        "@google/genai": "https://esm.sh/@google/genai@^1.39.0"
-      }
-    }
-    </script>
+{
+  "imports": {
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.39.0"
+  }
+}
+</script>
     <style>
-      /* Essential Global Styles */
       body {
         background-color: #020202;
         color: #e2e8f0;
       }
-      
       /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #050505;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #334155;
-        border-radius: 3px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #475569;
-      }
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: #050505; }
+      ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: #475569; }
       
-      /* Range Slider Reset */
-      input[type=range] {
-        -webkit-appearance: none;
-        background: transparent;
-      }
+      /* Slider Reset */
+      input[type=range] { -webkit-appearance: none; background: transparent; }
       input[type=range]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        height: 14px;
-        width: 14px;
-        border-radius: 50%;
-        background: #ffffff;
-        cursor: pointer;
-        margin-top: -5px;
+        -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%;
+        background: #ffffff; cursor: pointer; margin-top: -5px;
         box-shadow: 0 0 10px rgba(255,255,255,0.5);
       }
       input[type=range]::-webkit-slider-runnable-track {
-        width: 100%;
-        height: 4px;
-        cursor: pointer;
-        background: #334155;
-        border-radius: 2px;
+        width: 100%; height: 4px; cursor: pointer; background: #334155; border-radius: 2px;
       }
     </style>
   </head>
