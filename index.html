@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ovd Glass Engine</title>
+    <!-- Tailwind CSS Play CDN for instant styling safety -->
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
       tailwind.config = {
@@ -44,7 +45,13 @@
     }
     </script>
     <style>
-      /* Custom scrollbar override since Tailwind CDN doesn't handle component layers exactly the same way without build */
+      /* Essential Global Styles */
+      body {
+        background-color: #020202;
+        color: #e2e8f0;
+      }
+      
+      /* Custom Scrollbar */
       ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
@@ -60,7 +67,7 @@
         background: #475569;
       }
       
-      /* Slider Resets */
+      /* Range Slider Reset */
       input[type=range] {
         -webkit-appearance: none;
         background: transparent;

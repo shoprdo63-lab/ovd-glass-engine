@@ -1,9 +1,33 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { GlassSettings, DEFAULT_SETTINGS } from "../types";
+
+// Define local interface to avoid dependency on types.ts
+interface LocalGlassSettings {
+  blur: number;
+  transparency: number;
+  saturation: number;
+  color: string;
+  outlineOpacity: number;
+  shadowBlur: number;
+  shadowOpacity: number;
+  lightAngle: number;
+  borderRadius: number;
+}
+
+const DEFAULT_SETTINGS: LocalGlassSettings = {
+  blur: 16,
+  transparency: 0.25,
+  saturation: 110,
+  color: '#ffffff',
+  outlineOpacity: 0.3,
+  shadowBlur: 20,
+  shadowOpacity: 0.15,
+  lightAngle: 135,
+  borderRadius: 24,
+};
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-export const generateGlassStyle = async (prompt: string): Promise<GlassSettings> => {
+export const generateGlassStyle = async (prompt: string): Promise<LocalGlassSettings> => {
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-pro-preview",
@@ -44,14 +68,13 @@ export const generateGlassStyle = async (prompt: string): Promise<GlassSettings>
     const jsonText = response.text;
     if (!jsonText) throw new Error("No response from AI");
     
-    const data = JSON.parse(jsonText) as Partial<GlassSettings>;
+    const data = JSON.parse(jsonText) as Partial<LocalGlassSettings>;
     
     // Merge with defaults to ensure safety
     return { ...DEFAULT_SETTINGS, ...data };
 
   } catch (error) {
     console.error("Failed to generate style:", error);
-    // Fallback or re-throw depending on desired UX
     throw error;
   }
 };
