@@ -89,7 +89,7 @@
       import { 
         Menu, X, Shuffle, Check, Copy, Terminal, Zap, Layers, Box, 
         Crown, Globe, Users, PenTool, Figma, Monitor, Package, Mail,
-        Shield, FileText, Info, Code, Star, Layout, Grid, Download
+        Shield, FileText, Info, Code, Star, Layout, Grid, Download, Sparkles, Smartphone
       } from 'https://esm.sh/lucide-react@0.294.0';
 
       // --- 1. DATA & CONSTANTS ---
@@ -97,7 +97,7 @@
         blur: 16, transparency: 0.25, saturation: 110, color: '#ffffff', outlineOpacity: 0.3, shadowBlur: 20, shadowOpacity: 0.15, lightAngle: 135, borderRadius: 24,
       };
 
-      // 1. Generate 50+ Presets
+      // Generate 50+ Presets
       const OVD_PRESETS = [
           { name: "Eco Frost", category: "Nature", settings: { blur: 20, transparency: 0.3, saturation: 140, color: "#d1fae5", outlineOpacity: 0.4, borderRadius: 24 } },
           { name: "Deep Jungle", category: "Nature", settings: { blur: 12, transparency: 0.6, saturation: 110, color: "#064e3b", outlineOpacity: 0.2, borderRadius: 16 } },
@@ -111,7 +111,6 @@
           { name: "Void", category: "Dark Matter", settings: { blur: 15, transparency: 0.2, saturation: 50, color: "#262626", outlineOpacity: 0.3, shadowOpacity: 1 } },
       ];
 
-      // Procedurally generate the rest to hit 50+
       const COLORS = [
         { c: "#ef4444", n: "Red" }, { c: "#f97316", n: "Orange" }, { c: "#eab308", n: "Amber" }, 
         { c: "#84cc16", n: "Lime" }, { c: "#22c55e", n: "Green" }, { c: "#06b6d4", n: "Cyan" }, 
@@ -140,14 +139,12 @@
 
       // --- 2. COMPONENTS ---
 
-      // Background Component
       const Background = () => React.createElement('div', { className: "fixed inset-0 -z-10 overflow-hidden bg-black pointer-events-none" },
         React.createElement('div', { className: "absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(6,78,59,0.1),rgba(0,0,0,1))]" }),
         React.createElement('div', { className: "absolute top-0 left-[-10%] w-[60vw] h-[60vw] bg-emerald-900/10 rounded-full mix-blend-screen filter blur-[120px] opacity-30 animate-blob" }),
         React.createElement('div', { className: "absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-green-900/10 rounded-full mix-blend-screen filter blur-[120px] opacity-30 animate-blob animation-delay-2000" })
       );
 
-      // Slider Component
       const Slider = ({ label, value, min, max, step = 1, onChange, unit = '' }) => (
         React.createElement('div', { className: "mb-5 group" },
           React.createElement('div', { className: "flex justify-between mb-2 items-center" },
@@ -162,7 +159,6 @@
         )
       );
 
-      // Control Panel
       const ControlPanel = ({ settings, onChange }) => {
         const update = (key, value) => onChange({ ...settings, [key]: value });
         const handleRandomize = () => {
@@ -208,7 +204,6 @@
         );
       };
 
-      // Preview Component
       const GlassPreview = ({ settings }) => {
         const { blur, transparency, saturation, color, outlineOpacity, shadowBlur, shadowOpacity, lightAngle, borderRadius } = settings;
         const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
@@ -249,7 +244,6 @@
         );
       };
 
-      // Code Output Component
       const CodeOutput = ({ settings }) => {
         const [copied, setCopied] = useState(false);
         const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(settings.color);
@@ -391,12 +385,8 @@
         )
       );
 
-      const EcosystemView = () => {
-        const handleJoin = () => {
-            alert("Thank you! We will contact you at magic.reviewsite@gmail.com");
-        };
-
-        return React.createElement('div', { className: "max-w-5xl mx-auto py-16 animate-in fade-in duration-500" },
+      const EcosystemView = () => (
+        React.createElement('div', { className: "max-w-5xl mx-auto py-16 animate-in fade-in duration-500" },
              React.createElement('header', { className: "text-center mb-16" },
                 React.createElement('h1', { className: "text-4xl font-black text-white mb-4" }, "Ovd Ecosystem"),
                 React.createElement('p', { className: "text-slate-400 max-w-2xl mx-auto" }, "We are building a complete suite of tools to bring procedural glassmorphism to your entire workflow.")
@@ -407,14 +397,13 @@
                     React.createElement('div', { className: "md:col-span-7 space-y-6" },
                         React.createElement('div', { className: "flex items-center gap-3 mb-2" },
                             React.createElement('div', { className: "p-2 bg-[#2c2c2c] rounded-lg" }, React.createElement(Figma, { className: "w-6 h-6 text-purple-400" })),
-                            React.createElement('span', { className: "text-sm font-bold text-purple-400 uppercase tracking-widest" }, "Coming Soon")
+                            React.createElement('span', { className: "text-sm font-bold text-purple-400 uppercase tracking-widest" }, "Available Now")
                         ),
                         React.createElement('h2', { className: "text-2xl font-bold text-white" }, "Ovd for Figma"),
                         React.createElement('div', { className: "prose prose-invert text-slate-400 text-sm" },
                             React.createElement('p', null, "Stop guessing blur values. The Ovd Figma Plugin brings the exact same rendering engine from the web directly to your canvas. Sync your tokens 1:1."),
                             React.createElement('p', null, "Designers can tweak transparency, saturation, and noise in real-time, then export the JSON configuration directly to the development team. No more 'eye-balling' implementation.")
-                        ),
-                        React.createElement('button', { onClick: handleJoin, className: "px-6 py-2 bg-purple-900/20 border border-purple-500/50 text-purple-300 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-purple-900/40 transition-colors" }, "Join Beta List")
+                        )
                     ),
                     React.createElement('div', { className: "md:col-span-5 aspect-square bg-slate-900 rounded-2xl border border-slate-800 flex items-center justify-center relative overflow-hidden" },
                         React.createElement('div', { className: "absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(168,85,247,0.15),transparent)]" }),
@@ -429,19 +418,18 @@
                     React.createElement('div', { className: "md:col-span-7 space-y-6 order-1 md:order-2" },
                         React.createElement('div', { className: "flex items-center gap-3 mb-2" },
                             React.createElement('div', { className: "p-2 bg-[#2c2c2c] rounded-lg" }, React.createElement(Code, { className: "w-6 h-6 text-blue-400" })),
-                            React.createElement('span', { className: "text-sm font-bold text-blue-400 uppercase tracking-widest" }, "In Development")
+                            React.createElement('span', { className: "text-sm font-bold text-blue-400 uppercase tracking-widest" }, "Beta Access")
                         ),
                         React.createElement('h2', { className: "text-2xl font-bold text-white" }, "VS Code Extension"),
                         React.createElement('div', { className: "prose prose-invert text-slate-400 text-sm" },
                             React.createElement('p', null, "Get IntelliSense for glassmorphism. The extension highlights standard CSS backdrop-filter properties and offers 'Quick Fix' suggestions to convert them into high-performance Ovd classes."),
                             React.createElement('p', null, "Includes snippets for React, Vue, and plain HTML. Type `glass-card` and press Tab to generate a fully accessible, fall-back ready glass container.")
-                        ),
-                        React.createElement('button', { onClick: handleJoin, className: "px-6 py-2 bg-blue-900/20 border border-blue-500/50 text-blue-300 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-blue-900/40 transition-colors" }, "Notify Me")
+                        )
                     )
                 )
             )
-        );
-      };
+        )
+      );
 
       const ProView = () => (
         React.createElement('div', { className: "max-w-5xl mx-auto py-20 animate-in zoom-in-95 duration-500" },
@@ -453,30 +441,37 @@
                 React.createElement('p', { className: "text-xl text-slate-400 max-w-2xl mx-auto mb-12" }, "Scale your design system with the robust, team-oriented version of Glass Engine.")
             ),
             
-            React.createElement('div', { className: "grid md:grid-cols-3 gap-8 mb-20" },
-                React.createElement('div', { className: "bg-slate-900/50 p-8 rounded-2xl border border-slate-800 hover:border-emerald-500/30 transition-colors" },
-                    React.createElement('div', { className: "w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mb-6" }, React.createElement(Box, { className: "w-6 h-6 text-emerald-400" })),
-                    React.createElement('h3', { className: "text-xl font-bold text-white mb-3" }, "Batch Export"),
-                    React.createElement('p', { className: "text-slate-400 leading-relaxed" }, "Generate 50+ glass variants at once. Export to CSS, SCSS, Tailwind config, or JSON tokens for Figma.")
+            React.createElement('div', { className: "grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20" },
+                // Feature Cards (Gallery Style)
+                React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center" },
+                    React.createElement('div', { className: "w-12 h-12 bg-emerald-900/20 rounded-xl flex items-center justify-center mb-4 text-emerald-400" }, React.createElement(Box, { className: "w-6 h-6" })),
+                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "Batch Export"),
+                    React.createElement('p', { className: "text-sm text-slate-400" }, "Generate 50+ glass variants at once. Export to CSS, SCSS, Tailwind config, or JSON tokens.")
                 ),
-                React.createElement('div', { className: "bg-slate-900/50 p-8 rounded-2xl border border-slate-800 hover:border-emerald-500/30 transition-colors" },
-                     React.createElement('div', { className: "w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mb-6" }, React.createElement(Users, { className: "w-6 h-6 text-purple-400" })),
-                    React.createElement('h3', { className: "text-xl font-bold text-white mb-3" }, "Team Sync"),
-                    React.createElement('p', { className: "text-slate-400 leading-relaxed" }, "Shared preset libraries for your organization. Enforce consistency across your design and engineering teams.")
+                React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center" },
+                    React.createElement('div', { className: "w-12 h-12 bg-purple-900/20 rounded-xl flex items-center justify-center mb-4 text-purple-400" }, React.createElement(Users, { className: "w-6 h-6" })),
+                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "Team Sync"),
+                    React.createElement('p', { className: "text-sm text-slate-400" }, "Shared preset libraries for your organization. Enforce consistency across your design teams.")
                 ),
-                React.createElement('div', { className: "bg-slate-900/50 p-8 rounded-2xl border border-slate-800 hover:border-emerald-500/30 transition-colors" },
-                     React.createElement('div', { className: "w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center mb-6" }, React.createElement(PenTool, { className: "w-6 h-6 text-blue-400" })),
-                    React.createElement('h3', { className: "text-xl font-bold text-white mb-3" }, "Custom Noise"),
-                    React.createElement('p', { className: "text-slate-400 leading-relaxed" }, "Upload your own noise textures. Control grain intensity, blend modes, and opacity directly in the generated CSS.")
-                )
-            ),
-            
-            React.createElement('div', { className: "bg-gradient-to-r from-emerald-900/20 to-cyan-900/20 border border-emerald-900/30 rounded-3xl p-12 text-center" },
-                React.createElement('h2', { className: "text-3xl font-bold text-white mb-6" }, "Get Early Access"),
-                React.createElement('p', { className: "text-slate-400 mb-8 max-w-lg mx-auto" }, "Ovd Pro is currently in closed beta with select partners including Vercel and Linear."),
-                React.createElement('div', { className: "flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto" },
-                    React.createElement('input', { type: "email", placeholder: "work@email.com", className: "px-4 py-3 bg-black border border-slate-800 rounded-lg text-white focus:outline-none focus:border-emerald-500 flex-1" }),
-                    React.createElement('button', { onClick: () => alert("Thank you! We will contact you at magic.reviewsite@gmail.com"), className: "px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition-colors whitespace-nowrap" }, "Request Access")
+                React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center" },
+                    React.createElement('div', { className: "w-12 h-12 bg-blue-900/20 rounded-xl flex items-center justify-center mb-4 text-blue-400" }, React.createElement(PenTool, { className: "w-6 h-6" })),
+                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "Custom Noise"),
+                    React.createElement('p', { className: "text-sm text-slate-400" }, "Upload noise textures. Control grain intensity and opacity directly in generated CSS.")
+                ),
+                React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center" },
+                     React.createElement('div', { className: "w-12 h-12 bg-yellow-900/20 rounded-xl flex items-center justify-center mb-4 text-yellow-400" }, React.createElement(Sparkles, { className: "w-6 h-6" })),
+                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "AI Suggestions"),
+                    React.createElement('p', { className: "text-sm text-slate-400" }, "Smart adjustments based on your background image analysis.")
+                ),
+                 React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center" },
+                     React.createElement('div', { className: "w-12 h-12 bg-pink-900/20 rounded-xl flex items-center justify-center mb-4 text-pink-400" }, React.createElement(Smartphone, { className: "w-6 h-6" })),
+                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "Mobile Optimized"),
+                    React.createElement('p', { className: "text-sm text-slate-400" }, "Automatically generates media queries for fallback opacity on older devices.")
+                ),
+                 React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center" },
+                     React.createElement('div', { className: "w-12 h-12 bg-cyan-900/20 rounded-xl flex items-center justify-center mb-4 text-cyan-400" }, React.createElement(Download, { className: "w-6 h-6" })),
+                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "NPM Package"),
+                    React.createElement('p', { className: "text-sm text-slate-400" }, "Install @ovd/glass directly into your project for runtime generation.")
                 )
             )
         )
