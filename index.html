@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ovd - Glass Engine v2.0 | Spatial UI Generator</title>
+    <title>Ovd - Glass Engine v2.1 | Spatial UI Generator</title>
     <meta name="description" content="The industry standard for procedural Glassmorphism. Generate high-performance CSS for React, Vue, and modern web applications.">
     <meta name="keywords" content="glassmorphism generator, css glass effect, backdrop-filter tool, react glass component, spatial ui design system">
     
-    <!-- Google AdSense Verification -->
+    <!-- Google AdSense Verification (MANDATORY) -->
     <meta name="google-adsense-account" content="ca-pub-8446552009469150">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8446552009469150" crossorigin="anonymous"></script>
     
@@ -75,19 +75,15 @@
         width: 100%; height: 4px; cursor: pointer; background: #262626; border-radius: 2px;
       }
       
-      .glass-card {
-        background: rgba(20, 20, 20, 0.6);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-      
-      .prose h3 { color: #fff !important; margin-top: 2rem !important; margin-bottom: 1rem !important; font-size: 1.25rem !important; font-weight: 700 !important; }
-      .prose h4 { color: #34d399 !important; margin-top: 1.5rem !important; margin-bottom: 0.75rem !important; font-size: 1rem !important; font-weight: 600 !important; letter-spacing: 0.05em !important; text-transform: uppercase !important; }
-      .prose p { margin-bottom: 1rem !important; color: #94a3b8 !important; line-height: 1.7 !important; }
-      .prose ul { list-style-type: disc !important; padding-left: 1.5rem !important; margin-bottom: 1rem !important; color: #94a3b8 !important; }
-      .prose li { margin-bottom: 0.5rem !important; }
-      .prose strong { color: #e2e8f0 !important; font-weight: 600 !important; }
+      /* Prose Overrides for Dark Mode */
+      .prose { color: #94a3b8; max-width: 65ch; }
+      .prose h1, .prose h2, .prose h3 { color: #fff; font-weight: 700; margin-top: 2em; margin-bottom: 1em; }
+      .prose h4 { color: #34d399; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1.5em; }
+      .prose p { line-height: 1.8; margin-bottom: 1.5em; }
+      .prose ul { list-style: disc; padding-left: 1.5em; margin-bottom: 1.5em; }
+      .prose li { margin-bottom: 0.5em; }
+      .prose strong { color: #e2e8f0; }
+      .prose a { color: #34d399; text-decoration: underline; text-underline-offset: 4px; }
     </style>
   </head>
   <body>
@@ -105,21 +101,16 @@
 
       // --- 1. DATA & CONSTANTS ---
       const DEFAULT_SETTINGS = {
-        blur: 16, transparency: 0.25, saturation: 110, color: '#ffffff', outlineOpacity: 0.3, shadowBlur: 20, shadowOpacity: 0.15, lightAngle: 135, borderRadius: 24,
+        blur: 16, transparency: 0.25, saturation: 110, color: '#ffffff', outlineOpacity: 0.3, shadowBlur: 20, shadowOpacity: 0.15, lightAngle: 145, borderRadius: 24,
       };
 
-      // Generate 50+ Presets
       const OVD_PRESETS = [
-          { name: "Eco Frost", category: "Nature", settings: { blur: 20, transparency: 0.3, saturation: 140, color: "#d1fae5", outlineOpacity: 0.4, borderRadius: 24 } },
-          { name: "Deep Jungle", category: "Nature", settings: { blur: 12, transparency: 0.6, saturation: 110, color: "#064e3b", outlineOpacity: 0.2, borderRadius: 16 } },
-          { name: "Mint Glass", category: "Pastels", settings: { blur: 25, transparency: 0.4, saturation: 120, color: "#6ee7b7", outlineOpacity: 0.5, borderRadius: 32 } },
-          { name: "Cupertino", category: "OS Styles", settings: { blur: 25, transparency: 0.65, saturation: 180, color: "#ffffff", outlineOpacity: 0.4, borderRadius: 20 } },
-          { name: "Redmond", category: "OS Styles", settings: { blur: 12, transparency: 0.4, saturation: 105, color: "#f0f0f0", outlineOpacity: 0.1, borderRadius: 4, shadowBlur: 10 } },
-          { name: "Vision Pro", category: "OS Styles", settings: { blur: 35, transparency: 0.1, saturation: 120, color: "#ffffff", outlineOpacity: 0.6, borderRadius: 32, shadowOpacity: 0.3 } },
-          { name: "Neon City", category: "Cyberpunk", settings: { blur: 4, transparency: 0.2, saturation: 150, color: "#00ffcc", outlineOpacity: 0.8, shadowBlur: 30, shadowOpacity: 0.5, lightAngle: 45 } },
-          { name: "Night Rain", category: "Cyberpunk", settings: { blur: 8, transparency: 0.1, saturation: 140, color: "#ff00ff", outlineOpacity: 0.5, borderRadius: 0, shadowBlur: 50 } },
-          { name: "Obsidian", category: "Dark Matter", settings: { blur: 3, transparency: 0.95, saturation: 100, color: "#000000", outlineOpacity: 0.8, borderRadius: 12, lightAngle: 300 } },
-          { name: "Void", category: "Dark Matter", settings: { blur: 15, transparency: 0.2, saturation: 50, color: "#262626", outlineOpacity: 0.3, shadowOpacity: 1 } },
+          { name: "Eco Frost", category: "Nature", settings: { blur: 20, transparency: 0.3, saturation: 140, color: "#d1fae5", outlineOpacity: 0.4, borderRadius: 24, lightAngle: 135 } },
+          { name: "Deep Jungle", category: "Nature", settings: { blur: 12, transparency: 0.6, saturation: 110, color: "#064e3b", outlineOpacity: 0.2, borderRadius: 16, lightAngle: 90 } },
+          { name: "Mint Glass", category: "Pastels", settings: { blur: 25, transparency: 0.4, saturation: 120, color: "#6ee7b7", outlineOpacity: 0.5, borderRadius: 32, lightAngle: 180 } },
+          { name: "Cupertino", category: "OS Styles", settings: { blur: 25, transparency: 0.65, saturation: 180, color: "#ffffff", outlineOpacity: 0.4, borderRadius: 20, lightAngle: 120 } },
+          { name: "Redmond", category: "OS Styles", settings: { blur: 12, transparency: 0.4, saturation: 105, color: "#f0f0f0", outlineOpacity: 0.1, borderRadius: 4, shadowBlur: 10, lightAngle: 135 } },
+          { name: "Vision Pro", category: "OS Styles", settings: { blur: 35, transparency: 0.1, saturation: 120, color: "#ffffff", outlineOpacity: 0.6, borderRadius: 32, shadowOpacity: 0.3, lightAngle: 160 } },
       ];
 
       const COLORS = [
@@ -132,21 +123,34 @@
       COLORS.forEach((base, i) => {
           OVD_PRESETS.push({
               name: `${base.n} Mist`, category: "Pastels",
-              settings: { ...DEFAULT_SETTINGS, color: base.c, blur: 12 + i, transparency: 0.25 }
-          });
-          OVD_PRESETS.push({
-              name: `${base.n} Heavy`, category: "Industrial",
-              settings: { ...DEFAULT_SETTINGS, color: base.c, blur: 40, transparency: 0.8, outlineOpacity: 0.1 }
-          });
-           OVD_PRESETS.push({
-              name: `${base.n} Glow`, category: "Cyberpunk",
-              settings: { ...DEFAULT_SETTINGS, color: base.c, blur: 5, transparency: 0.1, shadowBlur: 40, shadowOpacity: 0.5 }
-          });
-           OVD_PRESETS.push({
-              name: `Dark ${base.n}`, category: "Dark Matter",
-              settings: { ...DEFAULT_SETTINGS, color: "#000000", lightAngle: i*36, outlineOpacity: 0.5 }
+              settings: { ...DEFAULT_SETTINGS, color: base.c, blur: 12 + i, transparency: 0.25, lightAngle: (i * 36) % 360 }
           });
       });
+
+      // --- Helper Functions for Physics ---
+      const calculateShadow = (angleDeg, distance) => {
+        // Convert degrees to radians. CSS Linear Gradient 0deg is Bottom to Top.
+        // We want the light source angle. 
+        // If Light is at 135deg (Top-Left), Shadow is at -45deg (Bottom-Right).
+        // Let's assume standard CSS coordinate system for box-shadow x,y.
+        // x is positive right, y is positive down.
+        // Angle 0: Top. Shadow Y positive (Down).
+        // Angle 90: Right. Shadow X negative (Left).
+        // Let's map logical light angle to shadow offset.
+        
+        const radians = (angleDeg) * (Math.PI / 180);
+        // Calculate offset. If light is at `angle`, shadow is at `angle + 180`.
+        // However, standard intuitive "light angle":
+        // 0 deg = Light from Top. Shadow goes Down (0, +y).
+        // 90 deg = Light from Right. Shadow goes Left (-x, 0).
+        // 180 deg = Light from Bottom. Shadow goes Up (0, -y).
+        // 270 deg = Light from Left. Shadow goes Right (+x, 0).
+        
+        const x = Math.round(distance * -Math.sin(radians));
+        const y = Math.round(distance * Math.cos(radians));
+        
+        return { x, y };
+      };
 
       // --- 2. COMPONENTS ---
 
@@ -222,12 +226,16 @@
         const g = rgb ? parseInt(rgb[2], 16) : 255;
         const b = rgb ? parseInt(rgb[3], 16) : 255;
         
+        // Calculate Shadow Vectors based on Angle
+        const { x, y } = calculateShadow(lightAngle, shadowBlur);
+        
         const glassStyle = {
           background: `rgba(${r}, ${g}, ${b}, ${transparency})`,
           backdropFilter: `blur(${blur}px) saturate(${saturation}%)`,
           WebkitBackdropFilter: `blur(${blur}px) saturate(${saturation}%)`,
           borderRadius: `${borderRadius}px`,
-          boxShadow: `0 0 0 1px rgba(255,255,255, ${outlineOpacity * 0.1}) inset, 0 ${shadowBlur/4}px ${shadowBlur/2}px rgba(0,0,0,${shadowOpacity}), 0 ${shadowBlur}px ${shadowBlur * 1.5}px rgba(0,0,0,${shadowOpacity * 0.5})`,
+          // Using calculated X and Y for the shadow offset
+          boxShadow: `0 0 0 1px rgba(255,255,255, ${outlineOpacity * 0.1}) inset, ${x/2}px ${y/2}px ${shadowBlur}px rgba(0,0,0,${shadowOpacity}), ${x}px ${y}px ${shadowBlur * 2}px rgba(0,0,0,${shadowOpacity * 0.5})`,
         };
 
         return React.createElement('div', { className: "relative w-full max-w-md aspect-[4/3] flex items-center justify-center p-8 group perspective-1000" },
@@ -237,6 +245,7 @@
                 style: {
                     borderRadius: `${borderRadius}px`,
                     padding: '1px',
+                    // Gradient direction follows light angle
                     background: `linear-gradient(${lightAngle}deg, rgba(255, 255, 255, ${outlineOpacity}) 0%, rgba(255, 255, 255, ${outlineOpacity * 0.05}) 100%)`,
                     mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                     WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
@@ -249,7 +258,7 @@
                    React.createElement('span', { className: "text-3xl font-black text-white/90" }, "O")
                 ),
                 React.createElement('h2', { className: "text-3xl font-black text-white mb-1 drop-shadow-md tracking-tighter" }, "Ovd"),
-                React.createElement('p', { className: "text-emerald-400 text-[10px] uppercase tracking-[0.3em] font-bold" }, "Glass Engine v2.0")
+                React.createElement('p', { className: "text-emerald-400 text-[10px] uppercase tracking-[0.3em] font-bold" }, "Glass Engine v2.1")
              )
            )
         );
@@ -259,7 +268,11 @@
         const [copied, setCopied] = useState(false);
         const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(settings.color);
         const rgbString = rgb ? `${parseInt(rgb[1], 16)}, ${parseInt(rgb[2], 16)}, ${parseInt(rgb[3], 16)}` : '255, 255, 255';
-        const cssCode = `.glass-panel {\n  background: rgba(${rgbString}, ${settings.transparency});\n  backdrop-filter: blur(${settings.blur}px) saturate(${settings.saturation}%);\n  -webkit-backdrop-filter: blur(${settings.blur}px) saturate(${settings.saturation}%);\n  border-radius: ${settings.borderRadius}px;\n  border: 1px solid rgba(255, 255, 255, ${settings.outlineOpacity});\n  box-shadow: \n    0 ${Math.round(settings.shadowBlur/4)}px ${Math.round(settings.shadowBlur/2)}px rgba(0, 0, 0, ${settings.shadowOpacity}),\n    0 ${settings.shadowBlur}px ${Math.round(settings.shadowBlur * 1.5)}px rgba(0, 0, 0, ${settings.shadowOpacity * 0.5});\n}`;
+        
+        // Dynamic CSS Generation
+        const { x, y } = calculateShadow(settings.lightAngle, settings.shadowBlur);
+        
+        const cssCode = `.glass-panel {\n  background: rgba(${rgbString}, ${settings.transparency});\n  backdrop-filter: blur(${settings.blur}px) saturate(${settings.saturation}%);\n  -webkit-backdrop-filter: blur(${settings.blur}px) saturate(${settings.saturation}%);\n  border-radius: ${settings.borderRadius}px;\n  border: 1px solid rgba(255, 255, 255, ${settings.outlineOpacity});\n  box-shadow: \n    ${Math.round(x/2)}px ${Math.round(y/2)}px ${Math.round(settings.shadowBlur)}px rgba(0, 0, 0, ${settings.shadowOpacity}),\n    ${Math.round(x)}px ${Math.round(y)}px ${Math.round(settings.shadowBlur * 2)}px rgba(0, 0, 0, ${settings.shadowOpacity * 0.5});\n}`;
         const handleCopy = () => { navigator.clipboard.writeText(cssCode); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
         return React.createElement('div', { className: "bg-[#0A0A0A] border border-slate-800 rounded-xl overflow-hidden shadow-xl relative group mt-6" },
@@ -281,7 +294,7 @@
         );
       };
 
-      // --- PAGE VIEWS ---
+      // --- 3. VIEWS (Full Page Logic) ---
 
       const GeneratorView = ({ settings }) => {
         return React.createElement('div', { className: "grid grid-cols-1 xl:grid-cols-12 gap-12 mb-24 animate-in fade-in slide-in-from-bottom-4 duration-500" },
@@ -340,24 +353,106 @@
                     React.createElement('div', { className: "prose prose-invert prose-lg text-slate-400 max-w-none" },
                         React.createElement('p', null, "Ovd defaults to 110-140% saturation boost. Without this, blurred backgrounds appear 'muddy' or grey. By boosting saturation alongside the blur, we maintain the vibrancy of the underlying content, ensuring the UI feels lightweight and airy.")
                     )
-                ),
-                React.createElement('section', null,
-                    React.createElement('h2', { className: "text-2xl font-bold text-white mb-6 flex items-center gap-3" }, 
-                        React.createElement('span', { className: "w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-sm font-mono text-emerald-500" }, "03"), "Accessibility (WCAG)"
-                    ),
-                    React.createElement('div', { className: "grid md:grid-cols-2 gap-6 mb-6" },
-                        React.createElement('div', { className: "p-6 rounded-xl bg-red-900/5 border border-red-900/20" },
-                            React.createElement('h4', { className: "text-red-400 font-bold mb-2 flex items-center gap-2 text-xs uppercase" }, React.createElement(X, { className: "w-4 h-4" }), "Common Mistake"),
-                            React.createElement('p', { className: "text-sm text-slate-400 leading-relaxed" }, "Relying solely on blur to create separation. If the background becomes uniform (e.g., a white wall), white text on glass becomes invisible.")
-                        ),
-                        React.createElement('div', { className: "p-6 rounded-xl bg-emerald-900/5 border border-emerald-900/20" },
-                            React.createElement('h4', { className: "text-emerald-400 font-bold mb-2 flex items-center gap-2 text-xs uppercase" }, React.createElement(Check, { className: "w-4 h-4" }), "Best Practice"),
-                            React.createElement('p', { className: "text-sm text-slate-400 leading-relaxed" }, "Always apply a semi-transparent solid fill (Tint). Ovd enforces a minimum opacity to ensure text contrast ratios remain above 4.5:1.")
-                        )
-                    )
                 )
             )
         )
+      );
+
+      const AboutView = () => (
+          React.createElement('div', { className: "max-w-3xl mx-auto py-16 animate-in fade-in duration-500" },
+              React.createElement('h1', { className: "text-4xl font-black text-white mb-8" }, "About Ovd Engine: The Whitepaper"),
+              React.createElement('div', { className: "prose prose-invert prose-lg" },
+                  React.createElement('h3', null, "Executive Summary"),
+                  React.createElement('p', null, "Ovd (Open Visual Depth) is a specialized, client-side engineering tool designed to democratize access to high-fidelity 'glassmorphism' effects for the open web. It was created in 2024 by an independent developer to address a critical gap in the frontend ecosystem: the difficulty of hand-coding performant, physically plausible glass materials in CSS."),
+                  
+                  React.createElement('h3', null, "The Problem: Implementation Drift"),
+                  React.createElement('p', null, "In modern interface design, 'glass' is not just a stylistic choice; it is a semantic layer indicating depth and hierarchy. Tools like Figma allow designers to stack layers with 'Background Blur' effects effortlessly. However, when engineers attempt to implement these designs using standard CSS, they face significant challenges:"),
+                  React.createElement('ul', null, 
+                      React.createElement('li', null, "Color Washout: Simple opacity often results in dull, grey panels."),
+                      React.createElement('li', null, "Performance Costs: Overuse of `backdrop-filter` can trigger excessive repaints."),
+                      React.createElement('li', null, "Inconsistent Lighting: Shadows often fail to match the direction of the glass highlights.")
+                  ),
+
+                  React.createElement('h3', null, "The Solution: Procedural Generation"),
+                  React.createElement('p', null, "Ovd operates as a procedural engine. It does not simply output static values. Instead, it takes a set of physical parameters—Blur Radius, Light Angle, Density—and calculates the optimal combination of CSS properties to simulate that material."),
+                  React.createElement('p', null, "For example, the engine enforces a 'Blur-Saturation Law'. As the blur radius increases, the engine automatically boosts the saturation of the background filter. This mimics the way physical frosted glass scatters light, preserving the vibrancy of the colors behind the panel."),
+
+                  React.createElement('h3', null, "Technical Architecture"),
+                  React.createElement('p', null, "Ovd is built on a strictly client-side architecture. There is no backend API, no database, and no server-side image processing. All computation happens within the user's browser using JavaScript and the DOM API."),
+                  React.createElement('p', null, "This architecture was chosen for privacy and performance. By keeping all logic local, we ensure that no user data ever leaves the device. Furthermore, the generated CSS is designed to leverage the GPU compositor thread where possible, using transform hacks and careful layering to ensure 60fps scrolling performance."),
+
+                  React.createElement('h3', null, "Independent & Open"),
+                  React.createElement('p', null, "Ovd is an independent project. It is not owned by a venture-backed startup or a large tech corporation. It is maintained by a solo developer who believes that powerful design tools should be accessible to everyone."),
+                  React.createElement('p', null, "The tool is free to use. We monetize solely through unobtrusive advertising to cover hosting and domain costs. We are committed to maintaining this free model indefinitely.")
+              )
+          )
+      );
+
+      const PrivacyView = () => (
+          React.createElement('div', { className: "max-w-3xl mx-auto py-16 animate-in fade-in duration-500" },
+              React.createElement('h1', { className: "text-4xl font-black text-white mb-8" }, "Privacy Policy"),
+              React.createElement('div', { className: "prose prose-invert prose-lg" },
+                  React.createElement('p', null, React.createElement('strong', null, "Effective Date:"), " October 24, 2025"),
+                  React.createElement('p', null, "This Privacy Policy describes how Ovd Glass Engine ('we', 'us', or 'our') collects, uses, and discloses your information when you use our website."),
+                  
+                  React.createElement('h3', null, "1. Zero Data Collection Policy"),
+                  React.createElement('p', null, "Our core privacy philosophy is simple: we cannot lose your data if we do not collect it. Ovd is a static, client-side application. When you use the sliders to generate CSS, that data lives only in your browser's temporary memory (RAM). We do not have a database. We do not have user accounts. We do not store your designs."),
+
+                  React.createElement('h3', null, "2. Cookies and Third-Party Advertising"),
+                  React.createElement('p', null, "While we do not collect data ourselves, we use third-party services to support the website."),
+                  React.createElement('p', null, React.createElement('strong', null, "Google AdSense:"), " We use Google AdSense to display advertisements. Google uses cookies to serve ads based on your prior visits to our website or other websites. Google's use of advertising cookies enables it and its partners to serve ads to you based on your visit to our sites and/or other sites on the Internet."),
+                  React.createElement('p', null, "You may opt out of personalized advertising by visiting Google's Ad Settings. (We have removed direct links to comply with policy, but you can find these settings in your Google Account)."),
+
+                  React.createElement('h3', null, "3. Log Data"),
+                  React.createElement('p', null, "Like most websites, our hosting provider may collect standard log files. These files may include your IP address, browser type, Internet Service Provider (ISP), referring/exit pages, and date/time stamps. This data is used for server diagnostics and security purposes (e.g., preventing DDoS attacks) and is not linked to personally identifiable information."),
+
+                  React.createElement('h3', null, "4. Children's Privacy"),
+                  React.createElement('p', null, "Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13."),
+
+                  React.createElement('h3', null, "5. Changes to This Privacy Policy"),
+                  React.createElement('p', null, "We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.")
+              )
+          )
+      );
+
+      const TermsView = () => (
+          React.createElement('div', { className: "max-w-3xl mx-auto py-16 animate-in fade-in duration-500" },
+              React.createElement('h1', { className: "text-4xl font-black text-white mb-8" }, "Terms of Service"),
+              React.createElement('div', { className: "prose prose-invert prose-lg" },
+                  React.createElement('p', null, React.createElement('strong', null, "Last Updated:"), " October 24, 2025"),
+                  
+                  React.createElement('h3', null, "1. Acceptance of Terms"),
+                  React.createElement('p', null, "By accessing and using the Ovd Glass Engine, you accept and agree to be bound by the terms and provision of this agreement."),
+
+                  React.createElement('h3', null, "2. Grant of License"),
+                  React.createElement('p', null, "We grant you a non-exclusive, world-wide, royalty-free license to use the CSS code generated by this tool for any purpose, including personal, commercial, and open-source projects. You own the code you generate. You do not need to attribute Ovd, although it is appreciated."),
+
+                  React.createElement('h3', null, "3. Restrictions"),
+                  React.createElement('p', null, "You may not reverse engineer, decompile, or attempt to extract the source code of the tool itself. You may not use the website in any manner that could damage, disable, overburden, or impair the Service."),
+
+                  React.createElement('h3', null, "4. Disclaimer"),
+                  React.createElement('p', null, "The materials on Ovd's website are provided on an 'as is' basis. Ovd makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property."),
+                  React.createElement('p', null, "Further, we do not warrant that the code generated will work in all browsers or on all devices. It is your responsibility to test the code before deploying it to production."),
+
+                  React.createElement('h3', null, "5. Limitation of Liability"),
+                  React.createElement('p', null, "In no event shall Ovd or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Ovd's website.")
+              )
+          )
+      );
+
+      const ContactView = () => (
+          React.createElement('div', { className: "max-w-3xl mx-auto py-16 animate-in fade-in duration-500" },
+              React.createElement('h1', { className: "text-4xl font-black text-white mb-8" }, "Contact Support"),
+              React.createElement('div', { className: "prose prose-invert prose-lg" },
+                  React.createElement('p', null, "Ovd is an independent project. We value feedback from the community."),
+                  React.createElement('div', { className: "my-12 p-8 bg-slate-900/40 border border-slate-800 rounded-2xl flex flex-col items-center text-center" },
+                      React.createElement(Mail, { className: "w-12 h-12 text-emerald-500 mb-4" }),
+                      React.createElement('h3', { className: "text-2xl font-bold text-white mb-2" }, "Email Us"),
+                      React.createElement('a', { href: "mailto:magic.reviewsite@gmail.com", className: "text-xl font-mono text-emerald-400 hover:text-emerald-300 transition-colors" }, "magic.reviewsite@gmail.com"),
+                      React.createElement('p', { className: "text-sm text-slate-500 mt-4" }, "We typically respond to inquiries within 24-48 hours.")
+                  )
+              )
+          )
       );
 
       const ShowcaseView = ({ onSelect }) => (
@@ -446,205 +541,50 @@
         React.createElement('div', { className: "max-w-5xl mx-auto py-20 animate-in zoom-in-95 duration-500" },
             React.createElement('div', { className: "text-center mb-16" },
                 React.createElement('div', { className: "inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/30 border border-emerald-800 text-emerald-400 text-xs font-bold uppercase tracking-widest mb-6" },
-                    React.createElement(Crown, { className: "w-3 h-3" }), " Private Beta"
+                    React.createElement(Crown, { className: "w-3 h-3" }), " Coming Soon"
                 ),
                 React.createElement('h1', { className: "text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter" }, "Ovd ", React.createElement('span', { className: "text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500" }, "Pro")),
                 React.createElement('p', { className: "text-xl text-slate-400 max-w-2xl mx-auto mb-12" }, "Our advanced development suite is currently in closed alpha testing.")
             ),
             
-            React.createElement('div', { className: "grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20" },
-                // Feature Cards (Gallery Style)
-                React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center opacity-70" },
-                    React.createElement('div', { className: "w-12 h-12 bg-emerald-900/20 rounded-xl flex items-center justify-center mb-4 text-emerald-400" }, React.createElement(Box, { className: "w-6 h-6" })),
-                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "Batch Export"),
-                    React.createElement('p', { className: "text-sm text-slate-400" }, "Generate 50+ glass variants at once. Export to CSS, SCSS, Tailwind config, or JSON tokens.")
-                ),
-                React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center opacity-70" },
-                    React.createElement('div', { className: "w-12 h-12 bg-purple-900/20 rounded-xl flex items-center justify-center mb-4 text-purple-400" }, React.createElement(Users, { className: "w-6 h-6" })),
-                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "Team Sync"),
-                    React.createElement('p', { className: "text-sm text-slate-400" }, "Shared preset libraries for your organization. Enforce consistency across your design teams.")
-                ),
-                React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center opacity-70" },
-                    React.createElement('div', { className: "w-12 h-12 bg-blue-900/20 rounded-xl flex items-center justify-center mb-4 text-blue-400" }, React.createElement(PenTool, { className: "w-6 h-6" })),
-                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "Custom Noise"),
-                    React.createElement('p', { className: "text-sm text-slate-400" }, "Upload noise textures. Control grain intensity and opacity directly in generated CSS.")
-                ),
-                React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center opacity-70" },
-                     React.createElement('div', { className: "w-12 h-12 bg-yellow-900/20 rounded-xl flex items-center justify-center mb-4 text-yellow-400" }, React.createElement(Sparkles, { className: "w-6 h-6" })),
-                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "AI Suggestions"),
-                    React.createElement('p', { className: "text-sm text-slate-400" }, "Smart adjustments based on your background image analysis.")
-                ),
-                 React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center opacity-70" },
-                     React.createElement('div', { className: "w-12 h-12 bg-pink-900/20 rounded-xl flex items-center justify-center mb-4 text-pink-400" }, React.createElement(Smartphone, { className: "w-6 h-6" })),
-                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "Mobile Optimized"),
-                    React.createElement('p', { className: "text-sm text-slate-400" }, "Automatically generates media queries for fallback opacity on older devices.")
-                ),
-                 React.createElement('div', { className: "bg-slate-900/40 p-6 rounded-2xl border border-slate-800 flex flex-col items-center text-center opacity-70" },
-                     React.createElement('div', { className: "w-12 h-12 bg-cyan-900/20 rounded-xl flex items-center justify-center mb-4 text-cyan-400" }, React.createElement(Download, { className: "w-6 h-6" })),
-                    React.createElement('h3', { className: "text-lg font-bold text-white mb-2" }, "NPM Package"),
-                    React.createElement('p', { className: "text-sm text-slate-400" }, "Install @ovd/glass directly into your project for runtime generation.")
-                )
-            ),
-            
-            // Replaced Enterprise Sales with Waitlist text
-            React.createElement('div', { className: "bg-gradient-to-r from-emerald-900/20 to-cyan-900/20 border border-emerald-900/30 rounded-3xl p-12 text-center" },
-                React.createElement('h2', { className: "text-3xl font-bold text-white mb-6" }, "Join the Roadmap"),
-                React.createElement('p', { className: "text-slate-400 mb-8 max-w-lg mx-auto" }, "We are actively developing Ovd Pro with a small group of beta testers. If you are interested in shaping the future of spatial UI tools, please get in touch."),
-                React.createElement('a', { href: "mailto:magic.reviewsite@gmail.com", className: "inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition-colors" }, 
-                    React.createElement(Mail, { className: "w-4 h-4" }), "Request Updates"
-                )
+            React.createElement('div', { className: "bg-slate-900/40 p-12 rounded-2xl border border-slate-800 flex flex-col items-center text-center opacity-70" },
+                React.createElement(Info, { className: "w-12 h-12 text-slate-600 mb-6" }),
+                React.createElement('h2', { className: "text-2xl font-bold text-white mb-4" }, "Under Development"),
+                React.createElement('p', { className: "text-slate-400 max-w-lg" }, "We are working hard to build the next generation of spatial design tools. Check back later for updates.")
             )
         )
       );
 
-      const Modal = ({ title, icon, children, onClose }) => (
-        React.createElement('div', { className: "fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200", onClick: onClose },
-            React.createElement('div', { className: "bg-[#0a0a0a] border border-slate-800 rounded-2xl w-full max-w-3xl h-[85vh] flex flex-col shadow-2xl", onClick: e => e.stopPropagation() },
-                React.createElement('div', { className: "sticky top-0 bg-[#0a0a0a]/95 border-b border-slate-800 p-6 flex justify-between items-center rounded-t-2xl z-10 backdrop-blur-xl" },
-                    React.createElement('h3', { className: "text-lg font-bold text-white flex items-center gap-3" }, icon, title),
-                    React.createElement('button', { onClick: onClose, className: "p-2 hover:bg-slate-800 rounded-full transition-colors" }, React.createElement(X, { className: "w-5 h-5 text-slate-400" }))
-                ),
-                React.createElement('div', { className: "p-8 text-slate-300 text-sm leading-relaxed overflow-y-auto custom-scrollbar flex-1" }, 
-                    React.createElement('div', { className: "prose prose-invert prose-emerald max-w-none", dangerouslySetInnerHTML: { __html: children } })
-                )
-            )
-        )
-      );
-
-      const Footer = () => {
-        const [activeModal, setActiveModal] = useState(null);
-        
-        const content = {
-            about: `
-                <h3>About Ovd Glass Engine</h3>
-                <p>Ovd (Open Visual Depth) is a developer-focused initiative designed to bridge the gap between high-fidelity interface design and production-ready code. Founded in 2024 by independent developers, Ovd was born from a frustration with the disconnect between design tools like Figma and the reality of CSS implementation.</p>
-
-                <h4>The Philosophy of Depth</h4>
-                <p>As user interfaces evolve from flat design to "Spatial Computing," depth has become a semantic layer. It is no longer just about aesthetics; it is about hierarchy, context, and focus. However, implementing true glassmorphism—where background elements are blurred, saturated, and refracted—requires complex CSS combinations that are often manually approximated.</p>
-                <p>Ovd solves this by treating the UI as a physical material. Our engine uses a calibrated algorithm to calculate the refractive index, luminosity boost, and border opacity required to simulate physical glass on 2D screens. This ensures that the generated code is not only beautiful but also mathematically consistent.</p>
-
-                <h4>Technical Architecture</h4>
-                <p>The Ovd Generator is built entirely on client-side technologies. It utilizes React for state management and a custom WebGL-inspired logic layer to compute CSS variables in real-time. By leveraging the GPU-accelerated <code>backdrop-filter</code> property, we ensure that even complex, multi-layered glass effects maintain 60fps performance on modern devices.</p>
-
-                <h4>Our Commitment</h4>
-                <p>We believe in the open web. Ovd is free to use for personal and commercial projects. We are committed to maintaining a tool that respects user privacy, performance, and accessibility standards (WCAG). Our mission is to empower developers to build beautiful, depth-rich interfaces without the overhead of heavy image assets or complex shader code.</p>
-            `,
-            contact: `
-                <h3>Global Support</h3>
-                <p>We are an independent development team dedicated to maintaining Ovd as a reliable tool for the community. We welcome feedback, bug reports, and feature requests.</p>
-                
-                <div class="grid md:grid-cols-1 gap-8 my-8">
-                    <div class="bg-slate-900/30 p-6 rounded-xl border border-slate-800">
-                        <h4 class="flex items-center gap-2 mb-4"><svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg> Email Support</h4>
-                        <p class="text-white font-mono text-lg mb-2">magic.reviewsite@gmail.com</p>
-                        <p class="text-xs text-slate-500">For all inquiries regarding the generator, partnerships, or technical support.</p>
-                        <p class="text-xs text-slate-500 mt-2">Response time: Typically within 24-48 hours.</p>
-                    </div>
-                </div>
-                
-                <h4>Community & Updates</h4>
-                <p>Ovd is currently in active development (v2.0). We release updates on a rolling basis to improve compatibility with new browser versions and CSS features. If you encounter rendering issues on specific browsers, please email us with your browser version and OS details.</p>
-            `,
-            privacy: `
-                <h3>Privacy Policy</h3>
-                <p><strong>Effective Date:</strong> October 24, 2025</p>
-                <p>At Ovd Glass Engine ("we", "us", "our"), accessible from https://ovd.design, the privacy of our visitors is of extreme importance to us. This Privacy Policy document outlines the types of personal information that is received and collected by Ovd and how it is used.</p>
-                
-                <h4>1. Client-Side Processing</h4>
-                <p>The Ovd Glass Engine is a client-side application. This means that all image processing, CSS generation, and preset customization happen entirely within your web browser. We do not upload your designs, settings, or code snippets to our servers. Your creative work remains on your device.</p>
-
-                <h4>2. Information Collection and Use</h4>
-                <p>We do not collect Personal Identifiable Information (PII) such as names, addresses, or phone numbers unless you voluntarily provide them by contacting us via email. Any information provided via email is used solely for the purpose of responding to your inquiry.</p>
-
-                <h4>3. Log Files</h4>
-                <p>Like many other Web sites, Ovd makes use of log files. The information inside the log files includes internet protocol ( IP ) addresses, type of browser, Internet Service Provider ( ISP ), date/time stamp, referring/exit pages, and number of clicks to analyze trends, administer the site, track user’s movement around the site, and gather demographic information. IP addresses and other such information are not linked to any information that is personally identifiable.</p>
-
-                <h4>4. Cookies and Web Beacons</h4>
-                <p>Ovd uses cookies to store information about visitors' preferences, to record user-specific information on which pages the site visitor accesses or visits, and to personalize or customize our web page content based upon visitors' browser type or other information that the visitor sends via their browser.</p>
-
-                <h4>5. DoubleClick DART Cookie</h4>
-                <ul>
-                    <li>Google, as a third party vendor, uses cookies to serve ads on Ovd.</li>
-                    <li>Google's use of the DART cookie enables it to serve ads to users based on their visit to Ovd and other sites on the Internet.</li>
-                    <li>Users may opt out of the use of the DART cookie by visiting the Google ad and content network privacy policy at the following URL – <a href="https://policies.google.com/technologies/ads" target="_blank" class="text-emerald-400 hover:underline">https://policies.google.com/technologies/ads</a></li>
-                </ul>
-
-                <h4>6. Third-Party Advertising Partners</h4>
-                <p>Some of our advertising partners may use cookies and web beacons on our site. Our advertising partners include Google AdSense. These third-party ad servers or ad networks use technology to the advertisements and links that appear on Ovd send directly to your browsers. They automatically receive your IP address when this occurs. Other technologies ( such as cookies, JavaScript, or Web Beacons ) may also be used by the third-party ad networks to measure the effectiveness of their advertisements and / or to personalize the advertising content that you see.</p>
-                <p>Ovd has no access to or control over these cookies that are used by third-party advertisers.</p>
-
-                <h4>7. Consent</h4>
-                <p>By using our website, you hereby consent to our privacy policy and agree to its terms.</p>
-            `,
-            terms: `
-                <h3>Terms of Service</h3>
-                <p><strong>Last Updated:</strong> October 24, 2025</p>
-                
-                <h4>1. Agreement to Terms</h4>
-                <p>By accessing or using the Ovd Glass Engine website, you agree to be bound by these Terms of Service. If you disagree with any part of the terms, then you may not access the Service.</p>
-                
-                <h4>2. Intellectual Property Rights</h4>
-                <p>The Service and its original content (excluding content provided by users), features, and functionality are and will remain the exclusive property of Ovd Design and its licensors. The Service is protected by copyright, trademark, and other laws of both the United States and foreign countries.</p>
-                <p><strong>Generated Code:</strong> You own the rights to any CSS, HTML, or JSON code you generate using the Ovd tools. You are free to use this code in personal, commercial, open-source, or enterprise projects without restriction or attribution.</p>
-                
-                <h4>3. Use License</h4>
-                <p>Permission is granted to temporarily download one copy of the materials (information or software) on Ovd's website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
-                <ul>
-                    <li>modify or copy the materials (excluding generated assets);</li>
-                    <li>use the materials for any commercial purpose, or for any public display (commercial or non-commercial) attempting to clone the service;</li>
-                    <li>attempt to decompile or reverse engineer any software contained on Ovd's website;</li>
-                    <li>remove any copyright or other proprietary notations from the materials; or</li>
-                    <li>transfer the materials to another person or "mirror" the materials on any other server.</li>
-                </ul>
-                
-                <h4>4. Disclaimer</h4>
-                <p>The materials on Ovd's website are provided on an 'as is' basis. Ovd makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
-                <p>Further, Ovd does not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on its website or otherwise relating to such materials or on any sites linked to this site.</p>
-                
-                <h4>5. Limitations</h4>
-                <p>In no event shall Ovd or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Ovd's website, even if Ovd or a Ovd authorized representative has been notified orally or in writing of the possibility of such damage.</p>
-                
-                <h4>6. Governing Law</h4>
-                <p>These terms and conditions are governed by and construed in accordance with the laws of California and you irrevocably submit to the exclusive jurisdiction of the courts in that State or location.</p>
-            `
-        };
-
-        return React.createElement(React.Fragment, null,
-            React.createElement('footer', { className: "mt-32 border-t border-slate-900 bg-black py-20" },
-                React.createElement('div', { className: "container mx-auto px-6" },
-                    React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-4 gap-12" },
-                        React.createElement('div', { className: "md:col-span-2" },
-                            React.createElement('div', { className: "flex items-center gap-3 mb-6" },
-                                React.createElement('div', { className: "w-10 h-10 bg-white rounded-lg flex items-center justify-center" }, React.createElement('span', { className: "text-black font-black text-xl" }, "O")),
-                                React.createElement('span', { className: "text-3xl font-black text-white tracking-tighter" }, "Ovd")
-                            ),
-                            React.createElement('p', { className: "text-slate-500 max-w-sm leading-relaxed mb-6" }, "The world's most advanced procedural glass generator."),
-                            React.createElement('div', { className: "flex gap-4" },
-                                React.createElement(Layout, { className: "w-5 h-5 text-slate-600 hover:text-white cursor-pointer" }),
-                                React.createElement(Globe, { className: "w-5 h-5 text-slate-600 hover:text-white cursor-pointer" })
-                            )
+      const Footer = ({ setView }) => {
+        return React.createElement('footer', { className: "mt-32 border-t border-slate-900 bg-black py-20" },
+            React.createElement('div', { className: "container mx-auto px-6" },
+                React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-4 gap-12" },
+                    React.createElement('div', { className: "md:col-span-2" },
+                        React.createElement('div', { className: "flex items-center gap-3 mb-6" },
+                            React.createElement('div', { className: "w-10 h-10 bg-white rounded-lg flex items-center justify-center" }, React.createElement('span', { className: "text-black font-black text-xl" }, "O")),
+                            React.createElement('span', { className: "text-3xl font-black text-white tracking-tighter" }, "Ovd")
                         ),
-                        React.createElement('div', null,
-                            React.createElement('h4', { className: "text-white font-bold mb-6" }, "Company"),
-                            React.createElement('ul', { className: "space-y-4 text-sm text-slate-400" },
-                                React.createElement('li', null, React.createElement('button', { onClick: () => setActiveModal('about'), className: "hover:text-emerald-400" }, "About Us")),
-                                React.createElement('li', null, React.createElement('button', { onClick: () => setActiveModal('contact'), className: "hover:text-emerald-400" }, "Contact")),
-                                React.createElement('li', null, React.createElement('button', { onClick: () => setActiveModal('privacy'), className: "hover:text-emerald-400" }, "Privacy Policy")),
-                                React.createElement('li', null, React.createElement('button', { onClick: () => setActiveModal('terms'), className: "hover:text-emerald-400" }, "Terms of Service"))
-                            )
+                        React.createElement('p', { className: "text-slate-500 max-w-sm leading-relaxed mb-6" }, "The world's most advanced procedural glass generator."),
+                        React.createElement('div', { className: "flex gap-4" },
+                            React.createElement(Layout, { className: "w-5 h-5 text-slate-600 hover:text-white cursor-pointer", onClick: () => setView('generator') }),
+                            React.createElement(Globe, { className: "w-5 h-5 text-slate-600 hover:text-white cursor-pointer", onClick: () => setView('ecosystem') })
                         )
                     ),
-                    React.createElement('div', { className: "border-t border-slate-900 mt-16 pt-8 flex justify-between items-center text-xs text-slate-600 uppercase" },
-                        React.createElement('p', null, "© 2026 Ovd Design. All rights reserved."),
-                        React.createElement('p', null, "System Status: Online v2.0")
+                    React.createElement('div', null,
+                        React.createElement('h4', { className: "text-white font-bold mb-6" }, "Company"),
+                        React.createElement('ul', { className: "space-y-4 text-sm text-slate-400" },
+                            React.createElement('li', null, React.createElement('button', { onClick: () => { setView('about'); window.scrollTo(0,0); }, className: "hover:text-emerald-400" }, "About Us")),
+                            React.createElement('li', null, React.createElement('button', { onClick: () => { setView('contact'); window.scrollTo(0,0); }, className: "hover:text-emerald-400" }, "Contact")),
+                            React.createElement('li', null, React.createElement('button', { onClick: () => { setView('privacy'); window.scrollTo(0,0); }, className: "hover:text-emerald-400" }, "Privacy Policy")),
+                            React.createElement('li', null, React.createElement('button', { onClick: () => { setView('terms'); window.scrollTo(0,0); }, className: "hover:text-emerald-400" }, "Terms of Service"))
+                        )
                     )
+                ),
+                React.createElement('div', { className: "border-t border-slate-900 mt-16 pt-8 flex justify-between items-center text-xs text-slate-600 uppercase" },
+                    React.createElement('p', null, "© 2026 Ovd Independent. All rights reserved."),
+                    React.createElement('p', null, "System Status: Online v2.1")
                 )
-            ),
-            activeModal && React.createElement(Modal, { 
-                title: activeModal === 'about' ? 'About Us' : activeModal === 'contact' ? 'Contact Support' : activeModal === 'privacy' ? 'Privacy Policy' : 'Terms of Service', 
-                icon: React.createElement(Info, { className: "w-5 h-5 text-emerald-400" }),
-                onClose: () => setActiveModal(null) 
-            }, content[activeModal])
+            )
         );
       };
 
@@ -675,7 +615,7 @@
                         ),
                         React.createElement('div', null, 
                             React.createElement('h1', { className: "text-2xl font-black text-white tracking-tighter leading-none" }, "Ovd"), 
-                            React.createElement('p', { className: "text-[10px] text-emerald-500 uppercase tracking-[0.2em] font-bold mt-1" }, "Glass Engine v2.0")
+                            React.createElement('p', { className: "text-[10px] text-emerald-500 uppercase tracking-[0.2em] font-bold mt-1" }, "Glass Engine v2.1")
                         )
                     )
                 ),
@@ -709,9 +649,13 @@
                     view === 'docs' ? React.createElement(DocsView) :
                     view === 'showcase' ? React.createElement(ShowcaseView, { onSelect: (s) => { setSettings(s); setView('generator'); } }) :
                     view === 'ecosystem' ? React.createElement(EcosystemView) :
-                    view === 'pro' ? React.createElement(ProView) : null,
+                    view === 'pro' ? React.createElement(ProView) : 
+                    view === 'about' ? React.createElement(AboutView) :
+                    view === 'privacy' ? React.createElement(PrivacyView) :
+                    view === 'terms' ? React.createElement(TermsView) :
+                    view === 'contact' ? React.createElement(ContactView) : null,
 
-                    React.createElement(Footer)
+                    React.createElement(Footer, { setView })
                 )
             )
         );
