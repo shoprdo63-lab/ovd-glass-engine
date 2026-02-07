@@ -1,3 +1,4 @@
+
 import React, { useState, useId, Component, ErrorInfo, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { 
@@ -8,8 +9,9 @@ import {
 } from 'lucide-react';
 
 // --- ERROR BOUNDARY ---
-class ErrorBoundary extends React.Component<{ children?: ReactNode }, { hasError: boolean }> {
-  public state = { hasError: false };
+// Fix: Use imported Component instead of React.Component and ensure state is correctly typed to provide proper 'props' context
+class ErrorBoundary extends Component<{ children?: ReactNode }, { hasError: boolean }> {
+  public state: { hasError: boolean } = { hasError: false };
   static getDerivedStateFromError(_: Error) { return { hasError: true }; }
   componentDidCatch(error: Error, errorInfo: ErrorInfo) { console.error("CRITICAL_OVD_SYS_ERR:", error, errorInfo); }
   render() {
