@@ -60,7 +60,7 @@ const hexToRgb = (hex: string) => {
   return `${r}, ${g}, ${b}`;
 };
 
-// --- TECHNICAL AUTHORITY REPOSITORY (12,000+ Words Structure) ---
+// --- TECHNICAL AUTHORITY REPOSITORY ---
 const BLOG_POSTS = [
   {
     id: "structural-principles",
@@ -74,7 +74,7 @@ const BLOG_POSTS = [
 The distinguishing characteristic of glass in construction is its lack of a visible yield point. In a steel beam, excessive loading manifests as permanent deformation—a critical warning sign for structural integrity. In glass, failure is instantaneous and catastrophic. This behavior is governed by Linear Elastic Fracture Mechanics (LEFM). The functional strength of a glass panel is not a constant; it is a statistical probability determined by the density and orientation of microscopic surface flaws, commonly referred to as Griffith flaws.
 
 ### 2. The Compressive vs. Tensile Strength Paradox
-One of the most profound paradoxes in material science is the strength of glass. In pure laboratory compression, glass can withstand pressures exceeding 1,000 MPa, potentially rivaling high-performance structural alloys. However, because its amorphous structure cannot dissipate energy through grain-boundary dislocation, it is exceptionally weak in tension. Standard annealed glass is assigned a design tensile strength of approximately 24 MPa. Modern engineering overcomes this by utilizing 'thermal toughening,' a process that locks the outer surfaces in permanent compression. This 'compressive skin' must be physically overcome by external loads before any tensile force can activate a surface flaw.
+One of the most profound paradoxes in material science is the strength of glass. In pure laboratory compression, glass can withstand pressures exceeding 1,000 MPa, potentially rivaling high-performance structural alloys. However, because its amorphous structure cannot dissipate energy through grain-boundary dislocation, it is exceptionally weak in tension. Standard annealed glass is assigned a design tensile strength of approximately 24 MPa. Modern engineering overcomes this by utilizing 'thermal toughening,' a process that locks the outer surfaces in permanent compression. This 'compressive skin' must be physically overcome by external loads before any tensile force can reach a surface flaw.
 
 ### 3. Young's Modulus and Poisson's Ratio in Digital Simulation
 Calculations within the OVD Glass Engine are grounded in established material constants: a Young's Modulus (E) of 70,000 MPa and a Poisson's Ratio (ν) of 0.22. These values govern the elastic deflection of a pane under atmospheric pressures. Understanding these constants is vital for predicting 'membrane stresses'—the secondary stresses that occur when a thin panel undergoes large-scale deflection relative to its thickness.
@@ -179,7 +179,7 @@ The Australian standard is recognized for its comprehensive charts governing hum
     content: `The structural integrity of a glass pane is only as good as the frame that supports it. The interface between glass and metal is the most critical node in any facade assembly.
 
 ### 1. Setting Blocks and Dead Weight Support
-Setting blocks must be made of high-shore EPDM or Silicone. They must be positioned at 1/4 points of the lite width to minimize edge stress and prevent 'sagging' of the frame. Improper setting block placement is a primary cause of corner-cracking in heavy triple-glazed units.
+Setting blocks must be positioned at 1/4 points of the lite width to minimize edge stress and prevent 'sagging' of the frame. Improper setting block placement is a primary cause of corner-cracking in heavy triple-glazed units.
 
 ### 2. Edge Clearance (Bite) and Thermal Expansion
 The 'bite'—the depth the glass extends into the frame—must be precisely engineered. Too little bite leads to 'blow-outs' under peak wind suction. Too much bite increases the shaded area of the edge, drastically increasing the risk of thermal stress breakage.
@@ -196,7 +196,7 @@ In Structural Silicone Glazing (SSG), the sealant acts as the primary anchor for
     content: `Artificial Intelligence is transforming from an aesthetic generator into a structural optimization core for the next generation of building envelopes.
 
 ### 1. Predictive Maintenance in High-Rises
-By training AI models on decades of breakage and NiS inclusion data, we can predict which panels in a skyscraper's facade are most likely to fail before a fracture occurs. This allows for proactive maintenance, significantly reducing the liability and cost for building owners.
+By training AI models on historical breakage and NiS inclusion data, we can predict which panels in a skyscraper's facade are most likely to fail before a fracture occurs. This allows for proactive maintenance, significantly reducing the liability and cost for building owners.
 
 ### 2. Carbon-Optimized Geometries and Mass Reduction
 Glass production is exceptionally energy-intensive. By using AI-driven optimization within the OVD Engine, we can reduce the total glass mass of a building by up to 15%. This is achieved by varying the glass thickness across the facade based on specific, node-level wind-tunnel data, rather than specifying a 'worst-case' thickness for every pane.
@@ -623,18 +623,18 @@ const App = () => {
         <main className="flex-1">
           {view === 'engine' && (
             <div className="animate-in fade-in duration-1000">
-              <div className="bg-[#050505] border-b border-white/5 py-40 px-8 relative overflow-hidden">
+              <div className="bg-[#050505] border-b border-white/5 py-32 px-8 relative overflow-hidden">
                  <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#10b981 1.5px, transparent 1.5px)', backgroundSize: '60px 60px' }} />
                  <div className="max-w-7xl mx-auto relative z-10 text-center lg:text-left">
-                   <div className="flex items-center justify-center lg:justify-start gap-6 text-accent mb-12 font-black uppercase tracking-[0.7em] text-[10px]">
-                     <Activity className="w-10 h-10" />
+                   <div className="flex items-center justify-center lg:justify-start gap-6 text-accent mb-10 font-black uppercase tracking-[0.7em] text-[9px]">
+                     <Activity className="w-8 h-8" />
                      <span>Bureau Engine Hub</span>
                    </div>
-                   <h1 className="text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.85] mb-16 text-glow">Structural <br/> <span className="text-accent">Analysis Bureau</span></h1>
-                   <p className="text-3xl lg:text-4xl text-gray-500 font-light max-w-4xl leading-tight mb-24 mx-auto lg:mx-0">Authoritative material physics and load resistance simulation for architectural transparency.</p>
-                   <div className="flex flex-col sm:flex-row gap-12 justify-center lg:justify-start">
-                     <button onClick={() => setView('engine')} className="px-16 py-8 bg-accent text-black rounded-full font-black uppercase text-[10px] shadow-[0_0_50px_rgba(16,185,129,0.3)] hover:scale-105 transition-all">Launch Engine</button>
-                     <button onClick={() => setView('blog')} className="px-16 py-8 bg-white/5 border border-white/10 text-white rounded-full font-black uppercase text-[10px] hover:bg-white/10 transition-all flex items-center justify-center gap-4"><BookOpen className="w-6 h-6" /> Hub</button>
+                   <h1 className="text-6xl lg:text-7xl font-black text-white tracking-tighter leading-tight mb-12 text-glow">Structural <br/> <span className="text-accent">Analysis Bureau</span></h1>
+                   <p className="text-2xl lg:text-3xl text-gray-500 font-light max-w-3xl leading-snug mb-20 mx-auto lg:mx-0">Authoritative material physics and load resistance simulation for architectural transparency.</p>
+                   <div className="flex flex-col sm:flex-row gap-8 justify-center lg:justify-start">
+                     <button onClick={() => setView('engine')} className="px-12 py-5 bg-accent text-black rounded-full font-black uppercase text-[9px] shadow-[0_0_50px_rgba(16,185,129,0.3)] hover:scale-105 transition-all">Launch Engine</button>
+                     <button onClick={() => setView('blog')} className="px-12 py-5 bg-white/5 border border-white/10 text-white rounded-full font-black uppercase text-[9px] hover:bg-white/10 transition-all flex items-center justify-center gap-4"><BookOpen className="w-5 h-5" /> Hub</button>
                    </div>
                  </div>
               </div>
@@ -651,18 +651,18 @@ const App = () => {
           {view === 'terms' && <LegalPage type="terms" />}
           
           {view === 'contact' && (
-            <section className="py-48 px-8 max-w-7xl mx-auto text-center animate-in zoom-in-95 duration-1000">
-              <div className="mb-24">
-                <h2 className="text-8xl lg:text-9xl font-black text-white tracking-tighter mb-12 uppercase leading-none text-glow text-center">Bureau <br/> Consultation</h2>
-                <p className="text-3xl text-gray-600 font-light max-w-3xl mx-auto leading-tight italic">Direct transmission to our Global Engineering Division for analysis and certification.</p>
+            <section className="py-32 px-8 max-w-7xl mx-auto text-center animate-in zoom-in-95 duration-1000">
+              <div className="mb-20">
+                <h2 className="text-7xl lg:text-8xl font-black text-white tracking-tighter mb-8 uppercase leading-none text-glow text-center">Bureau <br/> Consultation</h2>
+                <p className="text-2xl text-gray-600 font-light max-w-2xl mx-auto leading-tight italic">Direct transmission to our Global Engineering Division for analysis and certification.</p>
               </div>
-              <div className="glass-card p-24 rounded-[80px] shadow-3xl relative overflow-hidden card-glow group max-w-4xl mx-auto">
+              <div className="glass-card p-16 rounded-[64px] shadow-3xl relative overflow-hidden card-glow group max-w-3xl mx-auto">
                 <div className="absolute inset-0 opacity-10 bg-gradient-to-tr from-accent to-transparent transition-opacity" />
-                <div className="w-32 h-32 rounded-[3rem] bg-accent/10 flex items-center justify-center text-accent mx-auto mb-16 border border-accent/20"><Mail className="w-16 h-16" /></div>
-                <p className="text-5xl font-black text-white mb-8 tracking-tighter transition-all group-hover:text-accent">magic.reviewsite@gmail.com</p>
-                <p className="text-gray-700 text-2xl font-light mb-16 uppercase tracking-[0.4em]">Transmission Hub Division</p>
-                <button className="px-16 py-10 bg-accent text-black rounded-full font-black uppercase text-xs shadow-3xl hover:scale-105 transition-all flex items-center gap-6 mx-auto">
-                  Initialize Inquiry <ChevronRight className="w-10 h-10" />
+                <div className="w-24 h-24 rounded-[2rem] bg-accent/10 flex items-center justify-center text-accent mx-auto mb-12 border border-accent/20"><Mail className="w-12 h-12" /></div>
+                <p className="text-4xl font-black text-white mb-6 tracking-tighter transition-all group-hover:text-accent">magic.reviewsite@gmail.com</p>
+                <p className="text-gray-700 text-xl font-light mb-12 uppercase tracking-[0.4em]">Transmission Hub Division</p>
+                <button className="px-12 py-7 bg-accent text-black rounded-full font-black uppercase text-[10px] shadow-3xl hover:scale-105 transition-all flex items-center gap-5 mx-auto">
+                  Initialize Inquiry <ChevronRight className="w-8 h-8" />
                 </button>
               </div>
             </section>
