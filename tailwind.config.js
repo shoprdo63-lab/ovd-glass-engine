@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     "./index.html",
     "./index.tsx",
@@ -16,6 +16,10 @@ module.exports = {
         card: '#111111',
         border: '#1f1f1f',
         accent: '#10b981', 
+        "accent-glow": 'rgba(16, 185, 129, 0.4)',
+      },
+      animation: {
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },
   },
