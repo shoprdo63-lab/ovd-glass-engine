@@ -1,6 +1,7 @@
+
 {
-  "name": "ovd-engine-bureau",
-  "version": "2.1.0",
+  "name": "ovd-engine-bureau-saas",
+  "version": "4.0.0",
   "private": true,
   "type": "module",
   "scripts": {
