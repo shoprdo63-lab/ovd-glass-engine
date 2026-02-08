@@ -58,7 +58,7 @@
 
   .bureau-range::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply h-4 w-[1px] bg-[#00FF99] -mt-[8px] transition-all duration-300;
+    @apply h-4 w-[2px] bg-[#00FF99] -mt-[8px] transition-all duration-300;
     box-shadow: 0 0 10px #00FF99;
   }
 
@@ -77,10 +77,6 @@
 
   .code-block {
     @apply font-mono text-[12px] bg-[#020202] border border-white/5 p-6 text-slate-300 leading-relaxed overflow-x-auto;
-  }
-
-  .metric-card {
-    @apply bg-[#1A1A1A]/40 border border-white/5 p-6 flex flex-col justify-between hover:border-[#00FF99]/30 transition-all;
   }
 
   /* Typography for long-form content */
@@ -113,4 +109,10 @@
   background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
   background-size: 20px 20px;
   opacity: 0.03;
+}
+
+.metallic-text {
+  background: linear-gradient(135deg, #fff 0%, #aaa 50%, #fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
