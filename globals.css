@@ -11,6 +11,9 @@
   
   body {
     @apply bg-[#050505] text-slate-400 antialiased font-sans overflow-x-hidden;
+    background-image: 
+      radial-gradient(circle at 2px 2px, rgba(255,255,255,0.02) 1px, transparent 0);
+    background-size: 40px 40px;
   }
 }
 
@@ -20,7 +23,7 @@
   }
 
   .text-glow {
-    text-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
   }
 
   .bureau-range {
@@ -29,20 +32,24 @@
   }
 
   .bureau-range::-webkit-slider-runnable-track {
-    @apply w-full h-[2px] bg-white/5 rounded-full transition-colors;
+    @apply w-full h-[1px] bg-white/10 rounded-full transition-colors;
   }
 
   .bureau-range:hover::-webkit-slider-runnable-track {
-    @apply bg-[#10b981]/20;
+    @apply bg-[#10b981]/30;
   }
 
   .bureau-range::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply h-4 w-4 rounded-full bg-[#10b981] border-2 border-black -mt-[7px] transition-all duration-300 shadow-lg;
+    @apply h-3 w-3 rounded-full bg-[#10b981] border border-black -mt-[6px] transition-all duration-300 shadow-[0_0_10px_rgba(16,185,129,0.5)];
   }
 
   .bureau-range:active::-webkit-slider-thumb {
     @apply scale-125 bg-white;
+  }
+
+  .active-indicator {
+    @apply w-1.5 h-1.5 rounded-full bg-[#10b981] shadow-[0_0_8px_#10b981];
   }
 }
 
@@ -52,4 +59,22 @@
 
 .prose p {
   @apply text-slate-500 mb-8 font-light;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #10b98122;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #10b98144;
 }

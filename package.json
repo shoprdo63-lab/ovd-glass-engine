@@ -1,6 +1,7 @@
 {
   "name": "ovd-engine-bureau",
   "version": "2.1.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
