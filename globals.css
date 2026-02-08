@@ -1,18 +1,17 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --emerald-accent: #10b981;
-  --deep-carbon: #050505;
-  --glass-bg: rgba(255, 255, 255, 0.05);
+  --neon-mint: #00FF99;
+  --deep-black: #050505;
+  --charcoal: #1A1A1A;
   --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 @layer base {
   html {
-    @apply selection:bg-[#10b981]/30 selection:text-white;
+    @apply selection:bg-[#00FF99]/30 selection:text-white;
     scroll-behavior: smooth;
     font-family: 'Inter', system-ui, sans-serif;
   }
@@ -20,7 +19,8 @@
   body {
     @apply bg-[#050505] text-slate-400 antialiased overflow-x-hidden;
     background-image: 
-      radial-gradient(circle at 2px 2px, rgba(16, 185, 129, 0.03) 1px, transparent 0);
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 
@@ -31,20 +31,20 @@
 
 @layer components {
   .saas-glass {
-    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-2xl transition-all duration-500;
+    @apply bg-[#1A1A1A]/40 backdrop-blur-xl border border-white/10 shadow-2xl transition-all duration-300;
   }
 
   .saas-glass:hover {
-    @apply border-[#10b981]/40 bg-white/[0.06];
+    @apply border-[#00FF99]/30 bg-[#1A1A1A]/60;
   }
 
-  .text-glow-emerald {
-    text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  .text-glow-mint {
+    text-shadow: 0 0 15px rgba(0, 255, 153, 0.5);
   }
 
   .bureau-button-primary {
-    @apply px-6 py-2.5 bg-[#10b981] text-black font-bold uppercase tracking-widest rounded-sm 
-           hover:bg-white hover:text-black transition-all transform active:scale-95 shadow-lg shadow-[#10b981]/20;
+    @apply px-6 py-2 bg-[#00FF99] text-black font-bold uppercase tracking-widest rounded-none 
+           hover:bg-white hover:text-black transition-all transform active:scale-95 shadow-lg shadow-[#00FF99]/10;
   }
 
   .bureau-range {
@@ -53,54 +53,57 @@
   }
 
   .bureau-range::-webkit-slider-runnable-track {
-    @apply w-full h-[1px] bg-white/10 rounded-full transition-colors;
+    @apply w-full h-[1px] bg-white/10 transition-colors;
   }
 
   .bureau-range:hover::-webkit-slider-runnable-track {
-    @apply bg-[#10b981]/40;
+    @apply bg-[#00FF99]/40;
   }
 
   .bureau-range::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply h-4 w-4 rounded-full bg-[#10b981] -mt-[7px] transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.8)];
+    @apply h-4 w-[2px] bg-[#00FF99] -mt-[8px] transition-all duration-300 shadow-[0_0_10px_rgba(0,255,153,1)];
   }
 
   .nav-link {
-    @apply text-[11px] font-bold uppercase tracking-[0.3em] text-slate-500 hover:text-[#10b981] transition-all relative py-2;
+    @apply text-[10px] font-bold uppercase tracking-[0.4em] text-slate-500 hover:text-[#00FF99] transition-all relative py-2;
   }
 
   .nav-link.active {
-    @apply text-[#10b981];
+    @apply text-[#00FF99];
   }
 
   .nav-link.active::after {
     content: '';
-    @apply absolute bottom-0 left-0 w-full h-[1px] bg-[#10b981] shadow-[0_0_10px_#10b981];
+    @apply absolute bottom-0 left-0 w-full h-[1px] bg-[#00FF99] shadow-[0_0_8px_#00FF99];
   }
 
   .code-block {
-    @apply font-mono text-[12px] bg-[#020202] border border-white/5 rounded-sm p-6 text-slate-300 leading-relaxed overflow-x-auto;
+    @apply font-mono text-[12px] bg-[#020202] border border-white/5 p-6 text-slate-300 leading-relaxed overflow-x-auto;
   }
 
   .prose h1 { @apply text-4xl font-black mb-10 text-white uppercase tracking-tighter; }
-  .prose h2 { @apply text-2xl font-black mb-6 mt-16 text-white uppercase tracking-tight border-l-4 border-[#10b981] pl-6; }
-  .prose h3 { @apply text-xl font-bold mb-4 mt-10 text-[#10b981] uppercase tracking-widest; }
-  .prose p { @apply text-lg text-slate-400 mb-8 leading-relaxed font-light; }
+  .prose h2 { @apply text-xl font-black mb-6 mt-16 text-white uppercase tracking-widest border-b border-white/10 pb-4; }
+  .prose h3 { @apply text-lg font-bold mb-4 mt-10 text-[#00FF99] uppercase tracking-widest; }
+  .prose p { @apply text-base text-slate-400 mb-8 leading-relaxed font-light; }
   .prose ul { @apply list-disc list-outside ml-6 mb-8 space-y-4 text-slate-400; }
-  .prose table { @apply w-full mb-12 border-collapse saas-glass rounded-sm overflow-hidden; }
-  .prose th { @apply bg-white/10 border-b border-white/10 p-4 text-left text-[11px] uppercase font-black text-[#10b981] tracking-widest; }
-  .prose td { @apply border-b border-white/5 p-4 text-sm font-light text-slate-300; }
-  .prose figure { @apply my-12 saas-glass p-8 rounded-sm; }
-  .prose blockquote { @apply border-l-4 border-[#10b981] pl-8 italic text-slate-300 my-10; }
+  .prose table { @apply w-full mb-12 border-collapse bg-white/[0.02] border border-white/10; }
+  .prose th { @apply bg-white/5 border-b border-white/10 p-4 text-left text-[10px] uppercase font-black text-[#00FF99] tracking-widest; }
+  .prose td { @apply border-b border-white/5 p-4 text-sm font-light text-slate-300 font-mono; }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { @apply bg-[#050505]; }
-::-webkit-scrollbar-thumb { @apply bg-[#10b981]/20 rounded-full hover:bg-[#10b981]/40; }
+.custom-scroll::-webkit-scrollbar { width: 2px; }
+.custom-scroll::-webkit-scrollbar-track { @apply bg-transparent; }
+.custom-scroll::-webkit-scrollbar-thumb { @apply bg-[#00FF99]/30 rounded-full; }
 
-.metallic-text {
-  background: linear-gradient(135deg, #fff 0%, #aaa 50%, #fff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.waveform-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 5s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
