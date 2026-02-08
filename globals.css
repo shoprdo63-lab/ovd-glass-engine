@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    @apply selection:bg-emerald-500/30 selection:text-emerald-100;
+    @apply selection:bg-[#10b981]/30 selection:text-emerald-100;
     font-size: 14px;
     background: #050505;
   }
@@ -29,12 +29,16 @@
   }
 
   .bureau-range::-webkit-slider-runnable-track {
-    @apply w-full h-[2px] bg-white/5 rounded-full transition-colors group-hover:bg-emerald-500/20;
+    @apply w-full h-[2px] bg-white/5 rounded-full transition-colors;
+  }
+
+  .bureau-range:hover::-webkit-slider-runnable-track {
+    @apply bg-[#10b981]/20;
   }
 
   .bureau-range::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply h-4 w-4 rounded-full bg-emerald-500 border-2 border-black -mt-[7px] transition-all duration-300 shadow-lg;
+    @apply h-4 w-4 rounded-full bg-[#10b981] border-2 border-black -mt-[7px] transition-all duration-300 shadow-lg;
   }
 
   .bureau-range:active::-webkit-slider-thumb {
@@ -47,5 +51,5 @@
 }
 
 .prose p {
-  @apply text-slate-500 mb-8;
+  @apply text-slate-500 mb-8 font-light;
 }

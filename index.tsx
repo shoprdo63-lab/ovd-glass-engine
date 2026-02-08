@@ -3,11 +3,26 @@ import './globals.css';
 import React, { Component, useState, useId, ErrorInfo, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { 
-  Layers, Wind, Shield, Database, 
-  ChevronRight, Globe, Activity, Mail, AlertTriangle, 
-  ArrowUpRight, Sparkles, Loader2, Cpu, Thermometer, Terminal, 
-  Hash, Fingerprint, Box, BarChart3, Microscope, Compass, 
-  PenTool, Layout
+  Shield, 
+  ChevronRight, 
+  Mail, 
+  AlertTriangle, 
+  ArrowUpRight, 
+  Sparkles, 
+  Loader2, 
+  Thermometer, 
+  Terminal, 
+  Hash, 
+  Fingerprint, 
+  Box, 
+  BarChart3, 
+  Microscope, 
+  Compass, 
+  PenTool, 
+  Layout,
+  Database,
+  Globe,
+  Wind
 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
@@ -15,9 +30,12 @@ import { GoogleGenAI } from "@google/genai";
 interface ErrorBoundaryProps { children?: ReactNode; }
 interface ErrorBoundaryState { hasError: boolean; }
 
-// Fixed: Inheriting from the named 'Component' import to ensure proper typing of 'this.props'.
+// Fixed: Inherit from Component directly and add constructor to resolve "property 'props' does not exist" error
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  public state: ErrorBoundaryState = { hasError: false };
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
   static getDerivedStateFromError(_: Error): ErrorBoundaryState { return { hasError: true }; }
   
@@ -29,16 +47,15 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     if (this.state.hasError) {
       return (
         <div className="h-screen bg-[#050505] flex items-center justify-center p-8 text-center">
-          <div className="glass-panel p-12 rounded-[32px] max-w-lg border-emerald-500/20">
-            <AlertTriangle size={64} className="text-emerald-500 mx-auto mb-8 animate-pulse" />
+          <div className="glass-panel p-12 rounded-[32px] max-w-lg border-[#10b981]/20">
+            <AlertTriangle size={64} className="text-[#10b981] mx-auto mb-8 animate-pulse" />
             <h1 className="text-2xl font-black uppercase tracking-tighter mb-4 text-white">Kernel Segmentation Fault</h1>
             <p className="text-slate-500 mb-8 font-light leading-relaxed text-sm">Structural engine failure. Lock engaged.</p>
-            <button onClick={() => window.location.reload()} className="w-full py-3 bg-emerald-500 text-black font-black uppercase tracking-widest rounded-xl hover:bg-white transition-all transform active:scale-95">Reboot Engine</button>
+            <button onClick={() => window.location.reload()} className="w-full py-3 bg-[#10b981] text-black font-black uppercase tracking-widest rounded-xl hover:bg-white transition-all transform active:scale-95">Reboot Engine</button>
           </div>
         </div>
       );
     }
-    // Fixed line 39: Ensured 'props' is recognized as a member of the component class.
     return this.props.children;
   }
 }
@@ -46,23 +63,17 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 // --- CONSTANTS ---
 const CATEGORIES = ["Structural", "Architectural", "Logistics", "Compliance", "Forensics", "Innovation"];
 const DEFAULT_SETTINGS = {
-  blur: 32, transparency: 0.2, saturation: 115, color: '#ffffff', 
-  outlineOpacity: 0.15, shadowBlur: 40, shadowOpacity: 0.2, 
+  blur: 32, transparency: 0.02, saturation: 115, color: '#ffffff', 
+  outlineOpacity: 0.1, shadowBlur: 40, shadowOpacity: 0.2, 
   lightAngle: 145, borderRadius: 32, ior: 1.52, compressiveStrength: 120, 
   thermalCoeff: 8.5, transmission: 91, specularity: 0.9,
 };
 
 const PRESETS = [
-  { name: "Cupertino High-Iron v4", category: "Commercial", settings: { ...DEFAULT_SETTINGS, blur: 40, transparency: 0.55, saturation: 160, color: "#ffffff", outlineOpacity: 0.3, borderRadius: 24, ior: 1.52, transmission: 92, specularity: 0.95 } },
+  { name: "Cupertino High-Iron v4", category: "Commercial", settings: { ...DEFAULT_SETTINGS, blur: 40, transparency: 0.05, saturation: 160, color: "#ffffff", outlineOpacity: 0.2, borderRadius: 24, ior: 1.52, transmission: 92, specularity: 0.95 } },
   { name: "SentryGlas Spatial-X", category: "Advanced", settings: { ...DEFAULT_SETTINGS, blur: 64, transparency: 0.08, saturation: 120, color: "#ffffff", outlineOpacity: 0.5, borderRadius: 40, ior: 2.2, transmission: 96, specularity: 1.0 } },
-  { name: "Industrial Carbon Toughened", category: "Structural", settings: { ...DEFAULT_SETTINGS, blur: 80, transparency: 0.85, saturation: 0, color: "#09090b", outlineOpacity: 0.1, borderRadius: 28, compressiveStrength: 480, ior: 2.4, specularity: 0.2 } },
-  { name: "Nordic Laminated Frost", category: "Architectural", settings: { ...DEFAULT_SETTINGS, blur: 24, transparency: 0.35, saturation: 110, color: "#f0f9ff", outlineOpacity: 0.4, borderRadius: 20, ior: 1.6, specularity: 0.7 } }
-];
-
-const PLANS = [
-  { name: "Essential", description: "Standard monolithic analysis tools for schematic design.", price: "$299/mo" },
-  { name: "Standard", description: "Advanced IGU and Laminated composite modeling bureau.", price: "$899/mo" },
-  { name: "Enterprise", description: "Custom physics engines and forensic investigation.", price: "Custom" }
+  { name: "Industrial Carbon Toughened", category: "Structural", settings: { ...DEFAULT_SETTINGS, blur: 80, transparency: 0.1, saturation: 0, color: "#09090b", outlineOpacity: 0.1, borderRadius: 28, compressiveStrength: 480, ior: 2.4, specularity: 0.2 } },
+  { name: "Nordic Laminated Frost", category: "Architectural", settings: { ...DEFAULT_SETTINGS, blur: 24, transparency: 0.15, saturation: 110, color: "#f0f9ff", outlineOpacity: 0.4, borderRadius: 20, ior: 1.6, specularity: 0.7 } }
 ];
 
 const BLOG_POSTS = [
@@ -113,10 +124,10 @@ Thermal heat treatment introduces Roll Wave distortion—microscopic waves on th
 const Navigation = ({ view, setView }: { view: string, setView: (v: string) => void }) => (
   <nav className="sticky top-0 z-[100] border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-3xl px-12 py-5 flex justify-between items-center">
     <div className="flex items-center gap-6 cursor-pointer group" onClick={() => setView('engine')}>
-      <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-black font-black text-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-transform group-hover:scale-110">O</div>
+      <div className="w-10 h-10 bg-[#10b981] rounded-xl flex items-center justify-center text-black font-black text-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-transform group-hover:scale-110">O</div>
       <div className="flex flex-col">
         <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white leading-none">OVD BUREAU</span>
-        <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-emerald-500/60 leading-none mt-1">Independent Structural</span>
+        <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-[#10b981]/60 leading-none mt-1">Independent Structural</span>
       </div>
     </div>
     <div className="hidden md:flex items-center gap-10">
@@ -124,13 +135,13 @@ const Navigation = ({ view, setView }: { view: string, setView: (v: string) => v
         <button 
           key={item}
           onClick={() => setView(item === 'archive' ? 'blog' : item)}
-          className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all hover:text-emerald-400 ${view === (item === 'archive' ? 'blog' : item) ? 'text-emerald-500' : 'text-slate-500'}`}
+          className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all hover:text-white ${view === (item === 'archive' ? 'blog' : item) ? 'text-[#10b981]' : 'text-slate-500'}`}
         >
           {item}
         </button>
       ))}
     </div>
-    <button onClick={() => setView('contact')} className="px-6 py-2 bg-white text-black rounded-lg text-[9px] font-black uppercase tracking-[0.3em] hover:bg-emerald-500 hover:text-white transition-all shadow-xl active:scale-95">Inquiry Terminal</button>
+    <button onClick={() => setView('contact')} className="px-6 py-2 bg-[#10b981] text-black rounded-lg text-[9px] font-black uppercase tracking-[0.3em] hover:bg-white transition-all shadow-xl active:scale-95">Inquiry Terminal</button>
   </nav>
 );
 
@@ -139,10 +150,10 @@ const LabControl = ({ label, value, min, max, step = 1, unit = '', onChange }: a
   return (
     <div className="group mb-6">
       <div className="flex justify-between items-center mb-2">
-        <label htmlFor={id} className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] group-hover:text-emerald-500 transition-colors flex items-center gap-2">
-          <Hash size={10} className="text-emerald-500/40" /> {label}
+        <label htmlFor={id} className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] group-hover:text-[#10b981] transition-colors flex items-center gap-2">
+          <Hash size={10} className="text-[#10b981]/40" /> {label}
         </label>
-        <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10">
+        <span className="text-[10px] font-mono text-[#10b981] bg-[#10b981]/5 px-2 py-0.5 rounded border border-[#10b981]/10">
           {value}{unit}
         </span>
       </div>
@@ -155,20 +166,21 @@ const EngineTerminal = ({ settings, setSettings }: any) => {
   const [insight, setInsight] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
 
+  // Use ai.models.generateContent to request structural analysis
   const runStructuralAnalysis = async () => {
     setAnalyzing(true);
     try {
-      // Create new GoogleGenAI instance right before making an API call for up-to-date configuration.
+      // Initialize GoogleGenAI right before the API call to ensure latest API key is used
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: `Structural engineering report request: Analysis of glass substrate with IOR ${settings.ior}, Strength ${settings.compressiveStrength}MPa, expansion coeff ${settings.thermalCoeff}, transmission ${settings.transmission}%. Analyze safety code compliance (ASTM E1300/EN 16612).`,
         config: { 
-          systemInstruction: "You are the Principal Structural Engineer at OVD Bureau. Output technical analysis blocks with high technical density. No fluff.",
+          systemInstruction: "You are the Principal Structural Engineer at OVD Bureau. Output technical analysis blocks with high technical density. No fluff. Use only English ASCII.",
           thinkingConfig: { thinkingBudget: 4000 }
         }
       });
-      // Extracting generated text directly from response property.
+      // Correctly extract generated text output from the response property
       setInsight(response.text || 'Bureau analysis returned no content.');
     } catch (error) { 
       console.error("AI_ANALYSIS_ERROR:", error);
@@ -194,9 +206,9 @@ const EngineTerminal = ({ settings, setSettings }: any) => {
         <div className="glass-panel p-8 rounded-[32px] border-white/10">
           <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-6">
             <h3 className="text-[10px] font-black uppercase tracking-[0.5em] flex items-center gap-3">
-              <Terminal size={14} className="text-emerald-500" /> Matrix Input
+              <Terminal size={14} className="text-[#10b981]" /> Matrix Input
             </h3>
-            <button onClick={runStructuralAnalysis} disabled={analyzing} className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-500 hover:bg-emerald-500/20 transition-all active:scale-90">
+            <button onClick={runStructuralAnalysis} disabled={analyzing} className="p-2 bg-[#10b981]/10 border border-[#10b981]/30 rounded-lg text-[#10b981] hover:bg-[#10b981]/20 transition-all active:scale-90">
               {analyzing ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
             </button>
           </div>
@@ -208,9 +220,9 @@ const EngineTerminal = ({ settings, setSettings }: any) => {
         </div>
 
         {insight && (
-          <div className="glass-panel p-8 rounded-[32px] bg-emerald-500/[0.02] border-emerald-500/20 animate-in slide-in-from-bottom-4">
+          <div className="glass-panel p-8 rounded-[32px] bg-[#10b981]/[0.02] border-[#10b981]/20 animate-in slide-in-from-bottom-4">
             <div className="flex items-center gap-3 mb-6">
-              <Shield size={14} className="text-emerald-500" />
+              <Shield size={14} className="text-[#10b981]" />
               <h4 className="text-[9px] font-black uppercase tracking-[0.4em]">Bureau Intelligence</h4>
             </div>
             <div className="text-[11px] text-slate-400 font-mono leading-relaxed space-y-4">
@@ -238,21 +250,21 @@ const EngineTerminal = ({ settings, setSettings }: any) => {
           >
             <div className="flex justify-between items-start mb-auto">
               <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/50"><Layout size={24} /></div>
-              <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-[8px] font-black text-emerald-500 tracking-[0.2em] uppercase">Verified_SAFE</span>
+              <span className="px-3 py-1 bg-[#10b981]/10 border border-[#10b981]/30 rounded-full text-[8px] font-black text-[#10b981] tracking-[0.2em] uppercase">Verified_SAFE</span>
             </div>
             <h4 className="text-3xl font-black text-white tracking-tighter mb-2 uppercase leading-none">Simulation Core</h4>
             <div className="flex gap-8 text-[9px] font-mono text-white/30 uppercase tracking-[0.2em]">
-              <div className="flex items-center gap-2"><Thermometer size={12} /> Thermal: OK</div>
-              <div className="flex items-center gap-2"><Wind size={12} /> Pressure: Stable</div>
+              <div className="flex items-center gap-2"><Thermometer size={12} className="text-[#10b981]" /> Thermal: OK</div>
+              <div className="flex items-center gap-2"><Wind size={12} className="text-[#10b981]" /> Pressure: Stable</div>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {PRESETS.map((p, idx) => (
-            <button key={idx} onClick={() => setSettings(p.settings)} className="glass-panel p-5 rounded-2xl group hover:border-emerald-500/40 transition-all text-left border-white/10 active:scale-95">
-              <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest mb-1 block group-hover:text-emerald-500">{p.category}</span>
-              <h5 className="text-[10px] font-black text-white uppercase group-hover:text-emerald-400">{p.name}</h5>
+            <button key={idx} onClick={() => setSettings(p.settings)} className="glass-panel p-5 rounded-2xl group hover:border-[#10b981] transition-all text-left border-white/10 active:scale-95">
+              <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest mb-1 block group-hover:text-[#10b981]">{p.category}</span>
+              <h5 className="text-[10px] font-black text-white uppercase group-hover:text-[#10b981]">{p.name}</h5>
             </button>
           ))}
         </div>
@@ -269,9 +281,9 @@ const ArticleHub = ({ setView, setActivePost }: any) => (
     </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {BLOG_POSTS.map(post => (
-        <article key={post.id} onClick={() => { setActivePost(post.id); setView('blog-detail'); }} className="glass-panel p-10 rounded-[32px] cursor-pointer group hover:border-emerald-500/40 border-white/10 h-full flex flex-col">
-          <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.4em] mb-8">{post.category}</span>
-          <h3 className="text-xl font-black text-white mb-6 group-hover:text-emerald-500 transition-colors uppercase leading-tight tracking-tighter">{post.title}</h3>
+        <article key={post.id} onClick={() => { setActivePost(post.id); setView('blog-detail'); }} className="glass-panel p-10 rounded-[32px] cursor-pointer group hover:border-[#10b981]/40 border-white/10 h-full flex flex-col">
+          <span className="text-[9px] font-black text-[#10b981] uppercase tracking-[0.4em] mb-8">{post.category}</span>
+          <h3 className="text-xl font-black text-white mb-6 group-hover:text-[#10b981] transition-colors uppercase leading-tight tracking-tighter">{post.title}</h3>
           <p className="text-xs font-light text-slate-500 mb-10 line-clamp-4 leading-relaxed">{post.summary}</p>
           <div className="mt-auto pt-6 border-t border-white/5 flex justify-between items-center text-[9px] font-mono opacity-40 uppercase">
             <span>{post.date}</span>
@@ -301,7 +313,7 @@ const App = () => {
               <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
                 <header className="pt-24 pb-12 flex flex-col md:flex-row items-end justify-between gap-8">
                   <div className="max-w-4xl">
-                    <div className="flex items-center gap-4 text-emerald-500 mb-6 font-black text-[9px] uppercase tracking-[0.6em]">
+                    <div className="flex items-center gap-4 text-[#10b981] mb-6 font-black text-[9px] uppercase tracking-[0.6em]">
                       <Fingerprint size={16} className="animate-pulse" /> Material Intelligence Terminal
                     </div>
                     <h2 className="text-5xl lg:text-7xl font-black text-white tracking-tighter uppercase leading-[0.85] text-glow">
@@ -309,7 +321,7 @@ const App = () => {
                     </h2>
                   </div>
                   <div className="text-right flex flex-col items-end gap-4 max-w-xs">
-                    <BarChart3 size={32} className="text-emerald-500/20" />
+                    <BarChart3 size={32} className="text-[#10b981]/20" />
                     <p className="text-xs text-slate-600 uppercase tracking-widest leading-loose">Digital framework for material physics simulation v2.4.0</p>
                   </div>
                 </header>
@@ -332,7 +344,7 @@ const App = () => {
                            { icon: Box, title: "Dead Load Calc", desc: "Precise mass-density anchor sizing." }
                          ].map((item, idx) => (
                            <div key={idx} className="flex gap-6 group">
-                              <item.icon className="w-8 h-8 text-emerald-500/20 group-hover:text-emerald-500 transition-colors shrink-0" />
+                              <item.icon className="w-8 h-8 text-[#10b981]/20 group-hover:text-[#10b981] transition-colors shrink-0" />
                               <div>
                                 <h4 className="text-white font-black uppercase text-[10px] mb-1 tracking-widest leading-none">{item.title}</h4>
                                 <p className="text-slate-500 text-[10px] font-light leading-relaxed">{item.desc}</p>
@@ -349,10 +361,10 @@ const App = () => {
 
             {view === 'blog-detail' && activePost && (
               <article className="py-32 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
-                <button onClick={() => setView('blog')} className="text-emerald-500 text-[9px] font-black uppercase tracking-[0.5em] mb-16 flex items-center gap-4 hover:text-white transition-all group">
+                <button onClick={() => setView('blog')} className="text-[#10b981] text-[9px] font-black uppercase tracking-[0.5em] mb-16 flex items-center gap-4 hover:text-white transition-all group">
                   <ChevronRight size={18} className="rotate-180 group-hover:-translate-x-2 transition-transform" /> Back to Archive
                 </button>
-                <div className="flex items-center gap-4 text-[9px] font-black text-emerald-500/40 uppercase tracking-[0.4em] mb-8">
+                <div className="flex items-center gap-4 text-[9px] font-black text-[#10b981]/40 uppercase tracking-[0.4em] mb-8">
                   <span>{activePost.category}</span>
                   <Hash size={12} />
                   <span>Protocol {activePost.id.toUpperCase()}</span>
@@ -374,7 +386,7 @@ const App = () => {
                     { t: "Thermal Stress Management", d: "Solar absorption analysis and edge resistance limits for low-e coated monolithic assemblies." }
                   ].map((doc, idx) => (
                     <div key={idx} className="glass-panel p-12 rounded-[40px] border-white/10 group">
-                      <h3 className="text-3xl font-black text-white uppercase tracking-tighter group-hover:text-emerald-400 transition-colors mb-6">{doc.t}</h3>
+                      <h3 className="text-3xl font-black text-white uppercase tracking-tighter group-hover:text-[#10b981] transition-colors mb-6">{doc.t}</h3>
                       <p className="text-lg font-light text-slate-500 leading-relaxed max-w-3xl">{doc.d}</p>
                     </div>
                   ))}
@@ -385,8 +397,8 @@ const App = () => {
             {view === 'contact' && (
               <section className="py-48 text-center flex flex-col items-center animate-in zoom-in-95 duration-700">
                 <h2 className="text-8xl font-black text-white uppercase tracking-tighter mb-12 text-glow">Inquiry</h2>
-                <div className="glass-panel p-20 rounded-[80px] w-full max-w-2xl border-emerald-500/20 shadow-[0_0_80px_rgba(16,185,129,0.05)]">
-                  <Mail size={48} className="text-emerald-500/20 mx-auto mb-12" />
+                <div className="glass-panel p-20 rounded-[80px] w-full max-w-2xl border-[#10b981]/20 shadow-[0_0_80px_rgba(16,185,129,0.05)]">
+                  <Mail size={48} className="text-[#10b981]/20 mx-auto mb-12" />
                   <p className="text-3xl font-black text-white mb-6 tracking-tighter uppercase">magic.reviewsite@gmail.com</p>
                   <div className="flex justify-center gap-10 text-[9px] font-black uppercase tracking-[0.8em] text-slate-800">
                     <span>London</span>
@@ -402,11 +414,11 @@ const App = () => {
             <div className="grid grid-cols-12 gap-16">
               <div className="col-span-12 md:col-span-5">
                 <div className="flex items-center gap-4 mb-10">
-                  <div className="w-10 h-10 bg-emerald-500 flex items-center justify-center rounded-xl text-black font-black text-xl">O</div>
+                  <div className="w-10 h-10 bg-[#10b981] flex items-center justify-center rounded-xl text-black font-black text-xl">O</div>
                   <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none">OVD Bureau</h3>
                 </div>
                 <p className="text-xs text-slate-600 font-light leading-relaxed max-w-sm mb-10">Global authority in structural glass simulation, technical facade documentation, and forensic material investigation bureau services since 2018.</p>
-                <div className="flex gap-6 text-emerald-500/20">
+                <div className="flex gap-6 text-[#10b981]/20">
                   <Database size={20} />
                   <Shield size={20} />
                   <Globe size={20} />
@@ -414,7 +426,7 @@ const App = () => {
               </div>
               <div className="col-span-12 md:col-span-7 grid grid-cols-3 gap-10">
                 <div>
-                  <h4 className="text-[9px] font-black uppercase text-emerald-500 tracking-[0.4em] mb-10 opacity-40">Hub</h4>
+                  <h4 className="text-[9px] font-black uppercase text-[#10b981] tracking-[0.4em] mb-10 opacity-40">Hub</h4>
                   <ul className="text-xs space-y-5 font-black uppercase tracking-[0.3em] text-slate-700">
                     <li className="cursor-pointer hover:text-white" onClick={() => setView('engine')}>Engine</li>
                     <li className="cursor-pointer hover:text-white" onClick={() => setView('blog')}>Archive</li>
@@ -422,7 +434,7 @@ const App = () => {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="text-[9px] font-black uppercase text-emerald-500 tracking-[0.4em] mb-10 opacity-40">Bureau</h4>
+                  <h4 className="text-[9px] font-black uppercase text-[#10b981] tracking-[0.4em] mb-10 opacity-40">Bureau</h4>
                   <ul className="text-xs space-y-5 font-black uppercase tracking-[0.3em] text-slate-700">
                     <li>Logistics</li>
                     <li>Compliance</li>
@@ -430,7 +442,7 @@ const App = () => {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="text-[9px] font-black uppercase text-emerald-500 tracking-[0.4em] mb-10 opacity-40">Legal</h4>
+                  <h4 className="text-[9px] font-black uppercase text-[#10b981] tracking-[0.4em] mb-10 opacity-40">Legal</h4>
                   <ul className="text-xs space-y-5 font-black uppercase tracking-[0.3em] text-slate-700">
                     <li className="cursor-pointer hover:text-white">Privacy</li>
                     <li className="cursor-pointer hover:text-white">Terms</li>
