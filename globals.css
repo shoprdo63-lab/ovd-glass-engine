@@ -4,77 +4,48 @@
 
 @layer base {
   html {
-    @apply scroll-smooth selection:bg-accent/30 selection:text-white;
+    @apply selection:bg-emerald-500/30 selection:text-emerald-100;
     font-size: 14px;
+    background: #050505;
   }
   
   body {
-    @apply bg-black text-gray-300 antialiased font-sans overflow-x-hidden;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply text-white font-black tracking-tighter leading-none;
+    @apply bg-[#050505] text-slate-400 antialiased font-sans overflow-x-hidden;
   }
 }
 
 @layer components {
-  .glass-card {
-    @apply bg-[#0c0c0c]/90 backdrop-blur-2xl border border-white/10 shadow-2xl;
-    @apply transition-all duration-300;
+  .glass-panel {
+    @apply bg-white/[0.02] backdrop-blur-3xl border border-white/10 shadow-2xl transition-all duration-500;
   }
 
   .text-glow {
-    text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+    text-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
   }
 
-  .card-glow {
-    box-shadow: 0 0 50px -10px rgba(16, 185, 129, 0.1);
-  }
-
-  .transition-apple {
-    @apply transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)];
-  }
-
-  input[type=range] {
+  .bureau-range {
     -webkit-appearance: none;
     @apply bg-transparent w-full cursor-pointer m-0 p-0;
   }
 
-  input[type=range]::-webkit-slider-runnable-track {
-    @apply w-full h-[1px] bg-white/20 rounded-full transition-colors group-hover:bg-accent/30;
+  .bureau-range::-webkit-slider-runnable-track {
+    @apply w-full h-[2px] bg-white/5 rounded-full transition-colors group-hover:bg-emerald-500/20;
   }
 
-  input[type=range]::-webkit-slider-thumb {
+  .bureau-range::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply h-3.5 w-3.5 rounded-full bg-accent border border-black -mt-[6.5px] transition-transform duration-100;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+    @apply h-4 w-4 rounded-full bg-emerald-500 border-2 border-black -mt-[7px] transition-all duration-300 shadow-lg;
   }
 
-  input[type=range]:active::-webkit-slider-thumb {
-    @apply scale-150;
-  }
-
-  .prose h1, .prose h2, .prose h3 {
-    @apply text-white font-black tracking-tighter mt-12 mb-6 uppercase;
-  }
-
-  .prose p {
-    @apply text-gray-400 font-light leading-relaxed mb-8 text-lg;
-  }
-
-  .prose strong {
-    @apply text-white font-bold;
+  .bureau-range:active::-webkit-slider-thumb {
+    @apply scale-125 bg-white;
   }
 }
 
-::-webkit-scrollbar {
-  @apply w-[5px];
+.prose h1, .prose h2, .prose h3 {
+  @apply text-white font-black uppercase tracking-tighter mt-12 mb-6 leading-none;
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-black;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-white/10 rounded-full hover:bg-accent/40 transition-colors;
+.prose p {
+  @apply text-slate-500 mb-8;
 }

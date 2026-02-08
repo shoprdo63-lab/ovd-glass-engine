@@ -1,71 +1,62 @@
 
 import './globals.css';
-import React, { useState, useId, Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, useState, useId, ErrorInfo, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { 
-  Layers, Zap, Terminal, Copy, Menu, X, Wind, Shield, Database, 
-  Settings, BookOpen, UserCheck, FileText, ChevronRight, Globe, Scale, 
-  Activity, Sun, Mail, Clock, CheckCircle, AlertTriangle, 
-  Thermometer, Glasses, Microscope, ArrowUpRight, Sparkles, Loader2
+  Layers, Wind, Shield, Database, 
+  ChevronRight, Globe, Activity, Mail, AlertTriangle, 
+  ArrowUpRight, Sparkles, Loader2, Cpu, Thermometer, Terminal, 
+  Hash, Fingerprint, Box, BarChart3, Microscope, Compass, 
+  PenTool, Layout
 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
 // --- ERROR BOUNDARY ---
-interface ErrorBoundaryProps {
-  children?: ReactNode;
-}
+interface ErrorBoundaryProps { children?: ReactNode; }
+interface ErrorBoundaryState { hasError: boolean; }
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-}
-
-// Fix: Use Component directly from react imports and include a constructor to properly initialize state/props for TS.
+// Fixed: Inheriting from the named 'Component' import to ensure proper typing of 'this.props'.
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  public state: ErrorBoundaryState = { hasError: false };
 
-  static getDerivedStateFromError(_: Error): ErrorBoundaryState { 
-    return { hasError: true }; 
-  }
+  static getDerivedStateFromError(_: Error): ErrorBoundaryState { return { hasError: true }; }
   
   componentDidCatch(error: Error, errorInfo: ErrorInfo) { 
-    console.error("CRITICAL_OVD_SYS_ERR:", error, errorInfo); 
+    console.error("BUREAU_SYS_FAULT:", error, errorInfo); 
   }
-  
+
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-black flex items-center justify-center p-8">
-          <div className="max-w-md w-full glass-card p-12 rounded-3xl text-center border-red-500/20 shadow-2xl">
-            <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-6" />
-            <h2 className="text-xl font-black text-white mb-4 uppercase tracking-tighter">{String("System Malfunction")}</h2>
-            <p className="text-gray-500 mb-8 text-sm leading-relaxed font-light">{String("The material simulation core encountered a critical rendering exception. The environment has been locked to maintain data integrity.")}</p>
-            <button onClick={() => window.location.reload()} className="px-8 py-3 bg-red-500 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-red-600 transition-all">{String("Restore Engine")}</button>
+        <div className="h-screen bg-[#050505] flex items-center justify-center p-8 text-center">
+          <div className="glass-panel p-12 rounded-[32px] max-w-lg border-emerald-500/20">
+            <AlertTriangle size={64} className="text-emerald-500 mx-auto mb-8 animate-pulse" />
+            <h1 className="text-2xl font-black uppercase tracking-tighter mb-4 text-white">Kernel Segmentation Fault</h1>
+            <p className="text-slate-500 mb-8 font-light leading-relaxed text-sm">Structural engine failure. Lock engaged.</p>
+            <button onClick={() => window.location.reload()} className="w-full py-3 bg-emerald-500 text-black font-black uppercase tracking-widest rounded-xl hover:bg-white transition-all transform active:scale-95">Reboot Engine</button>
           </div>
         </div>
       );
     }
+    // Fixed line 39: Ensured 'props' is recognized as a member of the component class.
     return this.props.children;
   }
 }
 
 // --- CONSTANTS ---
 const CATEGORIES = ["Structural", "Architectural", "Logistics", "Compliance", "Forensics", "Innovation"];
-
 const DEFAULT_SETTINGS = {
-  blur: 16, transparency: 0.25, saturation: 110, color: '#ffffff', 
-  outlineOpacity: 0.3, shadowBlur: 20, shadowOpacity: 0.15, 
-  lightAngle: 145, borderRadius: 24, ior: 1.52, compressiveStrength: 120, 
-  thermalCoeff: 8.5, transmission: 88, specularity: 0.8,
+  blur: 32, transparency: 0.2, saturation: 115, color: '#ffffff', 
+  outlineOpacity: 0.15, shadowBlur: 40, shadowOpacity: 0.2, 
+  lightAngle: 145, borderRadius: 32, ior: 1.52, compressiveStrength: 120, 
+  thermalCoeff: 8.5, transmission: 91, specularity: 0.9,
 };
 
 const PRESETS = [
-    { name: "Pro Cupertino High-Iron", category: "Commercial", settings: { ...DEFAULT_SETTINGS, blur: 25, transparency: 0.65, saturation: 180, color: "#ffffff", outlineOpacity: 0.4, borderRadius: 20, ior: 1.52, transmission: 91, specularity: 0.95 } },
-    { name: "SentryGlas Spatial 2.0", category: "Advanced", settings: { ...DEFAULT_SETTINGS, blur: 35, transparency: 0.1, saturation: 120, color: "#ffffff", outlineOpacity: 0.6, borderRadius: 32, ior: 2.1, transmission: 95, specularity: 1.0 } },
-    { name: "Industrial Carbon Toughened", category: "Structural", settings: { ...DEFAULT_SETTINGS, blur: 50, transparency: 0.9, saturation: 0, color: "#09090b", outlineOpacity: 0.1, borderRadius: 24, compressiveStrength: 450, ior: 2.4, specularity: 0.2 } },
-    { name: "Arctic Laminated Frost", category: "Architectural", settings: { ...DEFAULT_SETTINGS, blur: 12, transparency: 0.4, saturation: 110, color: "#e0f2fe", outlineOpacity: 0.5, borderRadius: 16, ior: 1.58, specularity: 0.6 } }
+  { name: "Cupertino High-Iron v4", category: "Commercial", settings: { ...DEFAULT_SETTINGS, blur: 40, transparency: 0.55, saturation: 160, color: "#ffffff", outlineOpacity: 0.3, borderRadius: 24, ior: 1.52, transmission: 92, specularity: 0.95 } },
+  { name: "SentryGlas Spatial-X", category: "Advanced", settings: { ...DEFAULT_SETTINGS, blur: 64, transparency: 0.08, saturation: 120, color: "#ffffff", outlineOpacity: 0.5, borderRadius: 40, ior: 2.2, transmission: 96, specularity: 1.0 } },
+  { name: "Industrial Carbon Toughened", category: "Structural", settings: { ...DEFAULT_SETTINGS, blur: 80, transparency: 0.85, saturation: 0, color: "#09090b", outlineOpacity: 0.1, borderRadius: 28, compressiveStrength: 480, ior: 2.4, specularity: 0.2 } },
+  { name: "Nordic Laminated Frost", category: "Architectural", settings: { ...DEFAULT_SETTINGS, blur: 24, transparency: 0.35, saturation: 110, color: "#f0f9ff", outlineOpacity: 0.4, borderRadius: 20, ior: 1.6, specularity: 0.7 } }
 ];
 
 const PLANS = [
@@ -74,290 +65,194 @@ const PLANS = [
   { name: "Enterprise", description: "Custom physics engines and forensic investigation.", price: "Custom" }
 ];
 
-// --- HELPERS ---
-const calculateShadow = (angleDeg: number, distance: number) => {
-  const rad = (angleDeg * Math.PI) / 180;
-  return { x: Math.round(distance * -Math.sin(rad)), y: Math.round(distance * Math.cos(rad)) };
-};
-
-const hexToRgb = (hex: string) => {
-  const cleanHex = String(hex).replace('#', '');
-  const r = parseInt(cleanHex.slice(0, 2), 16) || 255;
-  const g = parseInt(cleanHex.slice(2, 4), 16) || 255;
-  const b = parseInt(cleanHex.slice(4, 6), 16) || 255;
-  return `${r}, ${g}, ${b}`;
-};
-
-// --- CONTENT REPOSITORY ---
 const BLOG_POSTS = [
   {
     id: "structural-principles",
-    title: "Structural Glass Stress and Safety Principles: Theoretical Mechanics and Risk Distribution",
-    category: "Structural Physics",
-    date: "March 15, 2026",
-    summary: "An exhaustive technical analysis of architectural glass as a brittle structural material, focusing on tensile stress gradients and Weibull probabilistic failure modeling.",
-    content: `Structural glass design represents the ultimate intersection of material physics and architectural ambition. Unlike ductile materials such as structural steel or aluminum, which undergo significant plastic deformation before ultimate failure, architectural glass is a fundamentally brittle solid. It possesses an amorphous atomic structure that lacks a defined crystalline grain.
+    title: "Theoretical Mechanics of Structural Glass: Non-Linear Stress Distribution and Probabilistic Failure",
+    category: "Mechanics",
+    date: "May 20, 2026",
+    summary: "A deep dive into Linear Elastic Fracture Mechanics (LEFM) and Griffith Crack Theory applied to amorphous silicate structures.",
+    content: `Structural glass design represents the ultimate engineering challenge. Unlike ductile materials, glass fails catastrophically without plastic deformation. This "all or nothing" behavior necessitates a statistical approach to safety.
 
-### 1. The Mechanics of Brittle Solitary Systems
-The distinguishing characteristic of glass in construction is its lack of a visible yield point. In a steel beam, excessive loading manifests as permanent deformation—a critical warning sign for structural integrity. In glass, failure is instantaneous and catastrophic. This behavior is governed by Linear Elastic Fracture Mechanics (LEFM). The functional strength of a glass panel is not a constant; it is a statistical probability determined by the density and orientation of microscopic surface flaws, commonly referred to as Griffith flaws.
+### 1. Linear Elastic Fracture Mechanics (LEFM)
+Linear Elastic Fracture Mechanics provides the mathematical framework for understanding brittle materials. For amorphous silicate structures, we rely on the Griffith energy balance principle, where the applied tensile stress relates to critical surface flaws. In architectural applications, the orientation and density of these microscopic flaws (Griffith flaws) dictate the functional strength of the panel.
 
 ### 2. Griffith Crack Theory and Fracture Energy
-The fundamental equation of glass strength relates the applied stress (σ) to the critical crack length (a). Energy must be balanced between the elastic strain energy released as the crack grows and the surface energy required to create new material surfaces. In architectural applications, we must assume a density of flaws (number of flaws per unit area) to calculate the probability of a critical flaw aligning with the maximum tensile stress vector.
+The fundamental equation relating stress (σ) to critical crack length (a) assumes a balance between the elastic strain energy released as a crack propagates and the surface energy required for new material separation. This stochastic property means glass has no singular "yield strength," only a probability of breakage at specific loads.
 
-### 3. The Compressive vs. Tensile Strength Paradox
-One of the most profound paradoxes in material science is the strength of glass. In pure laboratory compression, glass can withstand pressures exceeding 1,000 MPa, potentially rivaling high-performance structural alloys. However, because its amorphous structure cannot dissipate energy through grain-boundary dislocation, it is exceptionally weak in tension. Standard annealed glass is assigned a design tensile strength of approximately 24 MPa. Modern engineering overcomes this by utilizing 'thermal toughening,' a process that locks the outer surfaces in permanent compression. This 'compressive skin' must be physically overcome by external loads before any tensile force can activate a surface flaw.
+### 3. Young's Modulus and Poisson's Ratio
+Computational simulations within the OVD Bureau utilize a Young's Modulus (E) of 70,000 MPa and a Poisson's Ratio (ν) of 0.22. These constants govern the elastic deflection profile. Understanding membrane stresses is vital; as a panel undergoes large-scale deflection relative to its thickness, secondary tensile forces develop that can trigger failure before primary bending limits are reached.
 
-### 4. Young's Modulus and Poisson's Ratio in Digital Simulation
-Calculations within the OVD Glass Engine are grounded in established material constants: a Young's Modulus (E) of 70,000 MPa and a Poisson's Ratio (ν) of 0.22. These values govern the elastic deflection of a pane under atmospheric pressures. Understanding these constants is vital for predicting 'membrane stresses'—the secondary stresses that occur when a thin panel undergoes large-scale deflection relative to its thickness.
+### 4. Thermal Toughening Dynamics
+The thermal toughening process involves heating glass to its softening point (~620°C) and rapidly quenching it with air. This induces permanent compressive stress on the surfaces (approx. 90-150 MPa). This "compressive skin" must be overcome by external loads before pre-existing flaws can propagate. Our simulation core calculates this threshold in real-time.
 
-### 5. Probabilistic Safety Factors: The Weibull Distribution
-Engineering for transparency is a study in probability. Instead of deterministic safety factors used for ductile materials, glass engineers utilize the Weibull distribution to model the probability of breakage (Pb). Standard building codes, such as ASTM E1300, typically target a Pb of less than 8 panels per 1,000 under peak environmental loads. This stochastic approach requires high-fidelity digital simulation to ensure public safety in monumental architectural spaces.`
+### 5. Probability of Breakage (Pb)
+Safety factors for glass are expressed as breakage probabilities rather than deterministic ratios. Modern building codes, such as ASTM E1300, typically design for a Pb of less than 0.008 panels per 1,000. Our engine allows engineers to visualize where stresses accumulate, ensuring adherence to global safety mandates for monumental skylights and skyscrapers.`
   },
   {
-    id: "thickness-load-engineering",
-    title: "Glass Thickness and Load Calculation Engineering: Advanced Compliance with ASTM E1300",
-    category: "Code Compliance",
-    date: "March 20, 2026",
-    summary: "Determining design pressure, non-factored loads, and geometric stiffness for complex architectural glazing according to global safety standards.",
-    content: `The ASTM E1300 standard is the definitive structural framework for the sizing of architectural glass in North America and is the baseline for high-performance facade engineering globally.
+    id: "ior-refraction-physics",
+    title: "Index of Refraction (IOR) and Optical Deviations in High-Performance Laminated Assemblies",
+    category: "Optics",
+    date: "June 02, 2026",
+    summary: "Analyzing the complex interaction of light through multi-layered polymer interlayers and high-iron substrate variations.",
+    content: `Optical clarity is a critical engineering metric for premium facades. As lamination thickness increases, the parasitic absorption of iron oxides and refractive deviations become pronounced.
 
-### 1. Determining Design Pressure (DP) through Environmental Loads
-The engineering process begins with the establishment of environmental loads—wind pressure (positive and negative), snow surcharge, and potential live-load impacts. Using ASCE 7 methodologies, a peak Design Pressure is established. This represents the force the glazing system must withstand without failure or excessive deflection.
+### 1. Snell's Law and Multi-layered Refraction
+When light passes through multiple glass plies (n1=1.52) and polymer interlayers (n2=1.48), Snell's Law (n1 sinθ1 = n2 sinθ2) dictates the beam trajectory. Cumulative refractive deviations across thick laminated assemblies lead to visible "pincushion" distortions.
 
-### 2. Non-Factored Load (NFL) and Glass Type Factors (GTF)
-The structural resistance of a pane is derived from its Non-Factored Load (the resistance of standard annealed glass of a specific size) multiplied by a Glass Type Factor. Annealed glass has a GTF of 1.0. Heat-strengthened glass increases this to 2.0, providing enhanced thermal resistance. Fully tempered glass achieves a GTF of 4.0, representing the highest safety classification. Laminated glass, however, introduces 'composite action' that is highly dependent on the shear modulus of the polymer interlayer (PVB or Ionoplast).
+### 2. Iron Oxide Concentration and Transmission
+Standard clear glass contains higher iron concentrations, absorbing light in the green spectrum. Bureau-grade low-iron glass (Starphire/Optiwhite) maintains a Visible Light Transmission (VLT) above 91%. Our optical simulator models the shift between high-iron industrial substrates and low-iron architectural lites, helping designers maintain clarity in deep-lamination structural plies.
 
-### 3. Aspect Ratio and Geometric Influence on Stress
-The width-to-height ratio (Aspect Ratio) of a panel significantly alters its stress distribution. Square panels tend to distribute tensile stress more evenly toward the corner supports, whereas long, narrow panes develop massive tensile gradients at the center of the long unsupported edges. The OVD Bureau's engine visualizes these geometric stresses through its real-time optical refraction simulation, allowing designers to see the physical cost of aggressive aspect ratios.
-
-### 4. Serviceability Limits: Deflection vs. Safety
-In structural engineering, safety is only half of the requirement. Serviceability governs the functional performance of the facade. Excessive deflection (L/175), even if structurally safe, can lead to air/water infiltration, sealant failure, or 'oil-canning' distortions. Ensuring the pane remains aesthetically and functionally rigid under load is a primary objective of the OVD simulation workflow.`
-  },
-  {
-    id: "weight-calculation-integrity",
-    title: "Glass Weight Calculation Methods: Structural Integrity and Dead-Load Modeling for Facades",
-    category: "Logistics",
-    date: "March 22, 2026",
-    summary: "Managing dead loads in curtain wall systems and seismic drift through accurate density and composite assembly weight modeling.",
-    content: `Accurate dead-load calculation is the cornerstone of facade anchor sizing and building foundation design. For skyscrapers, the cumulative weight of the glass envelope can reach thousands of metric tons.
-
-### 1. Density and Monolithic Mass Calculations
-Architectural glass has a remarkably consistent density of approximately 2,500 kg/m³. For monolithic glass, the calculation is a direct linear function: (Nominal Thickness in mm) x 2.5 = Weight in kg per square meter. A standard 10mm lite weighs exactly 25 kg/m². Understanding this constant is vital for the preliminary sizing of aluminum mullion sections.
-
-### 2. Composite Weight of Insulating Glass Units (IGUs)
-An Insulating Glass Unit is a complex assembly. Its weight is the sum of the glass plies, the spacer bar, the desiccant, and the secondary structural sealant (typically Silicone or Polysulfide). Laminated interlayers, although thin, possess a specific mass (approx. 1 kg/m² for a 1.52mm interlayer) that must be accounted for in seismic base-shear calculations.
-
-### 3. Seismic Drift and Dynamic Mass Acceleration
-In high-seismic regions, the dead load of the glass is multiplied by a seismic acceleration factor (F=ma). The resulting lateral force can be significantly higher than the static weight, requiring robust mechanical retention of the glass within the frame. Reducing glass thickness through the use of high-strength laminates can significantly lower the seismic demand on the building's primary structure.`
-  },
-  {
-    id: "spontaneous-breakage-forensics",
-    title: "Structural Glass Failure Case Studies: Forensics of Spontaneous and Mechanical Breakage",
-    category: "Material Forensics",
-    date: "March 24, 2026",
-    summary: "Analyzing root causes of glass failure, from Nickel Sulfide (NiS) inclusions to thermal shock and edge damage in high-performance assemblies.",
-    content: `In the world of structural glass, breakage is rarely spontaneous. It is almost always the result of a specific material, design, or installation deficiency.
-
-### 1. Nickel Sulfide (NiS) Inclusions and Phase Transformation
-Microscopic stones of Nickel Sulfide can accidentally form in the center of the glass during the float process. Over time, these stones undergo a phase transformation, expanding in volume by up to 4%. If an NiS stone is located in the central tensile core of a tempered lite, its expansion can trigger a sudden explosion of the entire panel. Forensic engineers typically look for a 'butterfly' fracture pattern at the origin of the break.
-
-### 2. Thermal Stress and Solar Absorption Hazards
-Dark-tinted or high-reflectivity glass absorbs significant solar energy. When the center of the lite heats up while the edges remain cool in the shade of the mullion, a temperature differential (ΔT) occurs. If this ΔT exceeds the thermal resistance limit of the glass edge, a thermal crack initiates. OVD's Thermal Coeff slider allows engineers to simulate this dimensional volatility.
-
-### 3. Edge Quality and Stress Concentrators
-The ultimate strength of a glass panel is dictated by the quality of its edges. A microscopic chip or 'shell' created during handling acts as a stress concentrator. Under a standard wind load, this defect initiates a fracture that would not have occurred in a clean-cut lite. Digital simulation of Edge Specularity highlights the visual and structural cost of poor edge finishing.`
+### 3. Z-Distortion and Roll Wave
+Thermal heat treatment introduces Roll Wave distortion—microscopic waves on the glass surface caused by the tempering furnace rollers. When laminated, these waves interact, causing optical "banding." OVD Bureau simulation accounts for these deviations to predict the final aesthetic performance of the facade.`
   }
 ];
 
 // --- UI COMPONENTS ---
 
-const Navigation = ({ view, setView }: { view: string, setView: (v: string) => void }) => {
-  const [mobileMenu, setMobileMenu] = useState(false);
-  const items = [
-    { id: 'engine', label: 'Analysis Engine', icon: Zap },
-    { id: 'blog', label: 'Knowledge Hub', icon: BookOpen },
-    { id: 'docs', label: 'Technical Docs', icon: FileText },
-  ];
-
-  return (
-    <nav className="sticky top-0 z-50 glass-card border-b border-white/5 py-4 px-6 lg:px-12 flex justify-between items-center transition-all duration-300 backdrop-blur-3xl">
-      <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setView('engine')}>
-        <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center text-black font-black text-2xl shadow-xl transition-transform group-hover:scale-110">O</div>
-        <div className="hidden sm:block">
-          <h1 className="text-base font-black text-white tracking-tighter leading-none uppercase">{String("OVD Bureau")}</h1>
-          <p className="text-[8px] text-accent font-bold tracking-[0.3em] mt-1 uppercase leading-none opacity-80">{String("Structural Engine")}</p>
-        </div>
+const Navigation = ({ view, setView }: { view: string, setView: (v: string) => void }) => (
+  <nav className="sticky top-0 z-[100] border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-3xl px-12 py-5 flex justify-between items-center">
+    <div className="flex items-center gap-6 cursor-pointer group" onClick={() => setView('engine')}>
+      <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-black font-black text-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-transform group-hover:scale-110">O</div>
+      <div className="flex flex-col">
+        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white leading-none">OVD BUREAU</span>
+        <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-emerald-500/60 leading-none mt-1">Independent Structural</span>
       </div>
-      <div className="hidden lg:flex items-center gap-10">
-        {items.map(item => (
-          <button 
-            key={String(item.id)} 
-            onClick={() => setView(String(item.id))} 
-            className={`text-[10px] font-black uppercase tracking-[0.4em] transition-apple ${view === item.id ? 'text-accent' : 'text-gray-500 hover:text-white'}`}
-          >
-            {String(item.label)}
-          </button>
-        ))}
-        <button onClick={() => setView('contact')} className="px-6 py-2.5 bg-white text-black rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-accent transition-apple active:scale-95">{String("Inquire")}</button>
-      </div>
-      <button className="lg:hidden p-2 text-white" onClick={() => setMobileMenu(!mobileMenu)} aria-label="Toggle Menu">{mobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}</button>
-      {mobileMenu && (
-        <div className="absolute top-full left-0 w-full bg-black/95 border-b border-white/10 p-8 flex flex-col gap-8 lg:hidden animate-in slide-in-from-top-4 backdrop-blur-3xl">
-          {items.map(item => (
-            <button key={String(item.id)} onClick={() => { setView(String(item.id)); setMobileMenu(false); }} className="text-left text-xs font-black uppercase tracking-widest text-gray-400 hover:text-white transition-colors">{String(item.label)}</button>
-          ))}
-          <button onClick={() => { setView('contact'); setMobileMenu(false); }} className="w-full py-4 bg-accent text-black rounded-xl font-black uppercase tracking-widest text-[11px]">{String("Consult Bureau")}</button>
-        </div>
-      )}
-    </nav>
-  );
-};
+    </div>
+    <div className="hidden md:flex items-center gap-10">
+      {['engine', 'archive', 'protocol'].map((item) => (
+        <button 
+          key={item}
+          onClick={() => setView(item === 'archive' ? 'blog' : item)}
+          className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all hover:text-emerald-400 ${view === (item === 'archive' ? 'blog' : item) ? 'text-emerald-500' : 'text-slate-500'}`}
+        >
+          {item}
+        </button>
+      ))}
+    </div>
+    <button onClick={() => setView('contact')} className="px-6 py-2 bg-white text-black rounded-lg text-[9px] font-black uppercase tracking-[0.3em] hover:bg-emerald-500 hover:text-white transition-all shadow-xl active:scale-95">Inquiry Terminal</button>
+  </nav>
+);
 
-const PreciseControl = ({ label, value, min, max, step = 1, unit = '', onChange }: { label: string, value: number, min: number, max: number, step?: number, unit?: string, onChange: (v: number) => void }) => {
+const LabControl = ({ label, value, min, max, step = 1, unit = '', onChange }: any) => {
   const id = useId();
   return (
-    <div className="mb-5 relative slider-container group">
-      <div className="flex justify-between items-center mb-1.5">
-        <label htmlFor={id} className="text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] group-hover:text-gray-400 transition-colors">{String(label)}</label>
-        <span className="text-[11px] text-accent font-mono bg-accent/5 px-2 py-0.5 rounded border border-accent/20">
-          {String(value)}{String(unit)}
+    <div className="group mb-6">
+      <div className="flex justify-between items-center mb-2">
+        <label htmlFor={id} className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] group-hover:text-emerald-500 transition-colors flex items-center gap-2">
+          <Hash size={10} className="text-emerald-500/40" /> {label}
+        </label>
+        <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10">
+          {value}{unit}
         </span>
       </div>
-      <div className="relative h-6 flex items-center">
-        <input id={id} type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(parseFloat(e.target.value))} />
-      </div>
+      <input id={id} className="bureau-range" type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(parseFloat(e.target.value))} />
     </div>
   );
 };
 
-const Dashboard = ({ settings, setSettings }: { settings: any, setSettings: any }) => {
-  const [aiInsight, setAiInsight] = useState('');
-  const [loadingAi, setLoadingAi] = useState(false);
+const EngineTerminal = ({ settings, setSettings }: any) => {
+  const [insight, setInsight] = useState('');
+  const [analyzing, setAnalyzing] = useState(false);
 
-  const analyzeMaterial = async () => {
-    setLoadingAi(true);
-    setAiInsight('');
+  const runStructuralAnalysis = async () => {
+    setAnalyzing(true);
     try {
-      // Re-initialize GoogleGenAI right before the call as per guidelines
+      // Create new GoogleGenAI instance right before making an API call for up-to-date configuration.
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
-        contents: `Perform a detailed structural engineering analysis for architectural glass: 
-        IOR: ${settings.ior}, 
-        Strength: ${settings.compressiveStrength} MPa, 
-        Thermal Coeff: ${settings.thermalCoeff}, 
-        Transmission: ${settings.transmission}%.`,
-        config: {
-          systemInstruction: "You are a senior structural facade engineer at OVD Bureau.",
+        contents: `Structural engineering report request: Analysis of glass substrate with IOR ${settings.ior}, Strength ${settings.compressiveStrength}MPa, expansion coeff ${settings.thermalCoeff}, transmission ${settings.transmission}%. Analyze safety code compliance (ASTM E1300/EN 16612).`,
+        config: { 
+          systemInstruction: "You are the Principal Structural Engineer at OVD Bureau. Output technical analysis blocks with high technical density. No fluff.",
+          thinkingConfig: { thinkingBudget: 4000 }
         }
       });
-      // Corrected: accessing response.text property (not a method)
-      setAiInsight(response.text || String("Analysis node offline."));
-    } catch (err) {
-      console.error(err);
-      setAiInsight(String("Critical failure in Bureau AI communication link."));
-    } finally {
-      setLoadingAi(false);
+      // Extracting generated text directly from response property.
+      setInsight(response.text || 'Bureau analysis returned no content.');
+    } catch (error) { 
+      console.error("AI_ANALYSIS_ERROR:", error);
+      setInsight('Bureau parity connection failed. Check system logs.'); 
     }
+    finally { setAnalyzing(false); }
   };
 
-  const shadow = calculateShadow(settings.lightAngle, 10);
-  const rgb = hexToRgb(settings.color);
-  const effectiveTrans = (settings.transmission / 100) * settings.transparency;
-  const effectiveSat = settings.saturation * (settings.ior / 1.52);
+  const hexToRgb = (hex: string) => {
+    const cleanHex = String(hex).replace('#', '');
+    const r = parseInt(cleanHex.slice(0, 2), 16) || 255;
+    const g = parseInt(cleanHex.slice(2, 4), 16) || 255;
+    const b = parseInt(cleanHex.slice(4, 6), 16) || 255;
+    return `${r}, ${g}, ${b}`;
+  };
 
-  const cssCode = `.ovd-glass {
-  background: rgba(${rgb}, ${effectiveTrans.toFixed(2)});
-  backdrop-filter: blur(${settings.blur}px) saturate(${effectiveSat.toFixed(0)}%);
-  border-radius: ${settings.borderRadius}px;
-  border: 1px solid rgba(255, 255, 255, ${settings.outlineOpacity});
-  box-shadow: ${shadow.x}px ${shadow.y}px ${settings.shadowBlur}px rgba(0,0,0,${settings.shadowOpacity});
-}`;
+  const rgb = hexToRgb(settings.color);
+  const trans = (settings.transmission / 100) * settings.transparency;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in duration-700">
-      <div className="lg:col-span-4 space-y-8">
-        <div className="glass-card p-6 rounded-2xl shadow-2xl space-y-8 card-glow transition-apple">
-          <div className="flex items-center justify-between border-b border-white/5 pb-6">
-            <div className="flex items-center gap-4">
-              <Settings className="w-5 h-5 text-accent" />
-              <h3 className="text-xs font-black text-white uppercase tracking-[0.5em]">{String("Material Matrix")}</h3>
-            </div>
-            <button onClick={analyzeMaterial} disabled={loadingAi} className="p-2 bg-accent/10 border border-accent/30 rounded-lg text-accent hover:bg-accent/20 transition-all active:scale-95">
-              {loadingAi ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+    <div className="grid grid-cols-12 gap-10 py-10">
+      <div className="col-span-12 lg:col-span-4 flex flex-col gap-8">
+        <div className="glass-panel p-8 rounded-[32px] border-white/10">
+          <div className="flex items-center justify-between mb-8 border-b border-white/5 pb-6">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.5em] flex items-center gap-3">
+              <Terminal size={14} className="text-emerald-500" /> Matrix Input
+            </h3>
+            <button onClick={runStructuralAnalysis} disabled={analyzing} className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-500 hover:bg-emerald-500/20 transition-all active:scale-90">
+              {analyzing ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
             </button>
           </div>
-          <div className="space-y-1">
-            <PreciseControl label="Analysis Blur" value={settings.blur} min={0} max={64} onChange={v => setSettings({...settings, blur: v})} unit="px" />
-            <PreciseControl label="Refractive Index" value={settings.ior} min={1.0} max={2.5} step={0.01} onChange={v => setSettings({...settings, ior: v})} />
-            <PreciseControl label="Compressive Capacity" value={settings.compressiveStrength} min={20} max={500} onChange={v => setSettings({...settings, compressiveStrength: v})} unit=" MPa" />
-            <PreciseControl label="Thermal Expansion" value={settings.thermalCoeff} min={0} max={20} step={0.1} onChange={v => setSettings({...settings, thermalCoeff: v})} unit=" ×10⁻⁶" />
-            <PreciseControl label="Transmission Ratio" value={settings.transmission} min={0} max={100} onChange={v => setSettings({...settings, transmission: v})} unit="%" />
-          </div>
+          <LabControl label="Refraction Index" value={settings.ior} min={1.0} max={2.6} step={0.01} onChange={(v:any) => setSettings({...settings, ior: v})} />
+          <LabControl label="Compressive MPa" value={settings.compressiveStrength} min={20} max={600} onChange={(v:any) => setSettings({...settings, compressiveStrength: v})} />
+          <LabControl label="Expansion Alpha" value={settings.thermalCoeff} min={0} max={20} step={0.1} onChange={(v:any) => setSettings({...settings, thermalCoeff: v})} />
+          <LabControl label="Optical Diffusion" value={settings.blur} min={0} max={80} onChange={(v:any) => setSettings({...settings, blur: v})} unit="px" />
+          <LabControl label="VLT Coefficient" value={settings.transmission} min={0} max={100} onChange={(v:any) => setSettings({...settings, transmission: v})} unit="%" />
         </div>
-        {aiInsight && (
-          <div className="glass-card p-6 rounded-2xl border-accent/20 shadow-2xl animate-in slide-in-from-left-4">
-            <h4 className="text-[10px] font-black text-accent uppercase tracking-[0.4em] mb-4 flex items-center gap-2">
-              <Sparkles className="w-4 h-4" /> {String("Bureau Intelligence")}
-            </h4>
-            <div className="text-xs text-gray-400 leading-relaxed font-light prose-invert prose-p:mb-3">
-              {aiInsight.split('\n').map((line, i) => <p key={i}>{String(line)}</p>)}
+
+        {insight && (
+          <div className="glass-panel p-8 rounded-[32px] bg-emerald-500/[0.02] border-emerald-500/20 animate-in slide-in-from-bottom-4">
+            <div className="flex items-center gap-3 mb-6">
+              <Shield size={14} className="text-emerald-500" />
+              <h4 className="text-[9px] font-black uppercase tracking-[0.4em]">Bureau Intelligence</h4>
+            </div>
+            <div className="text-[11px] text-slate-400 font-mono leading-relaxed space-y-4">
+              {insight.split('\n').map((line, i) => <p key={i}>{line}</p>)}
             </div>
           </div>
         )}
       </div>
 
-      <div className="lg:col-span-8 space-y-8">
-        <div className="aspect-[16/9] bg-[#020202] border border-white/10 rounded-[32px] relative flex items-center justify-center shadow-[inset_0_0_80px_rgba(0,0,0,1)] overflow-hidden card-glow">
-          <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(#ffffff 1.5px, transparent 1.5px)', backgroundSize: '60px 60px' }} />
-          <div style={{
-            backgroundColor: `rgba(${rgb}, ${effectiveTrans})`,
-            backdropFilter: `blur(${settings.blur}px) saturate(${effectiveSat}%)`,
-            WebkitBackdropFilter: `blur(${settings.blur}px) saturate(${effectiveSat}%)`,
-            borderRadius: `${settings.borderRadius}px`,
-            border: `1px solid rgba(255,255,255,${settings.outlineOpacity})`,
-            boxShadow: `${shadow.x}px ${shadow.y}px ${settings.shadowBlur}px rgba(0,0,0,${settings.shadowOpacity})`,
-            transform: `perspective(1200px) rotateY(${(settings.ior - 1.5) * 8}deg)`,
-          }} className="w-[80%] h-[60%] flex flex-col p-8 transition-apple relative group">
-            <div className="flex justify-between items-start mb-auto relative z-10">
-              <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shadow-2xl backdrop-blur-md"><Layers className="text-white w-7 h-7" /></div>
-              <div className="text-right">
-                <p className="text-[9px] font-black uppercase tracking-[0.5em] text-white/40 mb-3">{String("Bureau_Analysis")}</p>
-                <p className="text-[12px] font-black text-white/80 font-mono tracking-tighter uppercase leading-none">{String("ID:")} {String(settings.ior).replace('.','')}_SAFE</p>
-              </div>
+      <div className="col-span-12 lg:col-span-8 flex flex-col gap-8">
+        <div className="aspect-video glass-panel rounded-[40px] flex items-center justify-center relative overflow-hidden bg-[#050505] border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)]">
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+          <div 
+            style={{
+              width: '80%', height: '70%',
+              background: `rgba(${rgb}, ${trans})`,
+              backdropFilter: `blur(${settings.blur}px) saturate(${settings.saturation}%)`,
+              WebkitBackdropFilter: `blur(${settings.blur}px) saturate(${settings.saturation}%)`,
+              borderRadius: `${settings.borderRadius}px`,
+              border: `1px solid rgba(255,255,255,${settings.outlineOpacity})`,
+              boxShadow: `0 40px 100px -20px rgba(0,0,0,0.6)`,
+              transform: `perspective(2000px) rotateY(${(settings.ior - 1.5) * 15}deg)`
+            }} 
+            className="p-12 flex flex-col transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
+          >
+            <div className="flex justify-between items-start mb-auto">
+              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/50"><Layout size={24} /></div>
+              <span className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-[8px] font-black text-emerald-500 tracking-[0.2em] uppercase">Verified_SAFE</span>
             </div>
-            <div className="relative z-10">
-              <h4 className="text-2xl font-black text-white mb-6 tracking-tighter leading-none">{String("Structural Simulation")}</h4>
-              <p className="text-white/40 text-base leading-relaxed font-light">
-                {String("Authoritative mapping:")} <span className="text-white/90 font-bold">{String(settings.compressiveStrength)}MPa</span>.
-              </p>
+            <h4 className="text-3xl font-black text-white tracking-tighter mb-2 uppercase leading-none">Simulation Core</h4>
+            <div className="flex gap-8 text-[9px] font-mono text-white/30 uppercase tracking-[0.2em]">
+              <div className="flex items-center gap-2"><Thermometer size={12} /> Thermal: OK</div>
+              <div className="flex items-center gap-2"><Wind size={12} /> Pressure: Stable</div>
             </div>
           </div>
         </div>
 
-        <div className="glass-card p-8 rounded-3xl shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 left-0 w-1.5 h-full bg-accent opacity-50 shadow-[0_0_30px_rgba(16,185,129,0.4)]" />
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xs font-black text-white uppercase tracking-[0.6em] flex items-center gap-4">
-              <Terminal className="w-6 h-6 text-accent" /> {String("Asset Syntax")}
-            </h3>
-            <button onClick={() => navigator.clipboard.writeText(cssCode)} className="px-4 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all flex items-center gap-3 shadow-xl">
-              <Copy className="w-4 h-4" /> {String("Copy Protocol")}
-            </button>
-          </div>
-          <div className="bg-black/95 p-6 rounded-2xl text-xs font-mono leading-relaxed border border-white/5 overflow-x-auto whitespace-pre selection:bg-accent/20">
-            <code className="text-emerald-400">{String(cssCode)}</code>
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {PRESETS.map((p, idx) => (
-            <button key={String(idx)} onClick={() => setSettings(p.settings)} className="glass-card group p-6 rounded-[24px] text-left hover:scale-[1.02] transition-all active:scale-95 border-transparent hover:border-accent/40">
-              <div className="flex justify-between items-center mb-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.5em] text-gray-600 group-hover:text-accent transition-colors">{String(p.category)}</p>
-                <Database className="w-5 h-5 text-gray-700" />
-              </div>
-              <h4 className="text-xl font-black text-white group-hover:text-accent transition-colors leading-none">{String(p.name)}</h4>
+            <button key={idx} onClick={() => setSettings(p.settings)} className="glass-panel p-5 rounded-2xl group hover:border-emerald-500/40 transition-all text-left border-white/10 active:scale-95">
+              <span className="text-[7px] font-black text-slate-600 uppercase tracking-widest mb-1 block group-hover:text-emerald-500">{p.category}</span>
+              <h5 className="text-[10px] font-black text-white uppercase group-hover:text-emerald-400">{p.name}</h5>
             </button>
           ))}
         </div>
@@ -366,170 +261,200 @@ const Dashboard = ({ settings, setSettings }: { settings: any, setSettings: any 
   );
 };
 
-const HomepagePillar = () => (
-  <article className="py-24 bg-page border-t border-white/5 relative overflow-hidden">
-    <div className="prose prose-invert prose-emerald lg:prose-xl max-w-4xl mx-auto px-4">
-      <h1 className="text-4xl lg:text-5xl mb-12 text-white">{String("Professional Structural Glass Engineering Bureau")}</h1>
-      <p className="lead text-xl text-accent font-bold mb-16 leading-relaxed">{String("The definitive architectural framework for material safety, mechanical limits, and global compliance optimization.")}</p>
-      <p>{String("Architectural glass is a technically complex material in modern construction. While perceived as fragile, advanced glass assemblies serve as critical structural members in the global skyscraper race. This authority report, curated by the OVD Independent Engineering Bureau, explores the intersection of material science and building code compliance.")}</p>
-      <section className="bg-panel p-12 rounded-[40px] border border-white/5 my-24 shadow-2xl">
-        <h2 className="mt-0 flex items-center gap-6 text-white text-3xl leading-tight uppercase"><Scale className="text-accent w-12 h-12" /> {String("1. Physics of Structural Glass")}</h2>
-        <p>{String("At the molecular level, architectural glass is an amorphous solid—a material that behaves like a solid but lacks the ordered crystalline structure found in metals. Structural engineering for glass is therefore an exercise in probability management using models like the Weibull distribution.")}</p>
-      </section>
-      <h2 className="text-3xl text-white mb-10 uppercase tracking-tighter">{String("2. Global Regulatory Landscape")}</h2>
-      <p>{String("Engineering glass is governed by mandates to prevent life-safety risks. Standards such as ASTM E1300 in North America and EN 12600 in Europe establish load resistance based on area, thickness, and aspect ratio.")}</p>
+const ArticleHub = ({ setView, setActivePost }: any) => (
+  <div className="py-20 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+    <div className="max-w-3xl mb-16">
+      <h2 className="text-5xl font-black text-white tracking-tighter uppercase mb-6 leading-none">Technical Archive</h2>
+      <p className="text-base text-slate-500 font-light leading-relaxed">Centralized knowledge repository for structural glass mechanics, forensics, and compliance protocols.</p>
     </div>
-  </article>
-);
-
-const Footer = ({ setView }: { setView: (v: string) => void }) => (
-  <footer className="bg-black border-t border-white/10 pt-24 pb-16 px-6 lg:px-12">
-    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
-      <div className="col-span-1 md:col-span-2">
-        <div className="flex items-center gap-6 mb-10 group cursor-pointer" onClick={() => setView('engine')}>
-          <div className="w-12 h-12 rounded-2xl bg-accent flex items-center justify-center text-black font-black text-2xl shadow-2xl transition-all group-hover:scale-110">O</div>
-          <h2 className="text-2xl font-black text-white tracking-tighter uppercase leading-none">{String("OVD Bureau")}</h2>
-        </div>
-        <p className="text-gray-500 text-base leading-relaxed max-w-md font-light">{String("Global authority in structural glass simulation and high-density technical facade documentation bureau services.")}</p>
-      </div>
-      <div>
-        <h4 className="text-accent font-black text-[10px] uppercase tracking-[0.5em] mb-10 opacity-60">{String("Operational Hub")}</h4>
-        <ul className="text-[10px] text-gray-600 space-y-6 font-black uppercase tracking-[0.3em]">
-          <li onClick={() => setView('engine')} className="hover:text-white cursor-pointer transition-colors flex items-center gap-4">{String("Engine Terminal")} <ArrowUpRight className="w-4 h-4" /></li>
-          <li onClick={() => setView('blog')} className="hover:text-white cursor-pointer transition-colors flex items-center gap-4">{String("Knowledge hub")} <ArrowUpRight className="w-4 h-4" /></li>
-        </ul>
-      </div>
-      <div>
-        <h4 className="text-accent font-black text-[10px] uppercase tracking-[0.5em] mb-10 opacity-60">{String("Governance")}</h4>
-        <ul className="text-[10px] text-gray-600 space-y-6 font-black uppercase tracking-[0.3em]">
-          <li onClick={() => setView('privacy')} className="hover:text-white cursor-pointer transition-colors">{String("Data Privacy")}</li>
-          <li onClick={() => setView('terms')} className="hover:text-white cursor-pointer transition-colors">{String("Bureau Terms")}</li>
-        </ul>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {BLOG_POSTS.map(post => (
+        <article key={post.id} onClick={() => { setActivePost(post.id); setView('blog-detail'); }} className="glass-panel p-10 rounded-[32px] cursor-pointer group hover:border-emerald-500/40 border-white/10 h-full flex flex-col">
+          <span className="text-[9px] font-black text-emerald-500 uppercase tracking-[0.4em] mb-8">{post.category}</span>
+          <h3 className="text-xl font-black text-white mb-6 group-hover:text-emerald-500 transition-colors uppercase leading-tight tracking-tighter">{post.title}</h3>
+          <p className="text-xs font-light text-slate-500 mb-10 line-clamp-4 leading-relaxed">{post.summary}</p>
+          <div className="mt-auto pt-6 border-t border-white/5 flex justify-between items-center text-[9px] font-mono opacity-40 uppercase">
+            <span>{post.date}</span>
+            <ArrowUpRight size={16} />
+          </div>
+        </article>
+      ))}
     </div>
-    <div className="max-w-7xl mx-auto border-t border-white/10 pt-16">
-      <p className="text-[9px] font-mono text-gray-800 tracking-[0.6em] uppercase">{String("© 2026 OVD Bureau of Structural Engineering. V2.1.0-STABLE")}</p>
-    </div>
-  </footer>
+  </div>
 );
 
 const App = () => {
   const [view, setView] = useState('engine');
-  const [activePost, setActivePost] = useState<string | null>(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [activePostId, setActivePostId] = useState<string | null>(null);
 
-  const handleNav = (v: string) => {
-    setView(String(v));
-    setActivePost(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handlePostClick = (id: string) => {
-    setActivePost(String(id));
-    setView('blog-detail');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const activePost = BLOG_POSTS.find(p => p.id === activePostId);
 
   return (
-    <div className="max-w-[1280px] mx-auto text-[14px] scale-[0.9] origin-top shadow-2xl bg-black min-h-screen">
+    <div className="bg-[#050505] min-h-screen text-slate-400 overflow-x-hidden font-sans">
       <ErrorBoundary>
-        <div className="flex flex-col bg-black selection:bg-accent/40 selection:text-white overflow-x-hidden">
-          <Navigation view={view} setView={handleNav} />
-          <main className="flex-1 px-4 lg:px-8">
+        <div style={{ transform: 'scale(0.9)', transformOrigin: 'top center' }} className="max-w-[1440px] mx-auto text-[14px] transition-all duration-1000 min-h-screen">
+          <Navigation view={view} setView={setView} />
+          
+          <main className="px-12 pb-24">
             {view === 'engine' && (
-              <div className="py-20">
-                <header className="mb-20 relative z-10 text-center lg:text-left">
-                  <div className="flex items-center justify-center lg:justify-start gap-8 text-accent mb-10 font-black uppercase tracking-[0.7em] text-[10px]">
-                    <Activity className="w-10 h-10 animate-pulse" />
-                    <span>{String("Bureau Analysis Division")}</span>
+              <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
+                <header className="pt-24 pb-12 flex flex-col md:flex-row items-end justify-between gap-8">
+                  <div className="max-w-4xl">
+                    <div className="flex items-center gap-4 text-emerald-500 mb-6 font-black text-[9px] uppercase tracking-[0.6em]">
+                      <Fingerprint size={16} className="animate-pulse" /> Material Intelligence Terminal
+                    </div>
+                    <h2 className="text-5xl lg:text-7xl font-black text-white tracking-tighter uppercase leading-[0.85] text-glow">
+                      Structural <br/> Analysis Bureau
+                    </h2>
                   </div>
-                  <h1 className="text-3xl lg:text-5xl font-black text-white tracking-tighter leading-[0.75] mb-12 text-glow uppercase">{String("Structural Analysis Bureau")}</h1>
-                  <p className="text-xl text-gray-600 font-light max-w-4xl leading-tight mb-16 mx-auto lg:mx-0 italic">{String("Authoritative material physics and structural load resistance simulation for high-complexity architectural bureau reports.")}</p>
+                  <div className="text-right flex flex-col items-end gap-4 max-w-xs">
+                    <BarChart3 size={32} className="text-emerald-500/20" />
+                    <p className="text-xs text-slate-600 uppercase tracking-widest leading-loose">Digital framework for material physics simulation v2.4.0</p>
+                  </div>
                 </header>
-                <Dashboard settings={settings} setSettings={setSettings} />
-                <HomepagePillar />
+                
+                <EngineTerminal settings={settings} setSettings={setSettings} />
+
+                <section className="py-24 border-t border-white/5 grid grid-cols-12 gap-12">
+                   <div className="col-span-12 lg:col-span-7">
+                      <h3 className="text-3xl font-black text-white uppercase tracking-tighter mb-8">Bureau Technical Protocols</h3>
+                      <div className="space-y-6 text-sm text-slate-500 font-light leading-relaxed">
+                        <p>In high-performance facade engineering, the designation of glass as a structural medium necessitates precise deterministic modelling. The OVD Bureau Engine operates on ASTM E1300 and EN 16612 baseline protocols, integrating local climatic wind-load models with geometric stiffness variables.</p>
+                        <p>Every analysis conducted in this terminal accounts for Young's Modulus and Poisson's Ratio as fixed material constants while allowing modulation of Compressive Pre-Stress Yield. This is vital for determining the "Critical Crack Length" across laminated composite surfaces.</p>
+                      </div>
+                   </div>
+                   <div className="col-span-12 lg:col-span-5">
+                      <div className="glass-panel p-10 rounded-[40px] border-white/10 space-y-8">
+                         {[
+                           { icon: Microscope, title: "Forensic Parity", desc: "NiS expansion risk verification." },
+                           { icon: Compass, title: "Snell Mapping", desc: "Refractive index calculations for IGU." },
+                           { icon: Box, title: "Dead Load Calc", desc: "Precise mass-density anchor sizing." }
+                         ].map((item, idx) => (
+                           <div key={idx} className="flex gap-6 group">
+                              <item.icon className="w-8 h-8 text-emerald-500/20 group-hover:text-emerald-500 transition-colors shrink-0" />
+                              <div>
+                                <h4 className="text-white font-black uppercase text-[10px] mb-1 tracking-widest leading-none">{item.title}</h4>
+                                <p className="text-slate-500 text-[10px] font-light leading-relaxed">{item.desc}</p>
+                              </div>
+                           </div>
+                         ))}
+                      </div>
+                   </div>
+                </section>
               </div>
             )}
-            {view === 'blog' && (
-               <div className="py-20">
-                 <h2 className="text-5xl font-black text-white tracking-tighter mb-12 uppercase">{String("Engineering Archive")}</h2>
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                   {BLOG_POSTS.map(post => (
-                     <article key={String(post.id)} className="glass-card group p-10 rounded-[40px] flex flex-col hover:border-accent/50 transition-all cursor-pointer" onClick={() => handlePostClick(post.id)}>
-                       <span className="text-accent text-[10px] font-black uppercase tracking-widest mb-6">{String(post.category)}</span>
-                       <h3 className="text-xl font-black text-white mb-6 leading-tight group-hover:text-accent transition-colors">{String(post.title)}</h3>
-                       <p className="text-gray-500 text-sm font-light mb-10 line-clamp-3">{String(post.summary)}</p>
-                       <div className="mt-auto pt-6 border-t border-white/5 flex justify-between items-center text-[10px] font-mono text-gray-700">
-                         <span>{String(post.date)}</span>
-                         <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                       </div>
-                     </article>
-                   ))}
-                 </div>
-               </div>
-            )}
+
+            {view === 'blog' && <ArticleHub setView={setView} setActivePost={setActivePostId} />}
+
             {view === 'blog-detail' && activePost && (
-               <div className="py-20 max-w-4xl mx-auto">
-                 <button onClick={() => handleNav('blog')} className="text-accent mb-16 flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.5em] group">
-                   <div className="rotate-180 group-hover:-translate-x-2 transition-transform"><ChevronRight className="w-6 h-6" /></div> {String("Back to Archive")}
-                 </button>
-                 <article className="prose prose-invert prose-emerald max-w-none">
-                    <h1 className="text-4xl font-black uppercase tracking-tighter mb-12">{String(BLOG_POSTS.find(p => p.id === activePost)?.title)}</h1>
-                    <div className="whitespace-pre-wrap text-gray-400 font-light text-lg leading-relaxed">
-                      {String(BLOG_POSTS.find(p => p.id === activePost)?.content)}
-                    </div>
-                 </article>
-               </div>
+              <article className="py-32 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
+                <button onClick={() => setView('blog')} className="text-emerald-500 text-[9px] font-black uppercase tracking-[0.5em] mb-16 flex items-center gap-4 hover:text-white transition-all group">
+                  <ChevronRight size={18} className="rotate-180 group-hover:-translate-x-2 transition-transform" /> Back to Archive
+                </button>
+                <div className="flex items-center gap-4 text-[9px] font-black text-emerald-500/40 uppercase tracking-[0.4em] mb-8">
+                  <span>{activePost.category}</span>
+                  <Hash size={12} />
+                  <span>Protocol {activePost.id.toUpperCase()}</span>
+                </div>
+                <h1 className="text-5xl font-black text-white uppercase tracking-tighter mb-16 leading-tight text-glow">{activePost.title}</h1>
+                <div className="prose prose-invert max-w-none text-slate-400 font-light leading-relaxed whitespace-pre-wrap text-base prose-emerald">
+                  {activePost.content}
+                </div>
+              </article>
             )}
-            {view === 'docs' && (
-              <div className="py-20 max-w-5xl mx-auto">
-                <h2 className="text-5xl font-black text-white tracking-tighter mb-16 uppercase">{String("Bureau Framework")}</h2>
-                <div className="grid gap-12">
-                   {[
-                     { title: "Analysis Logic", desc: "The OVD engine utilize real-time structural refraction." },
-                     { title: "Bureau Parameters", desc: "Indices of refraction, compression limits, and thermal alpha constants." }
-                   ].map((doc, idx) => (
-                     <div key={idx} className="glass-card p-12 rounded-[48px] border-white/10 hover:border-accent/40 transition-all group">
-                       <h3 className="text-white font-black text-2xl mb-6 uppercase tracking-tighter group-hover:text-accent transition-colors">{String(doc.title)}</h3>
-                       <p className="text-gray-500 text-lg font-light leading-relaxed">{String(doc.desc)}</p>
-                     </div>
-                   ))}
+
+            {view === 'protocol' && (
+              <div className="py-32 max-w-5xl mx-auto animate-in fade-in duration-1000">
+                <h2 className="text-6xl font-black text-white uppercase tracking-tighter mb-20 text-glow">Framework Protocol</h2>
+                <div className="grid gap-10">
+                  {[
+                    { t: "ASTM E1300 Compliance", d: "Standard Practice for Determining Load Resistance of Glass in Buildings. Baseline for OVD structural math." },
+                    { t: "Weibull Probability Modelling", d: "Stochastic strength assessment for amorphous silicate facades subject to environmental loading." },
+                    { t: "Thermal Stress Management", d: "Solar absorption analysis and edge resistance limits for low-e coated monolithic assemblies." }
+                  ].map((doc, idx) => (
+                    <div key={idx} className="glass-panel p-12 rounded-[40px] border-white/10 group">
+                      <h3 className="text-3xl font-black text-white uppercase tracking-tighter group-hover:text-emerald-400 transition-colors mb-6">{doc.t}</h3>
+                      <p className="text-lg font-light text-slate-500 leading-relaxed max-w-3xl">{doc.d}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
-            {view === 'privacy' && (
-              <div className="py-20 max-w-3xl mx-auto">
-                 <h2 className="text-4xl font-black text-white tracking-tighter mb-12 uppercase">{String("Privacy Bureau")}</h2>
-                 <p className="text-gray-500 text-lg leading-relaxed font-light">{String("Zero-persistence architecture policy.")}</p>
-              </div>
-            )}
-            {view === 'terms' && (
-              <div className="py-20 max-w-3xl mx-auto">
-                 <h2 className="text-4xl font-black text-white tracking-tighter mb-12 uppercase">{String("Bureau Terms")}</h2>
-                 <p className="text-gray-500 text-lg leading-relaxed font-light">{String("Conceptual schematic tool disclaimer.")}</p>
-              </div>
-            )}
+
             {view === 'contact' && (
-              <section className="py-32 text-center animate-in zoom-in-95 duration-1000">
-                <h2 className="text-5xl lg:text-7xl font-black text-white tracking-tighter mb-10 uppercase leading-[0.7]">{String("Inquiry")}</h2>
-                <div className="glass-card p-20 rounded-[80px] shadow-3xl relative overflow-hidden group max-w-3xl mx-auto border border-white/10 hover:border-accent/40 transition-all">
-                  <div className="w-16 h-16 rounded-[2rem] bg-accent/10 flex items-center justify-center text-accent mx-auto mb-12 border border-accent/20 transition-all"><Mail className="w-8 h-8" /></div>
-                  <p className="text-3xl lg:text-4xl font-black text-white mb-6 tracking-tighter transition-all group-hover:text-accent">{String("magic.reviewsite@gmail.com")}</p>
-                  <p className="text-gray-700 text-xl font-light mb-12 uppercase tracking-[0.5em]">{String("Transmission Bureau Division")}</p>
+              <section className="py-48 text-center flex flex-col items-center animate-in zoom-in-95 duration-700">
+                <h2 className="text-8xl font-black text-white uppercase tracking-tighter mb-12 text-glow">Inquiry</h2>
+                <div className="glass-panel p-20 rounded-[80px] w-full max-w-2xl border-emerald-500/20 shadow-[0_0_80px_rgba(16,185,129,0.05)]">
+                  <Mail size={48} className="text-emerald-500/20 mx-auto mb-12" />
+                  <p className="text-3xl font-black text-white mb-6 tracking-tighter uppercase">magic.reviewsite@gmail.com</p>
+                  <div className="flex justify-center gap-10 text-[9px] font-black uppercase tracking-[0.8em] text-slate-800">
+                    <span>London</span>
+                    <span>Zurich</span>
+                    <span>Tokyo</span>
+                  </div>
                 </div>
               </section>
             )}
           </main>
-          <Footer setView={handleNav} />
+
+          <footer className="py-24 px-12 border-t border-white/5 bg-[#050505]/40 mt-12">
+            <div className="grid grid-cols-12 gap-16">
+              <div className="col-span-12 md:col-span-5">
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="w-10 h-10 bg-emerald-500 flex items-center justify-center rounded-xl text-black font-black text-xl">O</div>
+                  <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none">OVD Bureau</h3>
+                </div>
+                <p className="text-xs text-slate-600 font-light leading-relaxed max-w-sm mb-10">Global authority in structural glass simulation, technical facade documentation, and forensic material investigation bureau services since 2018.</p>
+                <div className="flex gap-6 text-emerald-500/20">
+                  <Database size={20} />
+                  <Shield size={20} />
+                  <Globe size={20} />
+                </div>
+              </div>
+              <div className="col-span-12 md:col-span-7 grid grid-cols-3 gap-10">
+                <div>
+                  <h4 className="text-[9px] font-black uppercase text-emerald-500 tracking-[0.4em] mb-10 opacity-40">Hub</h4>
+                  <ul className="text-xs space-y-5 font-black uppercase tracking-[0.3em] text-slate-700">
+                    <li className="cursor-pointer hover:text-white" onClick={() => setView('engine')}>Engine</li>
+                    <li className="cursor-pointer hover:text-white" onClick={() => setView('blog')}>Archive</li>
+                    <li className="cursor-pointer hover:text-white" onClick={() => setView('protocol')}>Protocol</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-[9px] font-black uppercase text-emerald-500 tracking-[0.4em] mb-10 opacity-40">Bureau</h4>
+                  <ul className="text-xs space-y-5 font-black uppercase tracking-[0.3em] text-slate-700">
+                    <li>Logistics</li>
+                    <li>Compliance</li>
+                    <li>Forensics</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-[9px] font-black uppercase text-emerald-500 tracking-[0.4em] mb-10 opacity-40">Legal</h4>
+                  <ul className="text-xs space-y-5 font-black uppercase tracking-[0.3em] text-slate-700">
+                    <li className="cursor-pointer hover:text-white">Privacy</li>
+                    <li className="cursor-pointer hover:text-white">Terms</li>
+                    <li className="cursor-pointer hover:text-white">Safety</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="mt-24 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-[8px] font-mono text-slate-800 tracking-[0.6em] uppercase">
+              <p>© 2026 OVD Independent Bureau. Analysis Engine Core v2.4.0-Stable_Production</p>
+              <div className="flex gap-6 items-center">
+                <PenTool size={14} className="opacity-20" />
+                <span>Swiss Design Standards</span>
+              </div>
+            </div>
+          </footer>
         </div>
       </ErrorBoundary>
     </div>
   );
 };
 
-// --- BOOTSTRAP ---
 const rootEl = document.getElementById('root');
 if (rootEl) {
   const root = createRoot(rootEl);
-  root.render(<React.StrictMode><App /></React.StrictMode>);
+  root.render(<App />);
 }
