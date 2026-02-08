@@ -2,13 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --emerald: #10b981;
-  --carbon: #050505;
-  --glass: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
-}
-
 @layer base {
   html {
     @apply selection:bg-[#10b981]/30 selection:text-emerald-100;
@@ -30,11 +23,11 @@
 
 @layer components {
   .saas-glass {
-    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-2xl transition-all duration-300;
+    @apply bg-white/[0.02] backdrop-blur-3xl border border-white/10 shadow-2xl transition-all duration-300;
   }
 
   .saas-glass:hover {
-    @apply border-white/20 bg-white/[0.05];
+    @apply border-white/20 bg-white/[0.04];
   }
 
   .text-glow-emerald {
@@ -46,43 +39,30 @@
            hover:bg-white transition-all transform active:scale-95 shadow-lg shadow-[#10b981]/20;
   }
 
-  .bureau-input-range {
+  .bureau-range {
     -webkit-appearance: none;
     @apply bg-transparent w-full cursor-pointer h-6;
   }
 
-  .bureau-input-range::-webkit-slider-runnable-track {
-    @apply w-full h-[2px] bg-white/10 rounded-full transition-colors;
+  .bureau-range::-webkit-slider-runnable-track {
+    @apply w-full h-[1px] bg-white/10 rounded-full transition-colors;
   }
 
-  .bureau-input-range:hover::-webkit-slider-runnable-track {
+  .bureau-range:hover::-webkit-slider-runnable-track {
     @apply bg-[#10b981]/30;
   }
 
-  .bureau-input-range::-webkit-slider-thumb {
+  .bureau-range::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply h-4 w-4 rounded-full bg-[#10b981] border-2 border-black -mt-[7px] transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.5)];
-  }
-
-  .bureau-input-range:active::-webkit-slider-thumb {
-    @apply scale-125 bg-white shadow-[0_0_20px_#10b981];
+    @apply h-3.5 w-3.5 rounded-full bg-[#10b981] border border-black -mt-[6px] transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.5)];
   }
 
   .nav-link {
-    @apply text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500 hover:text-[#10b981] transition-all relative;
+    @apply text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500 hover:text-[#10b981] transition-all relative py-2;
   }
 
   .nav-link.active {
     @apply text-[#10b981];
-  }
-
-  .nav-link.active::after {
-    content: '';
-    @apply absolute -bottom-1 left-0 w-full h-[1px] bg-[#10b981];
-  }
-
-  .bento-grid {
-    @apply grid grid-cols-12 gap-6;
   }
 
   .code-block {
@@ -90,23 +70,14 @@
   }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { @apply bg-[#050505]; }
+::-webkit-scrollbar-thumb { @apply bg-[#10b981]/20 rounded-full hover:bg-[#10b981]/40 transition-all; }
 
-::-webkit-scrollbar-track {
-  @apply bg-[#050505];
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-[#10b981]/20 rounded-full hover:bg-[#10b981]/40 transition-all;
-}
-
-/* Animations */
 @keyframes float {
   0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
   100% { transform: translateY(0px); }
 }
 
