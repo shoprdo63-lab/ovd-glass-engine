@@ -2,79 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --emerald: #10b981;
+  --carbon: #050505;
+  --glass: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
 @layer base {
   html {
     @apply selection:bg-[#10b981]/30 selection:text-emerald-100;
-    font-size: 14px;
-    background: #050505;
+    scroll-behavior: smooth;
+    font-family: 'Inter', system-ui, sans-serif;
   }
   
   body {
-    @apply bg-[#050505] text-slate-400 antialiased font-sans overflow-x-hidden;
+    @apply bg-[#050505] text-slate-400 antialiased overflow-x-hidden;
     background-image: 
-      radial-gradient(circle at 2px 2px, rgba(255,255,255,0.02) 1px, transparent 0);
-    background-size: 40px 40px;
+      radial-gradient(circle at 2px 2px, rgba(16, 185, 129, 0.03) 1px, transparent 0);
+    background-size: 32px 32px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-white font-black tracking-tighter uppercase;
   }
 }
 
 @layer components {
-  .glass-panel {
-    @apply bg-white/[0.02] backdrop-blur-3xl border border-white/10 shadow-2xl transition-all duration-500;
+  .saas-glass {
+    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-2xl transition-all duration-300;
   }
 
-  .text-glow {
-    text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  .saas-glass:hover {
+    @apply border-white/20 bg-white/[0.05];
   }
 
-  .bureau-range {
+  .text-glow-emerald {
+    text-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+  }
+
+  .bureau-button-primary {
+    @apply px-6 py-2.5 bg-[#10b981] text-black font-black uppercase tracking-widest rounded-lg 
+           hover:bg-white transition-all transform active:scale-95 shadow-lg shadow-[#10b981]/20;
+  }
+
+  .bureau-input-range {
     -webkit-appearance: none;
-    @apply bg-transparent w-full cursor-pointer m-0 p-0;
+    @apply bg-transparent w-full cursor-pointer h-6;
   }
 
-  .bureau-range::-webkit-slider-runnable-track {
-    @apply w-full h-[1px] bg-white/10 rounded-full transition-colors;
+  .bureau-input-range::-webkit-slider-runnable-track {
+    @apply w-full h-[2px] bg-white/10 rounded-full transition-colors;
   }
 
-  .bureau-range:hover::-webkit-slider-runnable-track {
+  .bureau-input-range:hover::-webkit-slider-runnable-track {
     @apply bg-[#10b981]/30;
   }
 
-  .bureau-range::-webkit-slider-thumb {
+  .bureau-input-range::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply h-3 w-3 rounded-full bg-[#10b981] border border-black -mt-[6px] transition-all duration-300 shadow-[0_0_10px_rgba(16,185,129,0.5)];
+    @apply h-4 w-4 rounded-full bg-[#10b981] border-2 border-black -mt-[7px] transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.5)];
   }
 
-  .bureau-range:active::-webkit-slider-thumb {
-    @apply scale-125 bg-white;
+  .bureau-input-range:active::-webkit-slider-thumb {
+    @apply scale-125 bg-white shadow-[0_0_20px_#10b981];
   }
 
-  .active-indicator {
-    @apply w-1.5 h-1.5 rounded-full bg-[#10b981] shadow-[0_0_8px_#10b981];
+  .nav-link {
+    @apply text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500 hover:text-[#10b981] transition-all relative;
+  }
+
+  .nav-link.active {
+    @apply text-[#10b981];
+  }
+
+  .nav-link.active::after {
+    content: '';
+    @apply absolute -bottom-1 left-0 w-full h-[1px] bg-[#10b981];
+  }
+
+  .bento-grid {
+    @apply grid grid-cols-12 gap-6;
+  }
+
+  .code-block {
+    @apply font-mono text-[12px] bg-[#030303] border border-white/5 rounded-xl p-6 text-slate-300 leading-relaxed overflow-x-auto;
   }
 }
 
-.prose h1, .prose h2, .prose h3 {
-  @apply text-white font-black uppercase tracking-tighter mt-12 mb-6 leading-none;
-}
-
-.prose p {
-  @apply text-slate-500 mb-8 font-light;
-}
-
-/* Scrollbar Styling */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #050505;
+  @apply bg-[#050505];
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #10b98122;
-  border-radius: 10px;
+  @apply bg-[#10b981]/20 rounded-full hover:bg-[#10b981]/40 transition-all;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #10b98144;
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
