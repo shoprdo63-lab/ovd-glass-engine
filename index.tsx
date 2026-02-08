@@ -1,4 +1,3 @@
-
 import './globals.css';
 import React, { Component, useState, useId, ErrorInfo, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -30,11 +29,13 @@ import { GoogleGenAI } from "@google/genai";
 interface ErrorBoundaryProps { children?: ReactNode; }
 interface ErrorBoundaryState { hasError: boolean; }
 
-// Fixed: Inherit from Component directly and add constructor to resolve "property 'props' does not exist" error
-class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+// Use React.Component explicitly to ensure proper inheritance of state and props in TypeScript
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  // Explicitly declare state for strict TypeScript compliance where property existence might be checked on the class instance
+  public override state: ErrorBoundaryState = { hasError: false };
+
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false };
   }
 
   static getDerivedStateFromError(_: Error): ErrorBoundaryState { return { hasError: true }; }
@@ -44,6 +45,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   render() {
+    // Correctly accessing state and props which are now properly typed via React.Component inheritance and explicit declaration
     if (this.state.hasError) {
       return (
         <div className="h-screen bg-[#050505] flex items-center justify-center p-8 text-center">
@@ -166,11 +168,9 @@ const EngineTerminal = ({ settings, setSettings }: any) => {
   const [insight, setInsight] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
 
-  // Use ai.models.generateContent to request structural analysis
   const runStructuralAnalysis = async () => {
     setAnalyzing(true);
     try {
-      // Initialize GoogleGenAI right before the API call to ensure latest API key is used
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
@@ -180,7 +180,6 @@ const EngineTerminal = ({ settings, setSettings }: any) => {
           thinkingConfig: { thinkingBudget: 4000 }
         }
       });
-      // Correctly extract generated text output from the response property
       setInsight(response.text || 'Bureau analysis returned no content.');
     } catch (error) { 
       console.error("AI_ANALYSIS_ERROR:", error);
@@ -220,7 +219,7 @@ const EngineTerminal = ({ settings, setSettings }: any) => {
         </div>
 
         {insight && (
-          <div className="glass-panel p-8 rounded-[32px] bg-[#10b981]/[0.02] border-[#10b981]/20 animate-in slide-in-from-bottom-4">
+          <div className="glass-panel p-8 rounded-[32px] bg-[#10b981]/[0.02] border-[#10b981]/20 opacity-0 transition-opacity duration-700" style={{ opacity: insight ? 1 : 0 }}>
             <div className="flex items-center gap-3 mb-6">
               <Shield size={14} className="text-[#10b981]" />
               <h4 className="text-[9px] font-black uppercase tracking-[0.4em]">Bureau Intelligence</h4>
@@ -274,7 +273,7 @@ const EngineTerminal = ({ settings, setSettings }: any) => {
 };
 
 const ArticleHub = ({ setView, setActivePost }: any) => (
-  <div className="py-20 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+  <div className="py-20 transition-all duration-1000">
     <div className="max-w-3xl mb-16">
       <h2 className="text-5xl font-black text-white tracking-tighter uppercase mb-6 leading-none">Technical Archive</h2>
       <p className="text-base text-slate-500 font-light leading-relaxed">Centralized knowledge repository for structural glass mechanics, forensics, and compliance protocols.</p>
@@ -310,7 +309,7 @@ const App = () => {
           
           <main className="px-12 pb-24">
             {view === 'engine' && (
-              <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
+              <div>
                 <header className="pt-24 pb-12 flex flex-col md:flex-row items-end justify-between gap-8">
                   <div className="max-w-4xl">
                     <div className="flex items-center gap-4 text-[#10b981] mb-6 font-black text-[9px] uppercase tracking-[0.6em]">
@@ -360,7 +359,7 @@ const App = () => {
             {view === 'blog' && <ArticleHub setView={setView} setActivePost={setActivePostId} />}
 
             {view === 'blog-detail' && activePost && (
-              <article className="py-32 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
+              <article className="py-32 max-w-3xl mx-auto transition-all duration-700">
                 <button onClick={() => setView('blog')} className="text-[#10b981] text-[9px] font-black uppercase tracking-[0.5em] mb-16 flex items-center gap-4 hover:text-white transition-all group">
                   <ChevronRight size={18} className="rotate-180 group-hover:-translate-x-2 transition-transform" /> Back to Archive
                 </button>
@@ -377,13 +376,14 @@ const App = () => {
             )}
 
             {view === 'protocol' && (
-              <div className="py-32 max-w-5xl mx-auto animate-in fade-in duration-1000">
+              <div className="py-32 max-w-5xl mx-auto">
                 <h2 className="text-6xl font-black text-white uppercase tracking-tighter mb-20 text-glow">Framework Protocol</h2>
                 <div className="grid gap-10">
                   {[
                     { t: "ASTM E1300 Compliance", d: "Standard Practice for Determining Load Resistance of Glass in Buildings. Baseline for OVD structural math." },
                     { t: "Weibull Probability Modelling", d: "Stochastic strength assessment for amorphous silicate facades subject to environmental loading." },
-                    { t: "Thermal Stress Management", d: "Solar absorption analysis and edge resistance limits for low-e coated monolithic assemblies." }
+                    { t: "Thermal Stress Management", d: "Solar absorption analysis and edge resistance limits for low-e coated monolithic assemblies." },
+                    { t: "Seismic Drift Simulation", d: "Analysis of facade behavior during inter-story drift events and high-velocity shear stress." }
                   ].map((doc, idx) => (
                     <div key={idx} className="glass-panel p-12 rounded-[40px] border-white/10 group">
                       <h3 className="text-3xl font-black text-white uppercase tracking-tighter group-hover:text-[#10b981] transition-colors mb-6">{doc.t}</h3>
@@ -395,7 +395,7 @@ const App = () => {
             )}
 
             {view === 'contact' && (
-              <section className="py-48 text-center flex flex-col items-center animate-in zoom-in-95 duration-700">
+              <section className="py-48 text-center flex flex-col items-center">
                 <h2 className="text-8xl font-black text-white uppercase tracking-tighter mb-12 text-glow">Inquiry</h2>
                 <div className="glass-panel p-20 rounded-[80px] w-full max-w-2xl border-[#10b981]/20 shadow-[0_0_80px_rgba(16,185,129,0.05)]">
                   <Mail size={48} className="text-[#10b981]/20 mx-auto mb-12" />
