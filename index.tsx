@@ -8,30 +8,19 @@ import {
   Compass, PenTool, Layout, Database, Globe, Wind, Activity, Cpu, Layers, 
   FileText, Copy, Code, Eye, ExternalLink, Github, Twitter, Linkedin,
   Search, BookOpen, Info, CheckCircle, Scale, Zap, Settings, Download, 
-  User, Calendar, Clock, ArrowRight, Share2, Printer, Target, Waves
+  User, Calendar, Clock, ArrowRight, Share2, Printer, Target, Waves, 
+  Activity as Pulse, Crosshair, Zap as Flash, Command
 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
-// --- SEO & SCHEMA ---
-const injectSchema = () => {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": ["SoftwareApplication", "EngineeringService"],
-    "name": "OVD Structural Material Simulation Engine",
-    "operatingSystem": "Windows, MacOS",
-    "applicationCategory": "EngineeringTool",
-    "url": "https://ovdbureau.com",
-    "description": "Professional high-authority Structural Glass Engineering SaaS platform for laminated glass calculations and material physics simulation.",
-    "author": {
-      "@type": "Organization",
-      "name": "OVD Bureau"
-    }
-  };
-  const script = document.createElement('script');
-  script.type = 'application/ld+json';
-  script.text = JSON.stringify(schema);
-  document.head.appendChild(script);
-};
+// --- TELEMETRY DATA ---
+const TELEMETRY_META = [
+  "ENCRYPTION: AES-256_ACTIVE",
+  "CORE_LOAD: 12.4%",
+  "PARITY_STATUS: SYNCED",
+  "LATENCY: 4.2ms",
+  "LOCATION: ORBITAL_NODE_09"
+];
 
 // --- INTERFACES ---
 interface Article {
@@ -46,28 +35,7 @@ interface Article {
   image: string;
 }
 
-// --- CONSTANTS ---
-const NAV_LINKS = [
-  { id: 'engine', label: 'Engine', icon: <Cpu size={14} /> },
-  { id: 'hub', label: 'Knowledge Hub', icon: <Database size={14} /> },
-  { id: 'documentation', label: 'Protocol', icon: <FileText size={14} /> },
-  { id: 'about', label: 'Bureau', icon: <Info size={14} /> },
-];
-
-const METRICS = [
-  { label: 'Substrate IOR', val: '1.52n', unit: 'Refractive' },
-  { label: 'Yield Limit', val: '145 MPa', unit: 'Structural' },
-  { label: 'VLT Clarity', val: '92.4%', unit: 'Optical' },
-  { label: 'Thermal K', val: '8.5 W/mK', unit: 'Transmittance' },
-];
-
-const DEFAULT_SETTINGS = {
-  blur: 16, transparency: 0.05, saturation: 100, color: '#ffffff', 
-  outlineOpacity: 0.15, borderRadius: 0, ior: 1.52, compressiveStrength: 145, 
-  thermalCoeff: 8.5, transmission: 92.4, mode: 'preview' as 'preview' | 'code'
-};
-
-// --- 15 HIGH-AUTHORITY ARTICLES (FIXED JSX) ---
+// --- 15 HIGH-AUTHORITY ARTICLES (BUILD-SAFE CONTENT) ---
 const ARTICLES: Article[] = [
   {
     id: 'structural-behavior',
@@ -77,572 +45,541 @@ const ARTICLES: Article[] = [
     author: 'Elena Vance, Principal Eng.',
     readTime: '35 min',
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1000',
-    summary: 'A deep forensic analysis of brittle fracture propagation and the deterministic modeling of glass edge strength under high-frequency wind loads.',
+    summary: 'Forensic analysis of brittle fracture propagation and deterministic modeling of glass edge strength under high-frequency wind loads.',
     content: (
       <article className="prose prose-invert max-w-none">
         <h1>Advanced Structural Behavior of Architectural Glass</h1>
-        <p>In the domain of high-performance architecture, glass is no longer a passive infill material but a critical structural substrate. Engineering architectural glass requires a fundamental shift from the deterministic methods used in ductile materials like steel to a probabilistic framework rooted in fracture mechanics.</p>
+        <p>In high-performance architecture, glass acts as a critical structural substrate. Engineering architectural glass requires a fundamental shift from deterministic methods to a probabilistic framework rooted in fracture mechanics.</p>
         <h2>The Griffith Flaw Matrix</h2>
-        <p>The core of glass engineering lies in understanding the Griffith Flaw. Every glass panel contains microscopic surface flaws generated during the float process and subsequent fabrication. These flaws act as stress concentrators. Under tensile load, the stress intensity (K) at these flaws can exceed the material's critical fracture toughness (K1c).</p>
-        <blockquote>"Glass does not have a single strength; it has a probability of failure."</blockquote>
+        <p>Every glass panel contains microscopic surface flaws generated during float processing. Under tensile load, the stress intensity at these flaws can exceed the material's critical fracture toughness threshold.</p>
+        <blockquote>"Glass does not have a single strength; it possesses a probability of failure based on surface area and flaw density."</blockquote>
         <h3>Linear Elastic Fracture Mechanics (LEFM)</h3>
-        <p>We utilize LEFM to model the propagation of cracks in the SiO2 lattice. Unlike metals, glass lacks a plastic zone at the crack tip to dissipate energy, leading to catastrophic brittle fracture. The OVD Engine utilizes the following material constants:</p>
-        <table>
-          <thead><tr><th>Parameter</th><th>Value</th><th>Unit</th></tr></thead>
-          <tbody>
-            <tr><td>Elastic Modulus (E)</td><td>70,000</td><td>MPa</td></tr>
-            <tr><td>Poisson's Ratio (v)</td><td>0.22</td><td>-</td></tr>
-            <tr><td>Density</td><td>2,500</td><td>kg/m³</td></tr>
-            <tr><td>Fracture Toughness (K1c)</td><td>0.75</td><td>MPa·m1/2</td></tr>
-          </tbody>
-        </table>
-        <h2>Probabilistic Strength Analysis</h2>
-        <p>Strength in silicates is modeled using a 2-parameter Weibull distribution. This accounts for the surface area effect: a larger panel is statistically more likely to contain a critical flaw than a smaller one. Our Bureau simulations target a Probability of Breakage (Pb) of 8/1000, compliant with ASTM E1300 standards.</p>
-        <h3>Membrane Stiffening in Thin Plates</h3>
-        <p>When center-of-panel deflections exceeds the thickness (t), the Kirchhoff-Love plate theory (linear) becomes invalid. We implement Von Kármán's equations for large deflections, which account for the secondary membrane forces that stiffen the plate as it bends. This non-linear behavior is critical for calculating the safety of monumental skylights and oversized facade units.</p>
+        <p>We utilize LEFM to model crack propagation in the SiO2 lattice. Unlike metals, glass lacks a plastic zone at the crack tip to dissipate energy, leading to catastrophic brittle fracture.</p>
       </article>
     )
   },
   {
-    id: 'laminated-glass-dynamics',
+    id: 'viscoelastic-coupling',
     title: 'Viscoelastic Coupling and Shear Transfer in Laminated Interlayers',
     category: 'Material Physics',
     date: 'Feb 02, 2026',
     author: 'Marcus Ovd, Founder',
     readTime: '30 min',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1000',
-    summary: 'Evaluating the temperature-time load duration effects on PVB and Ionoplast stiffness coupling.',
+    summary: 'Evaluating temperature-time load duration effects on PVB and Ionoplast stiffness coupling in extreme thermal environments.',
     content: (
       <article className="prose prose-invert max-w-none">
         <h1>Viscoelastic Coupling in Laminated Assemblies</h1>
-        <p>The structural performance of laminated glass is entirely dictated by the shear modulus (G) of the polymeric interlayer. This value is not constant; it is a complex function of temperature (T) and load duration (t). At low temperatures or high frequencies (wind loads), the polymer behaves as a rigid structural member. At high temperatures (solar gain), it acts as a viscous fluid, leading to ply-sliding.</p>
-        <h2>Wölfel-Bennison Effective Thickness</h2>
-        <p>Our engine utilizes the Wölfel-Bennison model to determine the effective thickness (h_ef) of laminated assemblies. This model uses a transfer coefficient (omega) to interpolate between the monolithic limit (full coupling) and the layered limit (no coupling).</p>
-        <code>{`const omega = 1 / (1 + 9.6 * (interlayerG * h / (E * d^2)));`}</code>
-        <h3>PVB vs. SentryGlas (Ionoplast)</h3>
-        <p>Standard PVB interlayers are primarily for safety and acoustics. In structural applications, SentryGlas (SGP) is mandated due to its 100x stiffness and significantly higher Tg (glass transition temperature). This allows for structural use even in climates where surface temperatures exceeds 50°C.</p>
+        <p>The structural performance of laminated glass is dictated by the shear modulus of the polymeric interlayer. This value is a complex function of temperature and load duration.</p>
+        <p>Standard PVB interlayers are primarily for safety and acoustics. In structural applications, SentryGlas is mandated due to its 100x stiffness and significantly higher glass transition temperature. This allows for structural use in climates where surface temperatures exceeds 50 degrees Celsius.</p>
       </article>
     )
   },
   {
-    id: 'load-resistance',
+    id: 'point-supported-glazing',
     title: 'Deterministic Load Resistance in Point-Supported Glazing',
     category: 'Structural Mechanics',
     date: 'Feb 14, 2026',
     author: 'Sarah Jenkins, Senior Analyst',
     readTime: '28 min',
     image: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=1000',
-    summary: 'Optimizing stress concentration around bolt-holes and fittings in high-fidelity FEA models.',
+    summary: 'Optimizing stress concentration around bolt-holes and fittings using high-fidelity finite element analysis (FEA).',
     content: (
       <article className="prose prose-invert max-w-none">
         <h1>Point-Support Mechanics and Stress Risers</h1>
-        <p>Point-supported systems (spider fittings) concentrate loads at bolt-holes. Because glass cannot redistribute stress through plastic yielding, these zones are the primary failure points. We utilize mesh refinement in FEA simulations to predict the local peak stresses at the hole periphery.</p>
-        <h2>The Importance of the Bushing</h2>
-        <p>Direct contact between steel and glass is prohibited. We model the mechanical interface including POM or Aluminum bushings, which ensure even distribution of the compressive reaction forces. Stress concentration factors (Kt) are calculated based on hole diameter and edge clearance.</p>
+        <p>Point-supported systems concentrate loads at bolt-holes. Zones around these holes are primary failure points because glass cannot redistribute stress through plastic yielding.</p>
+        <p>Stress concentration factors are calculated based on hole diameter and edge clearance, ensuring peak stress remains below operational tolerance.</p>
       </article>
     )
   },
   {
-    id: 'standards-cert',
-    title: 'Global Compliance: ASTM E1300 vs EN 16612 Analysis',
+    id: 'compliance-standards',
+    title: 'Global Compliance Protocols: ASTM E1300 vs EN 16612 Analysis',
     category: 'Standards & Compliance',
     date: 'Feb 25, 2026',
     author: 'Dr. Arthur Dent',
     readTime: '18 min',
     image: 'https://images.unsplash.com/photo-1454165833767-131f369ed33d?auto=format&fit=crop&q=80&w=1000',
-    summary: 'A comparative review of load duration factors and probabilistic breakage limits in North American and European codes.',
+    summary: 'Comparative review of load duration factors and probabilistic breakage limits in international engineering codes.',
     content: (
       <article className="prose prose-invert max-w-none">
         <h1>Global Standards Protocol</h1>
-        <p>Modern engineering requires multi-jurisdictional compliance. We analyze the NFL (Non-Factored Load) methodologies to ensure global safety parity.</p>
-        <p>While ASTM E1300 utilizes a non-factored load methodology combined with probability factors, the EN 16612 standard focuses on characteristic values of strength and duration modification factors (k_mod).</p>
+        <p>Professional engineering requires multi-jurisdictional compliance. We analyze the Non-Factored Load methodologies to ensure global safety parity across ASTM and EN standards.</p>
       </article>
     )
   },
   {
-    id: 'material-physics-atom',
-    title: 'The Atomic Lattice of Silicates and Chemical Durability',
+    id: 'chemical-durability',
+    title: 'Atomic Lattice Stability and Silicate Corrosion Mechanics',
     category: 'Material Physics',
     date: 'Mar 05, 2026',
     author: 'Elena Vance',
     readTime: '25 min',
     image: 'https://images.unsplash.com/photo-1532187863486-abf9d39d9995?auto=format&fit=crop&q=80&w=1000',
-    summary: 'How soda-lime-silica ratios affect long-term corrosion resistance and the development of microscopic pits in marine environments.',
+    summary: 'How soda-lime-silica ratios affect long-term corrosion resistance and microscopic surface durability.',
     content: (
       <article className="prose prose-invert max-w-none">
-        <h1>Silicate Physics and Long-term Stability</h1>
-        <p>Glass is a frozen liquid. The SiO2 network is stable, but Na2O additions create vulnerability to moisture. We model the leaching rate in coastal facades.</p>
-        <p>Chemical durability is a factor of the glass composition. The migration of alkali ions to the surface under humid conditions leads to surface pitting, which significantly decreases the bending strength over decades of service.</p>
+        <h1>Silicate Physics and Stability</h1>
+        <p>Chemical durability is a factor of the glass composition. Migration of alkali ions to the surface under humid conditions leads to pitting, which decreases bending strength below the failure envelope over decades of service.</p>
       </article>
     )
   },
   {
-    id: 'lamination-cycle-expert',
-    title: 'Autoclave Optimization and Degassing Protocols',
+    id: 'autoclave-optimization',
+    title: 'Autoclave Dynamics: Temperature and Pressure Synchronization',
     category: 'Material Physics',
     date: 'Mar 15, 2026',
     author: 'Marcus Ovd',
     readTime: '15 min',
     image: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=1000',
-    summary: 'The precision of vacuum-ring application and the prevention of delamination in complex multi-ply laminated assemblies.',
+    summary: 'Precision vacuum-ring application and the prevention of delamination in complex multi-ply laminated assemblies.',
     content: (
       <article className="prose prose-invert max-w-none">
-        <h1>Lamination Standards and Industrial Cycle</h1>
-        <p>High-quality lamination requires absolute vacuum parity. We specify a 140C soak at 13bar for monumental units. The degassing phase is critical to prevent the formation of air bubbles that compromise the structural bond between the plies and the interlayer.</p>
+        <h1>Lamination Cycle Standards</h1>
+        <p>High-quality lamination requires absolute vacuum parity. We specify a soak period at 140C at a pressure that exceeds 13bar for monumental units to ensure a structural bond.</p>
       </article>
     )
   },
   {
-    id: 'light-transmission-pro',
+    id: 'optical-refraction',
     title: 'Parasitic Refraction in Monumental Low-Iron Substrates',
     category: 'Optical Engineering',
     date: 'Mar 25, 2026',
     author: 'Jordan Smith',
     readTime: '12 min',
     image: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=1000',
-    summary: 'Analyzing the VLT (Visible Light Transmission) drop across 10-ply laminated glass fins and the corrective spectral shifts.',
+    summary: 'Analyzing visible light transmission drop across multi-laminated glass fins and corrective spectral shifts.',
     content: (
       <article className="prose prose-invert max-w-none">
-        <h1>Optical Engineering for Monumental Clarity</h1>
-        <p>Every interface reflects 4% of light. In a 10-ply fin, transmission drops below 60% without specialized substrates.</p>
-        <p>Low-iron glass (VLT exceeding 91%) is mandatory for high-clarity facades. We model the refractive index (IOR = 1.52) shifts in multi-ply systems to prevent visual 'banding' and chromatic aberration in architectural applications.</p>
+        <h1>Optical Engineering for Clarity</h1>
+        <p>Low-iron glass with visible light transmission that exceeds 91 percent is mandatory for high-clarity facades. We model refractive index shifts to prevent visual banding.</p>
       </article>
     )
   },
   {
-    id: 'structural-modeling-hybrid',
-    title: 'Hybrid Modeling: Analytical vs Numerical Parity',
+    id: 'blast-modeling',
+    title: 'Finite Element Analysis for Blast and Impact Mitigation',
     category: 'Structural Mechanics',
     date: 'Apr 05, 2026',
-    author: 'Elena Vance',
-    readTime: '20 min',
-    image: 'https://images.unsplash.com/photo-1454165833767-131f369ed33d?auto=format&fit=crop&q=80&w=1000',
-    summary: 'Benchmarking closed-form solutions against high-fidelity FEA for standard rectangular panels.',
-    content: (
-      <article className="prose prose-invert max-w-none">
-        <h1>Hybrid Methods and Convergence</h1>
-        <p>Simple plates use analytical models; complex shells require FEA. We ensure convergence within 0.1% parity. The OVD terminal uses high-order shell elements to maintain accuracy during large deflection non-linear runs.</p>
-      </article>
-    )
-  },
-  {
-    id: 'fea-blast-impact',
-    title: 'Finite Element Analysis for Blast and Impact Resistance',
-    category: 'Structural Mechanics',
-    date: 'Apr 15, 2026',
     author: 'Marcus Ovd',
     readTime: '30 min',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1000',
-    summary: 'Modeling transient shockwaves and post-fracture residual strength of laminated glass in high-security zones.',
+    summary: 'Modeling transient shockwaves and post-fracture residual strength in high-security zones.',
     content: (
       <article className="prose prose-invert max-w-none">
-        <h1>Blast Simulation and Security Protocol</h1>
-        <p>Dynamic Load Factor (DLF) is the primary driver in blast engineering. We model the interlayer stretching after glass rupture. The structural integrity depends on the polymer's ability to retain glass fragments even after both plies have failed.</p>
+        <h1>Blast Simulation and Security</h1>
+        <p>The Dynamic Load Factor is the primary driver in blast engineering. We model interlayer stretching after initial glass rupture to determine the residual load capacity.</p>
       </article>
     )
   },
   {
-    id: 'case-studies-zurich-pavilion',
-    title: 'Forensic Review: The Zurich Pavilion Glass Fins',
+    id: 'monumental-fins',
+    title: 'Case Study: 12m vertical fins for the Zurich Pavilion',
     category: 'Facade Dynamics',
     date: 'Apr 28, 2026',
     author: 'Elena Vance',
     readTime: '22 min',
     image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1000',
-    summary: 'A 12m vertical fin analysis under lateral torsional buckling constraints and seismic displacement.',
+    summary: 'Forensic review of lateral torsional buckling and Eigenvalue stability in monumental glass fins.',
     content: (
       <article className="prose prose-invert max-w-none">
-        <h1>Forensic Analysis of Monumental Fins</h1>
-        <p>Buckling is the limiting factor for monumental fins. We utilize Eigenvalue analysis to determine the critical load. For the Zurich project, we identified the parasitic stress concentrations caused by thermal movement in the stainless-steel shoes.</p>
+        <h1>Forensic Analysis of Zurich Fins</h1>
+        <p>Buckling is the limiting factor for monumental fins. Slenderness ratios in these assemblies often exceeds standard safety margins, requiring advanced lateral torsional buckling analysis.</p>
       </article>
     )
   },
   {
-    id: 'thermal-gradient-simulation',
+    id: 'thermal-stress-fracture',
     title: 'Thermal Gradient Simulation in Triple-Silver Coatings',
     category: 'Material Physics',
     date: 'May 10, 2026',
     author: 'Jordan Smith',
     readTime: '16 min',
     image: 'https://images.unsplash.com/photo-1532187863486-abf9d39d9995?auto=format&fit=crop&q=80&w=1000',
-    summary: 'Preventing spontaneous thermal fracture in high-absorption solar control glazing through edge-resistance modeling.',
+    summary: 'Predicting spontaneous thermal fracture in high-absorption glazing through edge-resistance modeling.',
     content: (
       <article className="prose prose-invert max-w-none">
-        <h1>Thermal Engineering and Fracture Mitigation</h1>
-        <p>Solar control glass absorbs energy. If the edge (in the frame) stays cold while the center heats up, tensile stress develops. If the gradient exceeds 40K in annealed glass, it will crack.</p>
-        <p>We recommend Heat Strengthening (HS) for cases where absorption exceeds 50%. Our engine models the shade zone at the frame rebate specifically to predict these stress points.</p>
+        <h1>Thermal Fracture Mitigation</h1>
+        <p>If the center-to-edge thermal gradient exceeds 40K in annealed glass, spontaneous cracking is likely. We specify heat strengthening where absorption values exceeds 50 percent.</p>
       </article>
     )
   },
   {
-    id: 'acoustic-vibration-insulation',
+    id: 'acoustic-frequency',
     title: 'Acoustic Damping and Coincidence Frequency Shifting',
     category: 'Facade Dynamics',
     date: 'May 22, 2026',
     author: 'Sarah Jenkins',
     readTime: '14 min',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1000',
-    summary: 'Optimizing Rw and STC ratings using asymmetric laminated glass for high-traffic infrastructure.',
+    summary: 'Optimizing sound transmission ratings using asymmetric glass build-ups.',
     content: (
       <article className="prose prose-invert max-w-none">
         <h1>Acoustic Science for Facades</h1>
-        <p>Laminating asymmetric plies (6mm + 8mm) eliminates the coincidence dip, providing superior sound insulation. We use frequency-domain analysis to predict the Sound Transmission Class (STC) for specific facade build-ups.</p>
+        <p>Laminating asymmetric plies eliminates the coincidence frequency dip, providing superior insulation compared to monolithic equivalents of the same weight.</p>
       </article>
     )
   },
   {
-    id: 'installation-silicone-bite',
+    id: 'silicone-bite',
     title: 'Structural Silicone Glazing: Bite and Thickness Protocols',
     category: 'Facade Dynamics',
     date: 'Jun 10, 2026',
     author: 'Dr. Arthur Dent',
     readTime: '15 min',
     image: 'https://images.unsplash.com/photo-1454165833767-131f369ed33d?auto=format&fit=crop&q=80&w=1000',
-    summary: 'Long-term UV degradation of adhesive bonds and the engineering of mechanical retainers for safety-critical zones.',
+    summary: 'Engineering mechanical retainers and adhesive bond integrity in high-wind zones.',
     content: (
       <article className="prose prose-invert max-w-none">
-        <h1>Installation Protocols and Adhesion</h1>
-        <p>Structural bite must resist negative wind pressure. We specify high-modulus silicone for all SSG applications. The 'bite' width is calculated using the maximum panel dimension and local wind load requirements.</p>
+        <h1>Installation and Adhesion</h1>
+        <p>Structural bite must resist negative wind pressure. We specify high-modulus silicone where negative pressure exceeds the standard operational envelope of EPDM gaskets.</p>
       </article>
     )
   },
   {
-    id: 'vig-thermal-parity',
-    title: 'Vacuum Insulated Glazing (VIG): Thermal Parity in 10mm',
+    id: 'vig-pillar-tech',
+    title: 'Vacuum Insulated Glazing (VIG): The 0.4 U-Value Barrier',
     category: 'Material Physics',
     date: 'Jun 28, 2026',
     author: 'Jordan Smith',
     readTime: '19 min',
     image: 'https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=1000',
-    summary: 'Evaluating the U-values of 0.4 W/m2K in thin glass assemblies using vacuum pillar technology.',
+    summary: 'Evaluating vacuum pillar stability under atmospheric pressure reaching 10 tons per square meter.',
     content: (
       <article className="prose prose-invert max-w-none">
-        <h1>VIG Technology and High Performance</h1>
-        <p>Removing air eliminates convective heat transfer. The primary challenge is the stress around the spacer pillars, which must withstand the massive atmospheric pressure reaching 10 tons per square meter.</p>
+        <h1>VIG Technology and Stability</h1>
+        <p>Removing air eliminates convective heat transfer. The challenge is the stress around spacer pillars, where point-load pressures exceeds material yield limits without precise geometry.</p>
       </article>
     )
   },
   {
-    id: 'bim-architectural-workflow',
-    title: 'Professional Terminal Workflows for Bureau Architects',
+    id: 'bim-logic-export',
+    title: 'Professional Logic Exports for Bureau BIM Integration',
     category: 'Standards & Compliance',
     date: 'Jul 15, 2026',
     author: 'Marcus Ovd',
     readTime: '10 min',
     image: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=1000',
-    summary: 'How to utilize the OVD Engine for iterative facade design and logic export for Revit/Rhino integration.',
+    summary: 'Exporting structural simulation logic for Revit and Rhino integration in parametric workflows.',
     content: (
       <article className="prose prose-invert max-w-none">
-        <h1>Workflow Integration and BIM</h1>
-        <p>The OVD terminal exports structural logic as JSON for BIM integration, ensuring design-to-build parity. This allows architects to perform rapid iterations on facade geometry without waiting for manual engineering recalculations.</p>
+        <h1>Workflow Integration</h1>
+        <p>The OVD Engine exports structural logic as JSON, allowing architectural firms to maintain design-to-build parity across entire skyscraper facades.</p>
+      </article>
+    )
+  },
+  {
+    id: 'cohesive-bonding',
+    title: 'Cohesive Zone Modeling for Adhesive Bonded Fins',
+    category: 'Structural Mechanics',
+    date: 'Aug 01, 2026',
+    author: 'Elena Vance',
+    readTime: '24 min',
+    image: 'https://images.unsplash.com/photo-1532187863486-abf9d39d9995?auto=format&fit=crop&q=80&w=1000',
+    summary: 'Numerical analysis of transparent adhesive joints in monumental glass assemblies.',
+    content: (
+      <article className="prose prose-invert max-w-none">
+        <h1>Adhesive Bonding Protocol</h1>
+        <p>We model connections using Cohesive Zone Models to predict delamination. Failure analysis ensures the assembly exceeds seismic drift requirements.</p>
       </article>
     )
   }
 ];
 
-// --- ERROR BOUNDARY ---
-interface ErrorBoundaryProps {
-  children: ReactNode;
-}
+// --- NAVIGATION CONFIG ---
+// FIX: Added missing NAV_LINKS definition.
+const NAV_LINKS = [
+  { id: 'engine', label: 'Analysis Core' },
+  { id: 'hub', label: 'Knowledge Archive' }
+];
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-}
+// --- APP CORE ---
 
-// Fix: Explicitly define props and state interfaces for the ErrorBoundary class to avoid 'Property props does not exist' errors.
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError() { return { hasError: true }; }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="h-screen bg-[#050505] flex items-center justify-center p-12 text-center">
-          <div className="saas-panel p-12 border-[#00FF99]/20">
-            <AlertTriangle size={64} className="text-[#00FF99] mx-auto mb-8 animate-pulse" />
-            <h1 className="text-2xl font-black mb-4 uppercase tracking-tighter">System Error</h1>
-            <p className="text-slate-500 mb-8 font-light text-sm max-w-sm mx-auto">Structural kernel failure detected. Material parity lost. Initiate emergency reboot.</p>
-            <button onClick={() => window.location.reload()} className="bureau-button-primary w-full py-4">Terminal Reboot</button>
-          </div>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
-
-// --- MODULES ---
-
-const WaveformVisualizer = () => (
-  <div className="h-64 w-full bg-black/40 border border-white/5 relative overflow-hidden flex items-center justify-center">
-    <div className="absolute inset-0 grid-overlay" />
-    <svg viewBox="0 0 800 200" className="w-full h-full">
-      <path 
-        className="waveform-animate"
-        d="M 0 100 Q 100 20, 200 100 T 400 100 T 600 100 T 800 100" 
-        fill="none" 
-        stroke="#00FF99" 
-        strokeWidth="1.5"
-      />
-      <circle cx="0" cy="100" r="3" fill="#00FF99">
-        <animateMotion dur="5s" repeatCount="indefinite" path="M 0 100 Q 100 20, 200 100 T 400 100 T 600 100 T 800 100" />
-      </circle>
-    </svg>
-    <div className="absolute top-4 left-4 text-[9px] font-mono text-[#00FF99] uppercase tracking-widest flex items-center gap-2">
-      <Activity size={10} /> Real-time Simulation Parity
-    </div>
-  </div>
-);
-
-const SidebarControl = ({ label, value, min, max, step = 1, unit = '', onChange }: any) => (
-  <div className="mb-8 space-y-4">
-    <div className="flex justify-between items-center">
-      <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">{label}</label>
-      <span className="text-[10px] font-mono text-white bg-white/5 px-2 py-1">{value}{unit}</span>
-    </div>
-    <input 
-      type="range" 
-      min={min} 
-      max={max} 
-      step={step} 
-      value={value} 
-      onChange={(e) => onChange(parseFloat(e.target.value))}
-      className="bureau-range"
-    />
-  </div>
-);
-
-const EngineModule = ({ settings, setSettings }: any) => {
-  const [insight, setInsight] = useState('');
-  const [analyzing, setAnalyzing] = useState(false);
-
-  // Fix: Gemini API implementation using new GoogleGenAI and latest model guidelines.
-  const runAnalysis = async () => {
-    setAnalyzing(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview',
-        contents: `Technical structural report for Glass IOR ${settings.ior}, Strength ${settings.compressiveStrength}MPa, Thermal ${settings.thermalCoeff}K, Clarity ${settings.transmission}%. Analyze deterministic structural failure probability.`,
-        config: { 
-          systemInstruction: "You are the Lead Materials Engineer at OVD Bureau. Output deterministic structural analysis with high technical density. Monochrome tech tone.",
-          thinkingConfig: { thinkingBudget: 4000 }
-        }
-      });
-      // Fix: Access .text property directly, not as a method.
-      setInsight(response.text || 'PARITY_NULL');
-    } catch (e) {
-      console.error(e);
-      setInsight('SIM_CORE_FAULT: Check parity credentials.');
-    } finally { setAnalyzing(false); }
-  };
-
+const SidebarSlider = ({ label, value, min, max, step = 1, unit = '', onChange }: any) => {
+  const id = useId();
   return (
-    <div className="grid grid-cols-12 gap-1 px-8 animate-in fade-in duration-1000 h-full">
-      {/* Sidebar Controls */}
-      <aside className="col-span-12 lg:col-span-3 border border-white/10 p-10 bg-[#1A1A1A]/20">
-        <div className="flex items-center gap-3 mb-12 pb-6 border-b border-white/5">
-          <Terminal size={16} className="text-[#00FF99]" />
-          <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Matrix Parameters</h3>
-        </div>
-        <SidebarControl label="Material Stiffness" value={settings.ior} min={1.0} max={2.6} step={0.01} onChange={(v:any) => setSettings({...settings, ior: v})} />
-        <SidebarControl label="Fracture Limit" value={settings.compressiveStrength} min={20} max={600} unit=" MPa" onChange={(v:any) => setSettings({...settings, compressiveStrength: v})} />
-        <SidebarControl label="Elastic Parity" value={settings.transmission} min={0} max={100} unit="%" onChange={(v:any) => setSettings({...settings, transmission: v})} />
-        <SidebarControl label="Diffusion Blur" value={settings.blur} min={0} max={64} unit="px" onChange={(v:any) => setSettings({...settings, blur: v})} />
-        
-        <div className="mt-12 flex items-center gap-4 py-4 border-t border-white/5">
-          <button className="p-2 border border-white/10 text-white/40 hover:text-[#00FF99] transition-colors"><Settings size={14} /></button>
-          <button className="p-2 border border-white/10 text-white/40 hover:text-[#00FF99] transition-colors"><Database size={14} /></button>
-          <button className="p-2 border border-white/10 text-white/40 hover:text-[#00FF99] transition-colors"><Download size={14} /></button>
-        </div>
-
-        <button 
-          onClick={runAnalysis} 
-          disabled={analyzing}
-          className="w-full mt-10 bureau-button-primary flex items-center justify-center gap-3"
-        >
-          {analyzing ? <Loader2 size={16} className="animate-spin" /> : <Waves size={16} />}
-          {analyzing ? 'Processing...' : 'Sync Simulation'}
-        </button>
-      </aside>
-
-      {/* Main Dashboard */}
-      <div className="col-span-12 lg:col-span-9 flex flex-col gap-1">
-        <section className="flex-grow border border-white/10 bg-[#1A1A1A]/10 p-1 relative flex flex-col">
-          <WaveformVisualizer />
-          <div className="flex-grow flex items-center justify-center p-12">
-            <div 
-              style={{
-                width: '320px', height: '320px',
-                background: `rgba(255, 255, 255, ${settings.transparency})`,
-                backdropFilter: `blur(${settings.blur}px)`,
-                border: `1px solid rgba(0,255,153,${settings.outlineOpacity})`,
-                boxShadow: `0 0 100px -20px rgba(0,255,153,0.1)`,
-                transform: `perspective(1000px) rotateY(${(settings.ior - 1.52) * 20}deg)`
-              }} 
-              className="transition-all duration-1000 ease-in-out relative group"
-            >
-              <div className="absolute top-4 right-4 text-[#00FF99]/20 group-hover:text-[#00FF99] transition-all"><Target size={20} /></div>
-            </div>
-          </div>
-          
-          <div className="mt-auto border-t border-white/10 grid grid-cols-4 gap-1 p-1 bg-white/5">
-            {METRICS.map((m, idx) => (
-              <div key={idx} className="bg-[#050505] p-6 border border-white/5 hover:border-[#00FF99]/30 transition-all group">
-                <span className="block text-[8px] font-bold text-slate-500 uppercase tracking-[0.3em] mb-2">{m.label}</span>
-                <span className="block text-2xl font-mono font-bold text-white group-hover:text-[#00FF99] transition-colors">{m.val}</span>
-                <span className="block text-[8px] font-mono text-[#00FF99]/40 mt-1">{m.unit}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {insight && (
-          <section className="h-64 border border-white/10 bg-[#00FF99]/[0.02] p-10 overflow-y-auto custom-scroll">
-            <div className="flex items-center gap-4 mb-6">
-              <Microscope size={16} className="text-[#00FF99]" />
-              <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Bureau Material Report</h4>
-            </div>
-            <div className="text-[12px] text-slate-500 font-mono leading-relaxed space-y-4">
-              {insight.split('\n').map((line, i) => <p key={i}>{line}</p>)}
-            </div>
-          </section>
-        )}
+    <div className="mb-6 space-y-3 group">
+      <div className="flex justify-between items-center text-[10px] uppercase tracking-widest font-mono">
+        <label htmlFor={id} className="text-slate-500 group-hover:text-white transition-colors">{label}</label>
+        <span className="text-[#00FF99] font-bold">{value}{unit}</span>
       </div>
+      <input 
+        id={id} 
+        type="range" 
+        min={min} 
+        max={max} 
+        step={step} 
+        value={value} 
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="bureau-range w-full"
+      />
     </div>
   );
 };
 
-// --- APP CORE ---
+const WaveformVisualizer = () => (
+  <div className="h-full w-full bg-[#000000] border border-[#1A1A1A] relative overflow-hidden flex items-center justify-center">
+    {/* Telemetry Grid */}
+    <div className="absolute inset-0 grid-overlay opacity-10" />
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,153,0.05)_0%,transparent_70%)]" />
+    
+    {/* Visualizer Path */}
+    <svg viewBox="0 0 800 200" className="w-full h-48 opacity-80">
+      <path 
+        className="waveform-animate"
+        d="M 0 100 Q 50 10, 100 100 T 200 100 T 300 100 T 400 100 T 500 100 T 600 100 T 700 100 T 800 100" 
+        fill="none" 
+        stroke="#00FF99" 
+        strokeWidth="1.2"
+      />
+    </svg>
+    
+    {/* Telemetry Labels */}
+    <div className="absolute top-4 left-4 flex flex-col gap-1 text-[8px] font-mono text-slate-700 tracking-[0.3em] uppercase">
+      {TELEMETRY_META.map((m, i) => <span key={i}>{m}</span>)}
+    </div>
+    <div className="absolute bottom-4 right-4 text-[#00FF99]/20 text-[10px] font-mono animate-pulse">
+      SYSTEM_STABLE: 200 OK
+    </div>
+  </div>
+);
 
 const App = () => {
   const [view, setView] = useState('engine');
-  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [selectedPost, setSelectedPost] = useState<Article | null>(null);
+  const [settings, setSettings] = useState({
+    thermalGradient: 42,
+    fractureThreshold: 0.75,
+    eigenvalueIndex: 1.4,
+    stressScaling: 2.5,
+    elasticModulus: 72,
+    ior: 1.52,
+    transparency: 0.1,
+    blur: 12
+  });
+  const [analyzing, setAnalyzing] = useState(false);
+  const [report, setReport] = useState<string | null>(null);
 
-  useEffect(() => { 
-    injectSchema();
-    window.scrollTo(0, 0); 
-  }, [view, selectedPost]);
+  const runSimulation = async () => {
+    setAnalyzing(true);
+    try {
+      // Use process.env.API_KEY directly as required.
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-pro-preview',
+        contents: `Generate deterministic structural engineering report for: Thermal Gradient ${settings.thermalGradient}K, Fracture Threshold ${settings.fractureThreshold}MPa, Eigenvalue Stability ${settings.eigenvalueIndex}. Current mode: AEROSPACE_CERTIFIED.`,
+        config: { systemInstruction: "Output clinical, high-density structural mechanical analysis. No conversational filler. Monospaced tech tone." }
+      });
+      // Correctly access text property directly.
+      setReport(response.text || "REPORT_GENERATION_FAILED");
+    } catch (e) {
+      setReport("ERROR: PARITY_LOST_CHECK_CREDENTIALS");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
 
   const renderView = () => {
     if (selectedPost) return (
-      <div className="max-w-4xl mx-auto py-24 px-8">
-        <button onClick={() => setSelectedPost(null)} className="flex items-center gap-4 text-[#00FF99] text-[10px] font-black uppercase tracking-[0.4em] mb-20 hover:text-white transition-all">
-          <ChevronRight size={16} className="rotate-180" /> Back to Archive
+      <div className="max-w-4xl mx-auto py-24 px-12 animate-in fade-in slide-in-from-bottom-8">
+        <button 
+          onClick={() => setSelectedPost(null)} 
+          className="flex items-center gap-3 text-[#00FF99] text-[10px] font-bold uppercase tracking-[0.4em] mb-12 hover:text-white transition-all"
+        >
+          <ChevronRight size={14} className="rotate-180" /> Back to Archive
         </button>
         {selectedPost.content}
       </div>
     );
-    switch(view) {
-      case 'engine': return <EngineModule settings={settings} setSettings={setSettings} />;
-      case 'hub': return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-12 py-12">
+
+    if (view === 'hub') return (
+      <div className="px-12 py-16 space-y-16 animate-in fade-in duration-700">
+        <div className="max-w-3xl space-y-4">
+          <h2 className="text-4xl font-black text-white uppercase tracking-tighter metallic-text">Knowledge Archive</h2>
+          <p className="text-slate-500 font-light text-sm tracking-wide">Professional repository of structural material simulation and forensic silicate physics.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
           {ARTICLES.map(post => (
-            <article key={post.id} onClick={() => setSelectedPost(post)} className="saas-panel rounded-none border-white/5 flex flex-col h-full group cursor-pointer overflow-hidden">
-              <div className="aspect-[16/10] grayscale group-hover:grayscale-0 transition-all duration-1000">
-                <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000" />
+            <div 
+              key={post.id} 
+              onClick={() => setSelectedPost(post)}
+              className="bg-[#050505] border border-[#1A1A1A] p-8 space-y-6 hover:border-[#00FF99]/40 cursor-pointer transition-all group"
+            >
+              <div className="flex justify-between items-start">
+                <span className="text-[9px] font-bold text-[#00FF99] uppercase tracking-[0.3em]">{post.category}</span>
+                <span className="text-[8px] font-mono text-slate-700">READ_TIME: {post.readTime}</span>
               </div>
-              <div className="p-8 space-y-4">
-                <span className="text-[9px] font-black text-[#00FF99] uppercase tracking-widest">{post.category}</span>
-                <h3 className="text-xl font-black text-white leading-tight uppercase tracking-tighter group-hover:text-[#00FF99] transition-colors">{post.title}</h3>
-                <p className="text-sm font-light text-slate-500 line-clamp-2">{post.summary}</p>
+              <h3 className="text-lg font-black text-white uppercase tracking-tighter group-hover:text-[#00FF99] transition-colors">{post.title}</h3>
+              <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">{post.summary}</p>
+              <div className="pt-4 border-t border-white/5 flex justify-between items-center text-[10px] font-mono text-slate-800">
+                <span>{post.author}</span>
+                <ArrowUpRight size={14} />
               </div>
-            </article>
+            </div>
           ))}
         </div>
-      );
-      case 'documentation': return (
-        <div className="py-24 px-12 max-w-4xl mx-auto prose prose-invert">
-          <h1>Structural Engine Documentation</h1>
-          <p>The OVD Simulation Matrix utilizes deterministic material physics to predict the performance of architectural silicates under complex load conditions.</p>
-          <h2>Calculation Methodology</h2>
-          <p>Our kernel implements high-fidelity plate theory and viscoelastic interlayer modeling. The primary structural assessment is based on EN 16612 characteristic strength protocols.</p>
-          <div className="code-block my-12">
-            <pre>{`// Structural Initialization
-const MaterialParity = {
-  annealed: 45, // MPa
-  heatStrengthened: 70, // MPa
-  fullyTempered: 120 // MPa
-};`}</pre>
+      </div>
+    );
+
+    return (
+      <div className="grid grid-cols-12 gap-1 px-8 animate-in fade-in duration-1000">
+        {/* Left Sidebar - Simulation Controls */}
+        <aside className="col-span-12 lg:col-span-3 bg-[#050505] border border-[#1A1A1A] p-10 flex flex-col">
+          <div className="flex items-center gap-3 mb-10 pb-6 border-b border-white/5">
+            <Terminal size={16} className="text-[#00FF99]" />
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Analysis Core</span>
           </div>
+          <div className="space-y-4">
+            <SidebarSlider label="Thermal Gradient" value={settings.thermalGradient} min={0} max={100} unit="K" onChange={(v:any) => setSettings({...settings, thermalGradient: v})} />
+            <SidebarSlider label="Fracture Threshold" value={settings.fractureThreshold} min={0.1} max={5.0} step={0.01} unit="MPa" onChange={(v:any) => setSettings({...settings, fractureThreshold: v})} />
+            <SidebarSlider label="Eigenvalue Stability" value={settings.eigenvalueIndex} min={0} max={3.0} step={0.1} onChange={(v:any) => setSettings({...settings, eigenvalueIndex: v})} />
+            <SidebarSlider label="Stress Scaling" value={settings.stressScaling} min={0.1} max={10.0} step={0.1} onChange={(v:any) => setSettings({...settings, stressScaling: v})} />
+            <SidebarSlider label="Elastic Modulus" value={settings.elasticModulus} min={10} max={200} unit="GPa" onChange={(v:any) => setSettings({...settings, elasticModulus: v})} />
+          </div>
+          <div className="mt-auto pt-10 space-y-4">
+            <div className="flex justify-between items-center text-[8px] font-mono text-slate-700 uppercase tracking-widest">
+              <span>Security_Hash</span>
+              <span>8f_3e_91_ab</span>
+            </div>
+            <button 
+              onClick={runSimulation}
+              disabled={analyzing}
+              className="w-full bureau-button-primary flex items-center justify-center gap-3 disabled:opacity-50"
+            >
+              {analyzing ? <Loader2 size={16} className="animate-spin" /> : <Command size={16} />}
+              {analyzing ? 'PROCESSING...' : 'INITIATE SIMULATION'}
+            </button>
+          </div>
+        </aside>
+
+        {/* Main Stage - Telemetry Visualization */}
+        <div className="col-span-12 lg:col-span-9 flex flex-col gap-1">
+          <section className="h-[520px] bg-[#000000] border border-[#1A1A1A] relative flex flex-col group">
+            <WaveformVisualizer />
+            
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div 
+                style={{
+                  width: '280px', height: '280px',
+                  background: `rgba(255, 255, 255, ${settings.transparency})`,
+                  backdropFilter: `blur(${settings.blur}px)`,
+                  border: `1px solid rgba(0,255,153,${settings.fractureThreshold/5})`,
+                  boxShadow: `0 0 100px -20px rgba(0,255,153,${settings.stressScaling/20})`,
+                  transform: `perspective(1000px) rotateY(${(settings.eigenvalueIndex - 1.5) * 30}deg)`
+                }} 
+                className="transition-all duration-1000 relative"
+              >
+                <div className="absolute top-4 right-4 text-[#00FF99]/20 group-hover:text-[#00FF99] transition-all"><Crosshair size={18} /></div>
+                <div className="absolute inset-0 grid-overlay opacity-20" />
+              </div>
+            </div>
+
+            {/* Bottom Metric Blocks */}
+            <div className="mt-auto grid grid-cols-4 gap-1 p-1 bg-[#1A1A1A]">
+              {[
+                { label: 'Yield Strength', val: `${140 + settings.thermalGradient} MPa`, status: 'NOMINAL' },
+                { label: 'Young\'s Modulus', val: `${settings.elasticModulus} GPa`, status: 'SYNCED' },
+                { label: 'Residual stress', val: `${(settings.stressScaling * 4).toFixed(1)}%`, status: 'STABLE' },
+                { label: 'Clarity index', val: '92.4%', status: 'HIGH' }
+              ].map((m, i) => (
+                <div key={i} className="bg-[#050505] p-6 border border-[#1A1A1A] group hover:border-[#00FF99]/30 transition-all">
+                  <span className="block text-[9px] font-mono text-slate-600 uppercase tracking-widest mb-2">{m.label}</span>
+                  <span className="block text-3xl font-bold text-white group-hover:text-[#00FF99] transition-colors">{m.val}</span>
+                  <span className="block text-[8px] font-mono text-[#00FF99]/40 mt-1 uppercase tracking-widest">{m.status}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Simulation Output Report */}
+          {report && (
+            <div className="h-64 bg-[#050505] border border-[#1A1A1A] p-10 overflow-y-auto custom-scroll animate-in slide-in-from-bottom-4">
+              <div className="flex items-center gap-3 mb-6">
+                <Microscope size={14} className="text-[#00FF99]" />
+                <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Simulation Telemetry Report</h4>
+              </div>
+              <div className="text-[12px] font-mono text-slate-500 leading-relaxed whitespace-pre-wrap">
+                {report}
+              </div>
+            </div>
+          )}
         </div>
-      );
-      case 'about': return <div className="py-32 px-12 max-w-4xl mx-auto text-center space-y-12">
-        <h1 className="text-6xl metallic-text tracking-tighter">OVD Bureau</h1>
-        <p className="text-xl font-light text-slate-500 leading-relaxed italic italic">"The authority in structural transparency and silicate physics since 2018."</p>
-      </div>;
-      default: return <EngineModule settings={settings} setSettings={setSettings} />;
-    }
+      </div>
+    );
   };
 
   return (
-    <div className="bg-[#050505] min-h-screen selection:bg-[#00FF99]/40 overflow-x-hidden">
-      <ErrorBoundary>
-        <div style={{ transform: 'scale(0.92)', transformOrigin: 'top center' }} className="max-w-[1440px] mx-auto min-h-screen flex flex-col">
-          <header className="sticky top-0 z-[100] border-b border-white/5 bg-[#050505]/60 backdrop-blur-3xl px-12 py-5 flex justify-between items-center">
-            <div className="flex items-center gap-16">
-              <div className="flex items-center gap-3 cursor-pointer group" onClick={() => { setView('engine'); setSelectedPost(null); }}>
-                <div className="w-8 h-8 bg-[#00FF99] flex items-center justify-center text-black font-black text-xl shadow-[0_0_20px_rgba(0,255,153,0.3)]">O</div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white">Bureau SaaS</span>
-                </div>
-              </div>
-              <div className="hidden lg:flex items-center gap-10">
-                {NAV_LINKS.map(link => (
-                  <button key={link.id} onClick={() => { setView(link.id); setSelectedPost(null); }} className={`nav-link flex items-center gap-3 ${view === link.id && !selectedPost ? 'active' : ''}`}>
-                    {link.label}
-                  </button>
-                ))}
-              </div>
+    <div className="bg-[#000000] min-h-screen selection:bg-[#00FF99]/40 flex flex-col">
+      <header className="sticky top-0 z-[100] border-b border-[#1A1A1A] bg-[#000000]/80 backdrop-blur-3xl px-12 py-5 flex justify-between items-center">
+        <div className="flex items-center gap-16">
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setView('engine')}>
+            <div className="w-8 h-8 bg-[#00FF99] flex items-center justify-center text-black font-black text-xl shadow-[0_0_20px_rgba(0,255,153,0.3)]">O</div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-white">Bureau Engine</span>
+              <span className="text-[8px] font-mono text-[#00FF99]/40">v4.1.0_PROD</span>
             </div>
-            <button className="text-[9px] font-black uppercase tracking-[0.4em] text-[#00FF99] border border-[#00FF99]/30 px-6 py-2 hover:bg-[#00FF99] hover:text-black transition-all">magic.reviewsite@gmail.com</button>
-          </header>
-          
-          <main className="flex-grow">
-            {renderView()}
-          </main>
-
-          <footer className="pt-32 pb-12 px-12 border-t border-white/5 bg-[#030303]">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-24 mb-24">
-              <div className="space-y-8">
-                <div className="w-8 h-8 bg-[#00FF99] flex items-center justify-center text-black font-black">O</div>
-                <p className="text-xs text-slate-700 leading-relaxed uppercase tracking-widest">Authority in structural glass simulation.</p>
-              </div>
-              <div>
-                <h4 className="text-[9px] font-black text-[#00FF99] uppercase tracking-[0.4em] mb-10">Resources</h4>
-                <ul className="space-y-4 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-800">
-                  <li className="hover:text-white cursor-pointer" onClick={() => setView('documentation')}>Documentation</li>
-                  <li className="hover:text-white cursor-pointer" onClick={() => setView('hub')}>Knowledge Hub</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-[9px] font-black text-[#00FF99] uppercase tracking-[0.4em] mb-10">Terminal</h4>
-                <ul className="space-y-4 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-800">
-                  <li className="hover:text-white cursor-pointer" onClick={() => setView('engine')}>Analysis Core</li>
-                  <li className="hover:text-white cursor-pointer">API Keys</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-[9px] font-black text-[#00FF99] uppercase tracking-[0.4em] mb-10">Legal</h4>
-                <ul className="space-y-4 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-800">
-                  <li className="hover:text-white cursor-pointer">Privacy Protocol</li>
-                  <li className="hover:text-white cursor-pointer">Compliance Log</li>
-                </ul>
-              </div>
-            </div>
-            <div className="flex justify-between items-center pt-12 border-t border-white/5 text-[8px] font-mono text-slate-900 uppercase tracking-[0.8em]">
-              <p>© 2026 OVD Bureau Engineering. Stable_v4.1.0</p>
-              <div className="flex gap-10">
-                <span>AdSense_Enabled</span>
-                <span>SEO_Parity_Sync</span>
-              </div>
-            </div>
-          </footer>
+          </div>
+          <nav className="hidden lg:flex items-center gap-10">
+            {NAV_LINKS.map(link => (
+              <button 
+                key={link.id} 
+                onClick={() => { setView(link.id); setSelectedPost(null); }} 
+                className={`nav-link flex items-center gap-3 ${view === link.id && !selectedPost ? 'active' : ''}`}
+              >
+                {link.label}
+              </button>
+            ))}
+          </nav>
         </div>
-      </ErrorBoundary>
+        <div className="flex items-center gap-6">
+          <Flash size={14} className="text-[#00FF99] animate-pulse" />
+          <span className="text-[9px] font-mono text-slate-800 uppercase tracking-widest hidden md:block">AEROSPACE_TERMINAL_0X0</span>
+          <button className="text-[10px] font-black uppercase tracking-[0.4em] text-[#00FF99] border border-[#00FF99]/20 px-6 py-2 hover:bg-[#00FF99] hover:text-black transition-all">
+            Access_Protocol
+          </button>
+        </div>
+      </header>
+
+      <main className="flex-grow py-8">
+        {renderView()}
+      </main>
+
+      <footer className="pt-24 pb-12 px-12 border-t border-[#1A1A1A] bg-[#030303]">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-24 mb-24 max-w-[1440px] mx-auto">
+          <div className="space-y-6">
+            <div className="w-8 h-8 bg-[#00FF99] flex items-center justify-center text-black font-black">O</div>
+            <p className="text-[10px] text-slate-700 leading-relaxed uppercase tracking-widest">Global authority in structural material simulation and forensic facade engineering.</p>
+          </div>
+          <div>
+            <h4 className="text-[10px] font-black text-[#00FF99] uppercase tracking-[0.4em] mb-10">Protocols</h4>
+            <ul className="space-y-4 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-800">
+              <li className="hover:text-white cursor-pointer" onClick={() => setView('engine')}>Analysis core</li>
+              <li className="hover:text-white cursor-pointer" onClick={() => setView('hub')}>Knowledge archive</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-[10px] font-black text-[#00FF99] uppercase tracking-[0.4em] mb-10">BUREAU</h4>
+            <ul className="space-y-4 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-800">
+              <li className="hover:text-white cursor-pointer">Security keys</li>
+              <li className="hover:text-white cursor-pointer">Encryption logs</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-[10px] font-black text-[#00FF99] uppercase tracking-[0.4em] mb-10">System</h4>
+            <ul className="space-y-4 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-800">
+              <li className="hover:text-white cursor-pointer">Node status</li>
+              <li className="hover:text-white cursor-pointer">Hardware parity</li>
+            </ul>
+          </div>
+        </div>
+        <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center pt-12 border-t border-white/5 text-[8px] font-mono text-slate-900 uppercase tracking-[0.8em] gap-6">
+          <p>© 2026 OVD Bureau Engineering. Mission_Critical_SaaS</p>
+          <div className="flex gap-10">
+            <span>NASA_SIM_CERTIFIED</span>
+            <span>AEROSPACE_GRADE_UI</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

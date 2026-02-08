@@ -4,9 +4,8 @@
 
 :root {
   --neon-mint: #00FF99;
-  --deep-black: #050505;
+  --deep-black: #000000;
   --charcoal: #1A1A1A;
-  --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 @layer base {
@@ -17,11 +16,11 @@
   }
   
   body {
-    @apply bg-[#050505] text-slate-400 antialiased overflow-x-hidden;
+    @apply bg-[#000000] text-slate-400 antialiased overflow-x-hidden;
     background-image: 
-      linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-    background-size: 40px 40px;
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -30,17 +29,9 @@
 }
 
 @layer components {
-  .saas-panel {
-    @apply bg-[#1A1A1A]/30 backdrop-blur-xl border border-white/10 transition-all duration-300;
-  }
-
-  .saas-panel:hover {
-    @apply border-[#00FF99]/30;
-  }
-
   .bureau-button-primary {
-    @apply px-6 py-2 bg-[#00FF99] text-black font-bold uppercase tracking-widest rounded-none 
-           hover:bg-white hover:text-black transition-all transform active:scale-95 shadow-lg shadow-[#00FF99]/10;
+    @apply px-6 py-3 bg-[#00FF99] text-black font-black uppercase text-[10px] tracking-[0.4em] rounded-none 
+           hover:bg-white hover:text-black transition-all transform active:scale-95 shadow-lg shadow-[#00FF99]/20;
   }
 
   .bureau-range {
@@ -49,21 +40,21 @@
   }
 
   .bureau-range::-webkit-slider-runnable-track {
-    @apply w-full h-[1px] bg-white/10 transition-colors;
+    @apply w-full h-[1px] bg-[#1A1A1A] transition-colors;
   }
 
   .bureau-range:hover::-webkit-slider-runnable-track {
-    @apply bg-[#00FF99]/40;
+    @apply bg-[#00FF99]/30;
   }
 
   .bureau-range::-webkit-slider-thumb {
     -webkit-appearance: none;
     @apply h-4 w-[2px] bg-[#00FF99] -mt-[8px] transition-all duration-300;
-    box-shadow: 0 0 10px #00FF99;
+    box-shadow: 0 0 12px #00FF99;
   }
 
   .nav-link {
-    @apply text-[10px] font-bold uppercase tracking-[0.4em] text-slate-500 hover:text-white transition-all relative py-2;
+    @apply text-[10px] font-black uppercase tracking-[0.5em] text-slate-700 hover:text-white transition-all relative py-2;
   }
 
   .nav-link.active {
@@ -75,44 +66,33 @@
     @apply absolute bottom-0 left-0 w-full h-[1px] bg-[#00FF99];
   }
 
-  .code-block {
-    @apply font-mono text-[12px] bg-[#020202] border border-white/5 p-6 text-slate-300 leading-relaxed overflow-x-auto;
-  }
-
-  /* Typography for long-form content */
-  .prose h1 { @apply text-5xl font-black mb-12 text-white uppercase tracking-tighter border-b border-white/10 pb-6; }
-  .prose h2 { @apply text-2xl font-black mb-8 mt-16 text-white uppercase tracking-widest border-l-2 border-[#00FF99] pl-6; }
-  .prose h3 { @apply text-lg font-bold mb-6 mt-10 text-[#00FF99] uppercase tracking-widest; }
-  .prose p { @apply text-base text-slate-400 mb-8 leading-relaxed font-light; }
-  .prose ul { @apply list-disc list-outside ml-6 mb-8 space-y-4 text-slate-400; }
-  .prose table { @apply w-full mb-12 border-collapse bg-white/[0.01] border border-white/5; }
-  .prose th { @apply bg-white/5 border-b border-white/10 p-4 text-left text-[10px] uppercase font-black text-[#00FF99] tracking-widest; }
-  .prose td { @apply border-b border-white/5 p-4 text-sm font-light text-slate-300 font-mono; }
-  .prose blockquote { @apply border-l border-white/20 pl-8 italic text-slate-500 my-10 font-light text-xl; }
-}
-
-.custom-scroll::-webkit-scrollbar { width: 2px; }
-.custom-scroll::-webkit-scrollbar-track { @apply bg-transparent; }
-.custom-scroll::-webkit-scrollbar-thumb { @apply bg-[#00FF99]/20; }
-
-@keyframes waveform-pulse {
-  0% { opacity: 0.3; stroke-width: 1px; }
-  50% { opacity: 1; stroke-width: 2px; }
-  100% { opacity: 0.3; stroke-width: 1px; }
-}
-
-.waveform-animate {
-  animation: waveform-pulse 3s ease-in-out infinite;
+  .prose h1 { @apply text-4xl font-black mb-10 text-white uppercase tracking-tighter border-b border-[#1A1A1A] pb-6; }
+  .prose h2 { @apply text-xl font-black mb-6 mt-12 text-white uppercase tracking-widest border-l-2 border-[#00FF99] pl-6; }
+  .prose p { @apply text-sm text-slate-400 mb-6 leading-relaxed font-light; }
+  .prose blockquote { @apply border-l border-white/20 pl-6 italic text-slate-500 my-8; }
 }
 
 .grid-overlay {
   background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
-  background-size: 20px 20px;
-  opacity: 0.03;
+  background-size: 25px 25px;
+}
+
+.custom-scroll::-webkit-scrollbar { width: 3px; }
+.custom-scroll::-webkit-scrollbar-track { @apply bg-black; }
+.custom-scroll::-webkit-scrollbar-thumb { @apply bg-[#1A1A1A] hover:bg-[#00FF99]/30; }
+
+@keyframes waveform-pulse {
+  0% { opacity: 0.2; stroke-width: 1px; }
+  50% { opacity: 1; stroke-width: 1.5px; }
+  100% { opacity: 0.2; stroke-width: 1px; }
+}
+
+.waveform-animate {
+  animation: waveform-pulse 4s ease-in-out infinite;
 }
 
 .metallic-text {
-  background: linear-gradient(135deg, #fff 0%, #aaa 50%, #fff 100%);
+  background: linear-gradient(135deg, #fff 0%, #444 50%, #fff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
