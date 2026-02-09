@@ -2,86 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --neon-mint: #00FF99;
+}
+
 @layer base {
   body {
-    @apply bg-black text-slate-400 font-sans antialiased overflow-hidden select-none;
+    @apply bg-background text-slate-400 font-sans;
   }
 }
 
 @layer components {
-  .instrumentation-grid {
+  .micro-grid {
     background-image: 
-      linear-gradient(rgba(0, 255, 153, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 255, 153, 0.03) 1px, transparent 1px);
-    background-size: 20px 20px;
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 10px 10px;
   }
 
-  .scientific-label {
-    @apply font-mono text-[9px] tracking-[0.4em] uppercase text-slate-600 transition-all;
+  .radar-sweep {
+    background: conic-gradient(from 0deg, rgba(0, 255, 153, 0.15) 0%, transparent 20%, transparent 100%);
+    animation: radar 8s linear infinite;
+    transform-origin: center;
   }
 
-  .data-point {
-    @apply font-black italic tracking-tighter text-white transition-all duration-300;
+  .scanning-line {
+    animation: scan 6s linear infinite alternate;
   }
 
   .bureau-slider {
     -webkit-appearance: none;
-    @apply w-full h-[1px] bg-border rounded-full outline-none relative cursor-crosshair;
+    @apply w-full h-1 bg-border rounded-full outline-none;
   }
 
   .bureau-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply w-1.5 h-4 bg-accent shadow-[0_0_15px_#00FF99] border-none;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    @apply w-3 h-3 bg-accent border border-black shadow-[0_0_10px_#00FF99];
+    cursor: pointer;
   }
 
-  .bureau-slider::-webkit-slider-thumb:hover {
-    @apply h-6 bg-white shadow-[0_0_25px_#00FF99];
-  }
-
-  .metallic-subtitle {
-    background: linear-gradient(180deg, #ffffff 0%, #444444 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    @apply font-black uppercase tracking-widest;
-  }
-
-  .scanning-line {
-    animation: scan 6s linear infinite;
-  }
-
-  .glass-card {
-    @apply bg-black/60 border border-border backdrop-blur-3xl;
-  }
-
-  @keyframes scan {
-    0% { transform: translateY(-100%); opacity: 0; }
-    5% { opacity: 0.2; }
-    95% { opacity: 0.2; }
-    100% { transform: translateY(1200%); opacity: 0; }
-  }
-
-  @keyframes spin-custom {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  .animate-spin-custom {
-    animation: spin-custom 12s linear infinite;
+  .glass-panel {
+    @apply bg-surface/80 border border-border backdrop-blur-xl;
   }
 }
 
-.custom-scroll::-webkit-scrollbar { width: 1px; }
-.custom-scroll::-webkit-scrollbar-track { @apply bg-transparent; }
-.custom-scroll::-webkit-scrollbar-thumb { @apply bg-accent/40 hover:bg-accent; }
-
-input[type="range"] {
-  background: linear-gradient(to right, rgba(0,255,153,0.08) 0%, rgba(0,255,153,0) 100%);
+@keyframes radar {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-.line-clamp-4 {
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+@keyframes scan {
+  0% { transform: translateY(-50%); opacity: 0.1; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(150%); opacity: 0.1; }
 }
+
+.metallic-text {
+  background: linear-gradient(135deg, #ffffff 0%, #444444 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar { width: 4px; }
+.custom-scroll::-webkit-scrollbar-track { @apply bg-black; }
+.custom-scroll::-webkit-scrollbar-thumb { @apply bg-border hover:bg-accent/30 transition-colors; }

@@ -14,10 +14,10 @@ export default {
         mono: ['JetBrains Mono', 'monospace'],
       },
       letterSpacing: {
-        'telemetry': '0.4em',
+        'telemetry': '0.3em',
       },
       fontSize: {
-        '2xs': '8px',
+        '2xs': '10px',
       }
     },
   },
