@@ -1,35 +1,38 @@
 import './globals.css';
-import React, { useState, useId, useEffect, ReactNode, useMemo } from 'react';
+import React, { useState, useEffect, ReactNode, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { 
-  Shield, ChevronRight, AlertTriangle, Loader2, 
-  Terminal, BarChart3, Microscope, 
-  Cpu, Database, FileText, Info, 
+  Shield, ChevronRight, Loader2, 
+  Database, FileText, 
   Target, Crosshair, Command,
-  ArrowUpRight, Settings, Radio, Scan, Box, Activity,
-  Layers, Zap, Share2, Printer, Globe, Lock, Cpu as Processor,
-  History, Sliders, LayoutGrid, Monitor, Compass, Maximize
+  ArrowUpRight, Settings, Scan, 
+  Globe, Lock, Cpu as Processor,
+  Sliders, Monitor, Compass, 
+  Copy, CheckCircle2, AlertCircle, Download,
+  Activity, Maximize, Terminal, Radio, Info,
+  Box, Layers, Zap
 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 
-// --- TELEMETRY META LAYER ---
-const META_INDICATORS = [
-  { label: "NODE_ID", val: "BUREAU_ORBITAL_7X" },
-  { label: "ENC_PROTOCOL", val: "AES-256_GCM" },
-  { label: "LATENCY_P99", val: "1.24 MS" },
-  { label: "LOAD_CLASS", val: "AEROSPACE_SPEC_S1" }
+// --- TELEMETRY META LAYER (CORNER INDICATORS) ---
+const SYSTEM_TELEMETRY = {
+  NODE_ID: "BUREAU_ORBITAL_7X",
+  ENC_PROTOCOL: "AES-256_GCM",
+  RUNTIME: "PARITY_VERIFIED",
+  LATENCY: "1.24 MS",
+  LOAD_CLASS: "AERO_SPEC_S1"
+};
+
+// --- PARAMETER LAB CONFIGURATION ---
+const SIMULATION_PARAMETERS = [
+  { key: "thermalGradient", label: "Thermal Gradient Coefficient", min: 0, max: 250, unit: "K", desc: "Differential heat propagation through silicate cross-sections." },
+  { key: "fractureIndex", label: "Fracture Mechanics Index", min: 0.05, max: 2.5, step: 0.01, unit: "MPa√m", desc: "Critical stress intensity factor for brittle failure initiation." },
+  { key: "eigenvalueFactor", label: "Eigenvalue Stability Factor", min: 1.0, max: 10.0, step: 0.1, unit: "λ", desc: "Bifurcation threshold for slender structural components." },
+  { key: "stressTensor", label: "Stress Tensor Scaling", min: 0.1, max: 15.0, step: 0.1, unit: "σ_xx", desc: "Membrane stress concentration multiplier in non-linear states." },
+  { key: "fatigueLimit", label: "Structural Fatigue Envelope", min: 100, max: 10000, unit: "N_f", desc: "Cycle boundary before catastrophic lattice dislocation." },
+  { key: "shearModulus", label: "Viscoelastic Shear Modulus", min: 10, max: 300, unit: "MPa", desc: "Interlayer coupling constant (G) at operational temperatures." }
 ];
 
-const PARAMETER_CONFIG = [
-  { key: "thermalGradient", label: "Thermal Gradient Coefficient", min: 0, max: 250, unit: "K", desc: "Differential heat distribution through silicate layers." },
-  { key: "fractureIndex", label: "Fracture Mechanics Index", min: 0.05, max: 2.5, step: 0.01, unit: "MPa√m", desc: "Critical stress intensity factor for brittle failure." },
-  { key: "eigenvalueFactor", label: "Eigenvalue Stability Factor", min: 1.0, max: 10.0, step: 0.1, unit: "λ", desc: "Bifurcation point for slender structural elements." },
-  { key: "stressTensor", label: "Stress Tensor Scaling", min: 0.1, max: 15.0, step: 0.1, unit: "σ_xx", desc: "Membrane stress concentration multiplier." },
-  { key: "fatigueLimit", label: "Structural Fatigue Envelope", min: 100, max: 10000, unit: "N_f", desc: "Cycle boundary before lattice dislocation." },
-  { key: "shearModulus", label: "Viscoelastic Shear Modulus", min: 10, max: 300, unit: "MPa", desc: "Interlayer coupling constant (G) at 20°C." }
-];
-
-// --- KNOWLEDGE INTELLIGENCE HUB (8 HIGH-LEVEL REPORTS) ---
 interface ForensicReport {
   id: string;
   title: string;
@@ -40,145 +43,163 @@ interface ForensicReport {
   content: ReactNode;
 }
 
-const KNOWLEDGE_BASE: ForensicReport[] = [
+// --- KNOWLEDGE ENGINE (8 HIGH-LEVEL FORENSIC REPORTS) ---
+const KNOWLEDGE_ARCHIVE: ForensicReport[] = [
   {
-    id: 'von-karman-plate',
-    title: 'Non-Linear Plate Response in Large-Format Facades',
+    id: 'rpt-buckling',
+    title: 'Lateral Torsional Buckling of Monumental Glass Fins',
     category: 'Forensic Engineering',
-    author: 'Elena Vance, Senior Materials Lead',
-    metric: 'Von_Kármán: 0.998',
-    summary: 'Evaluating membrane stress stiffening in oversized panels where central deflection exceeds tolerance threshold of 1.0 thickness.',
+    author: 'Dr. Elena Vance, Senior Lead',
+    metric: 'Stability_λ: 1.22',
+    summary: 'A forensic investigation into lateral-torsional instability in structural fins where vertical load exceeds critical bifurcation thresholds of 40kN. The analysis confirms that unbraced length is longer than the safety envelope of 4000mm.',
     content: (
-      <div className="space-y-8 font-sans">
-        <h1 className="text-4xl font-black uppercase tracking-tighter text-white">Non-Linear Plate Theory in Structural Silicates</h1>
-        <p className="text-slate-400 text-lg leading-relaxed font-light">Structural analysis of architectural glass requires the application of Von Kármán equations when out-of-plane displacement is higher than the nominal plate thickness. Standard Kirchhoff-Love theory remains valid only when deflection is lower than this critical margin.</p>
-        <div className="grid grid-cols-3 gap-1">
-          <div className="bg-[#050505] border border-[#1A1A1A] p-6">
-            <h3 className="text-[#00FF99] text-[10px] font-mono tracking-widest uppercase mb-4">Boundary Parity</h3>
-            <p className="text-xs text-slate-500 font-mono">Simple support (SS1) with zero rotation constraint. In-plane movement exceeds 0.5mm threshold.</p>
-          </div>
-          <div className="bg-[#050505] border border-[#1A1A1A] p-6">
-            <h3 className="text-[#00FF99] text-[10px] font-mono tracking-widest uppercase mb-4">Stress Matrix</h3>
-            <p className="text-xs text-slate-500 font-mono">Radial stress distribution is above failure boundary at 145MPa. Mitigation required.</p>
-          </div>
-          <div className="bg-[#050505] border border-[#1A1A1A] p-6">
-            <h3 className="text-[#00FF99] text-[10px] font-mono tracking-widest uppercase mb-4">Mesh Convergence</h3>
-            <p className="text-xs text-slate-500 font-mono">Mesh density exceeds 8000 elements per m2. Error rate lower than 0.1 percent.</p>
-          </div>
+      <div className="space-y-6">
+        <p className="text-slate-400 leading-relaxed font-light">Structural modeling indicates that out-of-plane displacement is higher than the nominal safety threshold when unbraced length is longer than 4000mm. Support stiffness must be increased to ensure global stability.</p>
+        <div className="bg-[#080808] border border-[#1A1A1A] p-6 font-mono text-xs text-[#00FF99]/70">
+          STABILITY_EQUATION: M_cr = (π/L) * sqrt(E*Iz*G*It) * sqrt(1 + (π^2*E*Iw)/(L^2*G*It))
         </div>
       </div>
     )
   },
   {
-    id: 'viscoelastic-creep',
-    title: 'Viscoelastic Coupling and Shear Transfer Protocols',
+    id: 'rpt-aniso',
+    title: 'Anisotropic Stress Mapping in Heat-Strengthened Substrates',
     category: 'Material Science',
-    author: 'Marcus Ovd, Structural Director',
-    metric: 'Shear_G: 1.48 GPa',
-    summary: 'Detailed evaluation of shear transfer efficiency in laminated glass under load durations that exceeds 3-second wind protocol.',
-    content: <p className="text-slate-400 text-lg font-light">The effective thickness of a laminate is a factor of the interlayer shear modulus (G). This value varies as temperatures exceeds 30 degrees Celsius or load duration is longer than the standard 3-second wind gust protocol.</p>
+    author: 'Marcus Ovd, Director',
+    metric: 'σ_Residual: 45MPa',
+    summary: 'Clinical forensic mapping of stress distribution in annealed silicates post-tempering. This study identifies potential dislocation matrices where surface compression is lower than the safety margin.',
+    content: <p className="text-slate-400 leading-relaxed font-light">Surface compression must remain higher than the design threshold of 400MPa but lower than the fracture boundary of 550MPa to ensure deterministic breakage patterns and fragmentation safety.</p>
   },
   {
-    id: 'seismic-dissipation',
-    title: 'Seismic Dissipation in Double-Skin Facades',
-    category: 'Seismic Analysis',
-    author: 'Sarah Jenkins, Materials Scientist',
-    metric: 'Drift_Parity: 0.94',
-    summary: 'Evaluating inter-story drift capacity where lateral displacement exceeds the structural safety envelope of standard fixings.',
-    content: <p className="text-slate-400 text-lg font-light">Seismic resilience is dictated by the ability to accommodate story drift without inducing glass-to-metal contact. Required clearance is higher than calculated drift by a factor of 1.5.</p>
-  },
-  {
-    id: 'blast-mitigation',
-    title: 'Blast Mitigation for High-Velocity Impulse Loads',
+    id: 'rpt-shock',
+    title: 'Transient Shockwave Propagation in Laminated PVB Interlayers',
     category: 'Defense Simulation',
-    author: 'Dr. Arthur Dent, Lead Analyst',
-    metric: 'GSA_Level_D_Verified',
-    summary: 'Modeling shockwaves where peak reflective pressure exceeds 120kPa with duration lower than 10ms.',
-    content: <p className="text-slate-400 text-lg font-light">Structural retention is guaranteed if interlayer elongation remains higher than 220 percent post-fracture of all primary glass plies.</p>
+    author: 'Dr. Arthur Dent, Analyst',
+    metric: 'GSA_Level: D_CERT',
+    summary: 'High-fidelity modeling of impulse loads where peak reflected pressure exceeds 100kPa for durations shorter than 15 milliseconds. Results indicate perimeter tensile load is higher than standard anchorage limits.',
+    content: <p className="text-slate-400 leading-relaxed font-light">Laminate integrity is verified when interlayer elongation is higher than 200 percent post-impact. Perimeter tensile load remains below the critical failure margin.</p>
   },
   {
-    id: 'thermal-stress-prop',
-    title: 'Thermal Stress Propagation in Solar Control Glass',
-    category: 'Thermal Dynamics',
+    id: 'rpt-drift',
+    title: 'Inter-Story Drift Capacity in Unitized Curtain Walls',
+    category: 'Seismic Analysis',
+    author: 'Sarah Jenkins, Scientist',
+    metric: 'Drift_Max: 2.5%',
+    summary: 'Evaluation of seismic performance where lateral story displacement is higher than the engagement envelope of structural gaskets. The study defines a drift limit lower than 3 percent for seismic zone 4.',
+    content: <p className="text-slate-400 leading-relaxed font-light">Drift accommodation must exceed the calculated seismic displacement by a factor of 1.25. Mechanical retention ensures glass-to-metal collision remains lower than design tolerance.</p>
+  },
+  {
+    id: 'rpt-acoustic',
+    title: 'Coincidence Frequency Shifts in Acoustic Lamination',
+    category: 'Acoustics',
+    author: 'Jordan Smith, Specialist',
+    metric: 'STC_Rating: 44',
+    summary: 'Analyzing sound transmission loss where noise frequency is lower than the critical coincidence dip of asymmetric structural plys. Lamination thickness is higher than the acoustic resonance threshold.',
+    content: <p className="text-slate-400 leading-relaxed font-light">Effective damping occurs when the coincidence frequency is lower than the target noise spectrum. Asymmetric lamination reduces the dip depth by 6dB, optimizing STC performance.</p>
+  },
+  {
+    id: 'rpt-nis',
+    title: 'NiS Inclusion Phase Transformation Forecasting',
+    category: 'Forensic Engineering',
     author: 'Dr. Elena Vance',
-    metric: 'ΔT_Limit: 40.2K',
-    summary: 'Predicting phase transformation triggers in coatings when thermal environment exceeds standard operational envelope of HST.',
-    content: <p className="text-slate-400 text-lg font-light">If edge thermal gradient is higher than 40K in annealed substrates, spontaneous fracture occurs. HST is mandatory where absorption exceeds 50 percent.</p>
+    metric: 'HST_Parity: 0.99',
+    summary: 'Predicting α-β phase expansion in tempered glass where inclusion diameter exceeds 60 micrometers under cyclic thermal loading. Expansion pressure is higher than internal compression limits.',
+    content: <p className="text-slate-400 leading-relaxed font-light">Nickel Sulfide transformation triggers fracture if internal tension is higher than the compression boundary. HST remains the primary mitigation protocol for mission-critical facades.</p>
   },
   {
-    id: 'torsional-buckling',
-    title: 'Lateral Torsional Buckling of 12m Cantilevered Fins',
+    id: 'rpt-creep',
+    title: 'Long-Term Creep of Structural Silicone Adhesives',
+    category: 'Bond Mechanics',
+    author: 'Sarah Jenkins',
+    metric: 'Shear_Yield: 0.21',
+    summary: 'Longitudinal analysis of adhesive bond yield where sustained dead load exceeds the structural safety envelope. The creep coefficient is higher than the operational margin for 50-year service life.',
+    content: <p className="text-slate-400 leading-relaxed font-light">Bond integrity is maintained if sustained shear stress remains lower than 0.11 MPa. Dynamic wind load duration must stay below 3 seconds for safe structural calculations.</p>
+  },
+  {
+    id: 'rpt-plate',
+    title: 'Membrane Action in Large-Deflection Plate Theory',
     category: 'Structural Mechanics',
     author: 'Marcus Ovd',
-    metric: 'Bifurcation_Point: 45kN',
-    summary: 'Stability analysis for monumental glass fins where slenderness ratio is higher than standard engineering boundaries.',
-    content: <p className="text-slate-400 text-lg font-light">Buckling failure occurs if compressive load exceeds the bifurcation point. We require lateral support spacing lower than 3.5 meters.</p>
-  },
-  {
-    id: 'nis-forensics',
-    title: 'Forensic evaluation of Nickel Sulfide spontaneous fracture',
-    category: 'Forensic Engineering',
-    author: 'Sarah Jenkins',
-    metric: 'NiS_Detection_P: 0.99',
-    summary: 'Investigation of α-β phase transformation in tempered silicates causing failure when internal stress exceeds compression boundary.',
-    content: <p className="text-slate-400 text-lg font-light">Nickel Sulfide inclusions undergo phase expansion over time. Spontaneous fracture is triggered when inclusion diameter is higher than 50 micrometers.</p>
-  },
-  {
-    id: 'acoustic-damping',
-    title: 'Acoustic Damping and Coincidence Frequency Shifts',
-    category: 'Material Science',
-    author: 'Jordan Smith, Lead Aero-Engineer',
-    metric: 'STC_Rating: 44',
-    summary: 'Optimizing sound transmission ratings by ensuring coincidence frequency is lower than critical architectural noise spectrum.',
-    content: <p className="text-slate-400 text-lg font-light">Asymmetric laminate build-ups shift the coincidence dip to a frequency range lower than that of urban transit noise, improving STC performance.</p>
+    metric: 'Von_Karman_OK',
+    summary: 'Evaluating out-of-plane stiffening in oversized panels where central deflection is higher than 1.0 times the glass thickness. Non-linear stiffening effects exceed linear predictive models.',
+    content: <p className="text-slate-400 leading-relaxed font-light">Linear theory fails when deflection exceeds the plate thickness. Von Karman equations must be applied for deterministic results in oversized silicate assemblies.</p>
   }
 ];
 
-// --- MISSION CRITICAL COMPONENTS ---
+// --- HIGH-FIDELITY INSTRUMENTATION GRID ---
+const InstrumentationGrid = ({ stress }: { stress: number }) => {
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+  const containerRef = useRef<HTMLDivElement>(null);
 
-const InstrumentationGrid = ({ stress }: { stress: number }) => (
-  <div className="h-full w-full bg-[#000000] border border-[#1A1A1A] relative overflow-hidden flex items-center justify-center">
-    <div className="absolute inset-0 micro-grid-10 opacity-30 pointer-events-none" />
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,153,0.01)_0%,transparent_90%)]" />
-    
-    {/* Radar Sweep Animation */}
-    <div className="absolute top-1/2 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-1/2 radar-sweep pointer-events-none" />
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setMousePos({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100
+    });
+  };
 
-    {/* Coordinate Crosshairs */}
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <div className="w-full h-[1px] bg-[#1A1A1A]" />
-      <div className="h-full w-[1px] bg-[#1A1A1A]" />
+  return (
+    <div 
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      className="h-full w-full bg-[#000000] border border-[#1A1A1A] relative overflow-hidden flex items-center justify-center cursor-crosshair group"
+    >
+      {/* 10px Micro Grid Base */}
+      <div className="absolute inset-0 micro-grid-10 opacity-40 pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,153,0.015)_0%,transparent_90%)]" />
       
-      {/* Target Focus UI */}
-      <div 
-        style={{
-          width: '400px', height: '400px',
-          background: 'rgba(2, 2, 2, 0.2)',
-          border: `1px solid rgba(0,255,153,${stress / 20})`,
-          transform: `perspective(1200px) rotateY(${(stress - 7) * 5}deg)`
-        }}
-        className="relative transition-all duration-700 flex items-center justify-center border-dashed"
-      >
-        <Crosshair size={40} className="text-[#00FF99]/20" />
-        <div className="absolute top-4 left-4 text-[8px] font-mono text-[#00FF99]/40 tracking-[0.4em] uppercase">Sector_0x44</div>
-        <div className="absolute bottom-4 right-4 text-[8px] font-mono text-[#00FF99]/40 tracking-[0.4em] uppercase">Stress_Sigma: {(stress * 2.8).toFixed(3)}</div>
-        
-        {/* Active Scanning Lines */}
-        <div className="absolute top-0 bottom-0 w-[1px] bg-[#00FF99]/10 shadow-[0_0_15px_#00FF99] scanning-h z-10" />
-      </div>
-    </div>
+      {/* Radar Sweep Animation */}
+      <div className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 radar-sweep pointer-events-none" />
 
-    {/* Real-time Telemetry corner labels */}
-    <div className="absolute top-4 left-4 space-y-2">
-      <div className="flex items-center gap-3 text-[9px] font-mono text-[#00FF99]/30 tracking-widest uppercase">
-        <Monitor size={10} /> Parity_X: 1.0442
+      {/* Crosshair Instrumentation */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-full h-[1px] bg-[#1A1A1A]" />
+        <div className="h-full w-[1px] bg-[#1A1A1A]" />
+        
+        <div 
+          style={{
+            width: '480px', height: '480px',
+            background: 'rgba(2, 2, 2, 0.4)',
+            backdropFilter: 'blur(8px)',
+            border: `1px solid rgba(0,255,153,${stress / 25})`,
+            transform: `perspective(1200px) rotateY(${(stress - 7) * 4}deg)`
+          }}
+          className="relative transition-all duration-700 flex items-center justify-center border-dashed"
+        >
+          <Crosshair size={48} className="text-[#00FF99]/20" />
+          <div className="absolute top-6 left-6 text-[10px] font-mono text-[#00FF99]/40 tracking-[0.3em] uppercase">Sector_Forensic_Delta</div>
+          <div className="absolute bottom-6 right-6 text-[10px] font-mono text-[#00FF99]/40 tracking-[0.3em] uppercase">σ_Stress_Load: {(stress * 3.42).toFixed(4)}</div>
+          
+          {/* Active Vertical Scanning Line */}
+          <div className="absolute top-0 bottom-0 w-[1px] bg-[#00FF99]/25 shadow-[0_0_25px_#00FF99] scanning-v z-10" />
+        </div>
       </div>
-      <div className="flex items-center gap-3 text-[9px] font-mono text-[#00FF99]/30 tracking-widest uppercase">
-        <Compass size={10} /> Heading: 12.04°
+
+      {/* Coordinate Telemetry Overlays */}
+      <div 
+        className="absolute z-30 pointer-events-none flex flex-col gap-1 transition-all duration-75 opacity-0 group-hover:opacity-100"
+        style={{ left: `${mousePos.x}%`, top: `${mousePos.y}%`, transform: 'translate(20px, 20px)' }}
+      >
+        <div className="text-[10px] font-mono text-[#00FF99] tracking-widest bg-black/90 px-3 py-1 border border-[#1A1A1A]">COOR_X: {mousePos.x.toFixed(3)}</div>
+        <div className="text-[10px] font-mono text-[#00FF99] tracking-widest bg-black/90 px-3 py-1 border border-[#1A1A1A]">COOR_Y: {mousePos.y.toFixed(3)}</div>
       </div>
+
+      {/* System Status Indicators (Corner Data) */}
+      <div className="absolute top-8 left-8 flex flex-col gap-3">
+        <div className="flex items-center gap-4 text-[10px] font-mono text-[#00FF99]/40 tracking-widest uppercase"><Monitor size={12} /> Parity_Locked</div>
+        <div className="flex items-center gap-4 text-[10px] font-mono text-[#00FF99]/40 tracking-widest uppercase"><Compass size={12} /> Heading_V: 12.04°</div>
+        <div className="flex items-center gap-4 text-[10px] font-mono text-[#00FF99]/40 tracking-widest uppercase"><Scan size={12} /> Resolution: 10NM</div>
+      </div>
+      
+      {/* Dynamic Telemetry corners */}
+      <div className="absolute top-8 right-8 text-[10px] font-mono text-slate-800 tracking-[0.3em] uppercase">{SYSTEM_TELEMETRY.NODE_ID}</div>
+      <div className="absolute bottom-8 right-8 text-[10px] font-mono text-[#00FF99]/30 tracking-[0.3em] uppercase">{SYSTEM_TELEMETRY.LATENCY}</div>
+      <div className="absolute bottom-8 left-8 text-[10px] font-mono text-slate-800 tracking-[0.3em] uppercase">{SYSTEM_TELEMETRY.RUNTIME}</div>
     </div>
-  </div>
-);
+  );
+};
 
 const App = () => {
   const [view, setView] = useState<'engine' | 'hub' | 'report'>('engine');
@@ -193,44 +214,45 @@ const App = () => {
   });
   const [analyzing, setAnalyzing] = useState(false);
   const [simLog, setSimLog] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const runAnalysis = async () => {
     setAnalyzing(true);
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `Forensic Engineering Analysis: Thermal ${settings.thermalGradient}K, Fracture ${settings.fractureIndex}MPa√m, Eigenvalue λ=${settings.eigenvalueFactor}. Output technical clinical report. Monospaced.`;
+      const prompt = `Conduct clinical forensic structural analysis. Parameters: Thermal ${settings.thermalGradient}K, Fracture ${settings.fractureIndex}, Eigenvalue ${settings.eigenvalueFactor}. Output mission-critical technical data only.`;
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: prompt,
-        config: { systemInstruction: "Output mission-critical forensic engineering telemetry. Clinical, deterministic, monospaced tech tone only." }
+        config: { systemInstruction: "Output clinic, monospaced forensic telemetry reports. Deterministic and authoritative tone only." }
       });
-      setSimLog(response.text || "ERR: NULL_REPORT");
+      setSimLog(response.text || "ERROR: PARITY_FAIL");
     } catch (e) {
-      setSimLog("CRITICAL_ERROR: Parity verification failed.");
+      setSimLog("CRITICAL_ERR: Simulation parity failure.");
     } finally {
       setAnalyzing(false);
     }
   };
 
-  const openReport = (report: ForensicReport) => {
-    setActiveReport(report);
-    setView('report');
-    window.scrollTo(0, 0);
-  };
-
   return (
     <div className="bg-[#000000] min-h-screen text-slate-400 font-sans selection:bg-[#00FF99]/40 flex flex-col antialiased">
-      {/* AEROSPACE HUD HEADER */}
-      <header className="sticky top-0 z-[200] border-b border-[#1A1A1A] bg-[#000000]/95 backdrop-blur-3xl px-12 py-5 flex justify-between items-center">
-        <div className="flex items-center gap-16">
-          <div className="flex items-center gap-5 cursor-pointer group" onClick={() => { setView('engine'); setActiveReport(null); }}>
-            <div className="w-10 h-10 bg-[#00FF99] flex items-center justify-center text-black font-black text-2xl shadow-[0_0_30px_rgba(0,255,153,0.3)]">O</div>
+      {/* 12-COLUMN AEROSPACE HEADER */}
+      <header className="sticky top-0 z-[200] border-b border-[#1A1A1A] bg-[#000000]/95 backdrop-blur-3xl px-12 py-6 flex justify-between items-center">
+        <div className="flex items-center gap-20">
+          <div className="flex items-center gap-8 cursor-pointer group" onClick={() => { setView('engine'); setActiveReport(null); }}>
+            <div className="w-14 h-14 bg-[#00FF99] flex items-center justify-center text-black font-black text-3xl shadow-[0_0_35px_rgba(0,255,153,0.3)]">O</div>
             <div className="flex flex-col">
-              <span className="text-[14px] font-black uppercase tracking-[0.6em] text-white">Bureau_Forensic_S1</span>
-              <span className="text-[9px] font-mono text-[#00FF99]/40 tracking-[0.4em] uppercase">Auth_Level: Mission_Critical</span>
+              <span className="text-[16px] font-black uppercase tracking-[0.8em] text-white">Bureau_Forensic_v4</span>
+              <span className="text-[10px] font-mono text-[#00FF99]/40 tracking-[0.4em] uppercase">Auth_Level: Mission_Critical</span>
             </div>
           </div>
-          <nav className="hidden lg:flex items-center gap-12">
+          <nav className="hidden lg:flex items-center gap-16">
             {[
               { id: 'engine', label: 'Analysis Core', icon: <Sliders size={12} /> },
               { id: 'hub', label: 'Intelligence Hub', icon: <Database size={12} /> }
@@ -238,7 +260,7 @@ const App = () => {
               <button 
                 key={link.id}
                 onClick={() => { setView(link.id as any); setActiveReport(null); }}
-                className={`flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.5em] py-2 transition-all ${view === link.id ? 'text-white border-b border-[#00FF99]' : 'text-slate-700 hover:text-white'}`}
+                className={`flex items-center gap-4 text-[11px] font-black uppercase tracking-[0.6em] py-2 transition-all ${view === link.id ? 'text-white border-b border-[#00FF99]' : 'text-slate-700 hover:text-white'}`}
               >
                 {link.icon}
                 {link.label}
@@ -246,44 +268,35 @@ const App = () => {
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-10">
+        <div className="flex items-center gap-12">
           <div className="flex flex-col items-end gap-1">
-            <span className="text-[9px] font-mono text-slate-800 tracking-widest uppercase">Encryption_SHA512</span>
-            <div className="flex gap-2 items-center">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#00FF99] animate-pulse" />
-              <span className="text-[10px] font-mono text-[#00FF99] uppercase tracking-widest">System_Online</span>
+            <span className="text-[10px] font-mono text-slate-800 tracking-[0.4em] uppercase">ENC: {SYSTEM_TELEMETRY.ENC_PROTOCOL}</span>
+            <div className="flex gap-3 items-center">
+              <div className="w-2 h-2 rounded-full bg-[#00FF99] animate-pulse shadow-[0_0_12px_#00FF99]" />
+              <span className="text-[11px] font-mono text-[#00FF99] uppercase tracking-widest">Parity_Active</span>
             </div>
           </div>
-          <button className="bg-[#00FF99] text-black text-[11px] font-black uppercase tracking-[0.5em] px-10 py-3 hover:bg-white transition-all shadow-xl shadow-[#00FF99]/10">
+          <button className="bg-[#00FF99] text-black text-[12px] font-black uppercase tracking-[0.5em] px-12 py-4 hover:bg-white transition-all shadow-2xl shadow-[#00FF99]/10 active:scale-95">
             Export_Parity
           </button>
         </div>
       </header>
 
-      {/* SYSTEM META LAYER INDICATORS */}
-      <div className="grid grid-cols-4 gap-1 px-8 py-1">
-        {META_INDICATORS.map((indicator, i) => (
-          <div key={i} className="bg-[#050505] border border-[#1A1A1A] p-3 flex justify-between items-center">
-            <span className="text-[8px] font-mono text-slate-700 tracking-[0.3em] uppercase">{indicator.label}</span>
-            <span className="text-[9px] font-mono text-white font-bold tracking-widest">{indicator.val}</span>
-          </div>
-        ))}
-      </div>
-
-      <main className="flex-grow w-full max-w-[1920px] mx-auto py-1">
+      {/* MODULAR SYSTEM MAIN */}
+      <main className="flex-grow w-full max-w-[1920px] mx-auto py-2">
         {view === 'engine' && (
-          <div className="grid grid-cols-12 gap-1 px-8 animate-in fade-in duration-700">
-            {/* Control Lab Sidebar */}
-            <aside className="col-span-12 lg:col-span-3 bg-[#050505] border border-[#1A1A1A] p-10 flex flex-col h-full space-y-12">
-              <div className="flex items-center gap-4 border-b border-white/5 pb-8">
-                <Settings size={18} className="text-[#00FF99]" />
-                <span className="text-[11px] font-black uppercase tracking-[0.5em] text-white">Parameter Lab</span>
+          <div className="grid grid-cols-12 gap-1 px-8 animate-in fade-in duration-1000">
+            {/* Sidebar Command Center (Cols 1-3) */}
+            <aside className="col-span-12 lg:col-span-3 bg-[#050505] border border-[#1A1A1A] p-12 flex flex-col h-full space-y-12">
+              <div className="flex items-center gap-6 border-b border-white/5 pb-10">
+                <Settings size={22} className="text-[#00FF99]" />
+                <span className="text-[12px] font-black uppercase tracking-[0.6em] text-white">Parameter Lab</span>
               </div>
               
-              <div className="space-y-10 flex-grow">
-                {PARAMETER_CONFIG.map(param => (
-                  <div key={param.key} className="space-y-4 group">
-                    <div className="flex justify-between items-center text-[11px] font-mono uppercase tracking-widest">
+              <div className="space-y-12 flex-grow overflow-y-auto custom-scroll pr-8">
+                {SIMULATION_PARAMETERS.map(param => (
+                  <div key={param.key} className="space-y-5 group">
+                    <div className="flex justify-between items-center text-[11px] font-mono uppercase tracking-[0.3em]">
                       <label className="text-slate-600 group-hover:text-white transition-colors">{param.label}</label>
                       <span className="text-[#00FF99] font-bold">{(settings as any)[param.key]}{param.unit}</span>
                     </div>
@@ -296,73 +309,82 @@ const App = () => {
                       onChange={(e) => setSettings({...settings, [param.key]: parseFloat(e.target.value)})}
                       className="bureau-range w-full"
                     />
-                    <p className="text-[9px] text-slate-800 uppercase tracking-widest leading-relaxed font-mono">{param.desc}</p>
+                    <p className="text-[10px] text-slate-800 uppercase tracking-widest leading-relaxed font-mono">{param.desc}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="pt-10 border-t border-white/5 space-y-4">
-                <div className="flex justify-between text-[9px] font-mono text-slate-800 uppercase tracking-widest">
-                  <span>Kernel_Parity</span>
+              <div className="pt-12 border-t border-white/5 space-y-6">
+                <div className="flex justify-between text-[11px] font-mono text-slate-800 uppercase tracking-widest">
+                  <span>Kernel_State</span>
                   <span>0xFA_42_C1</span>
                 </div>
                 <button 
                   onClick={runAnalysis}
                   disabled={analyzing}
-                  className="w-full bg-[#00FF99] text-black font-black uppercase tracking-[0.5em] py-5 text-[11px] flex items-center justify-center gap-4 disabled:opacity-40 hover:bg-white transition-all"
+                  className="w-full bg-[#00FF99] text-black font-black uppercase tracking-[0.6em] py-6 text-[12px] flex items-center justify-center gap-6 disabled:opacity-40 hover:bg-white transition-all shadow-xl shadow-[#00FF99]/5"
                 >
-                  {analyzing ? <Loader2 size={18} className="animate-spin" /> : <Command size={18} />}
+                  {analyzing ? <Loader2 size={24} className="animate-spin" /> : <Command size={24} />}
                   {analyzing ? 'PROCESSING...' : 'INITIATE ANALYSIS'}
                 </button>
               </div>
             </aside>
 
-            {/* Central Analysis Core */}
+            {/* Analysis Instrumentation Center (Cols 4-12) */}
             <div className="col-span-12 lg:col-span-9 flex flex-col gap-1">
-              <div className="h-[540px] bg-[#000000] border border-[#1A1A1A] relative">
+              <div className="h-[640px] bg-[#000000] border border-[#1A1A1A] relative">
                 <InstrumentationGrid stress={settings.stressTensor} />
               </div>
               
-              {/* HIGH AUTHORITY METRICS */}
+              {/* AUTHORITATIVE METRIC GRID */}
               <div className="grid grid-cols-4 gap-1">
                 {[
-                  { label: "YIELD_LIMIT", val: `${(160 + settings.thermalGradient).toFixed(0)} MPa`, status: "NOMINAL" },
-                  { label: "YOUNGS_MODULUS", val: `${settings.shearModulus} GPa`, status: "STABLE" },
-                  { label: "RESIDUAL_MATRIX", val: `${(settings.stressTensor * 4.1).toFixed(1)}%`, status: "SYNCED" },
-                  { label: "STABILITY_λ", val: settings.eigenvalueFactor.toFixed(2), status: "OPTIMAL" }
+                  { label: "YIELD_STRENGTH_MAX", val: `${(158 + settings.thermalGradient).toFixed(0)} MPa`, status: "NOMINAL" },
+                  { label: "YOUNGS_MODULUS_REF", val: `${settings.shearModulus} GPa`, status: "STABLE" },
+                  { label: "RESIDUAL_MATRIX_RATIO", val: `${(settings.stressTensor * 4.3).toFixed(1)}%`, status: "SYNCED" },
+                  { label: "STABILITY_LAMBDA", val: settings.eigenvalueFactor.toFixed(2), status: "OPTIMAL" }
                 ].map((m, i) => (
-                  <div key={i} className="bg-[#050505] p-10 border border-[#1A1A1A] hover:border-[#00FF99]/20 transition-all cursor-crosshair group relative overflow-hidden">
-                    <span className="block text-[11px] font-mono text-slate-700 uppercase tracking-[0.3em] mb-5">{m.label}</span>
-                    <span className="block text-5xl font-black text-white font-mono group-hover:text-[#00FF99] transition-colors leading-none tracking-tighter">{m.val}</span>
-                    <span className="block text-[9px] font-mono text-[#00FF99]/40 mt-4 uppercase tracking-[0.5em]">{m.status}</span>
+                  <div key={i} className="bg-[#050505] p-12 border border-[#1A1A1A] hover:border-[#00FF99]/20 transition-all cursor-crosshair group relative overflow-hidden">
+                    <span className="block text-[11px] font-mono text-slate-700 uppercase tracking-[0.4em] mb-8">{m.label}</span>
+                    <span className="block text-4xl font-black italic text-white font-mono group-hover:text-[#00FF99] transition-colors leading-none tracking-tighter">{m.val}</span>
+                    <span className="block text-[10px] font-mono text-[#00FF99]/40 mt-8 uppercase tracking-[0.6em]">{m.status}</span>
                   </div>
                 ))}
               </div>
 
               {simLog && (
-                <div className="bg-[#050505] border border-[#1A1A1A] p-12 mt-1 animate-in slide-in-from-bottom-4">
-                  <div className="flex items-center gap-5 mb-8">
-                    <FileText size={18} className="text-[#00FF99]" />
-                    <span className="text-[12px] font-black uppercase tracking-[0.5em] text-white">Analysis Log Output</span>
+                <div className="bg-[#050505] border border-[#1A1A1A] p-16 mt-1 animate-in slide-in-from-bottom-8">
+                  <div className="flex justify-between items-center mb-12">
+                    <div className="flex items-center gap-8">
+                      <FileText size={24} className="text-[#00FF99]" />
+                      <span className="text-[16px] font-black uppercase tracking-[0.8em] text-white">Forensic Simulation Analysis Log</span>
+                    </div>
+                    <button 
+                      onClick={() => copyToClipboard(simLog)}
+                      className="flex items-center gap-6 text-[11px] font-black uppercase tracking-[0.5em] text-[#00FF99] hover:text-white transition-all bg-[#00FF99]/10 px-8 py-3 border border-[#00FF99]/20"
+                    >
+                      {copied ? <CheckCircle2 size={18} /> : <Copy size={18} />}
+                      {copied ? 'COPIED' : 'COPY LOG'}
+                    </button>
                   </div>
-                  <pre className="text-[14px] font-mono text-slate-500 leading-relaxed whitespace-pre-wrap">{simLog}</pre>
+                  <pre className="text-[18px] font-mono text-slate-500 leading-relaxed whitespace-pre-wrap">{simLog}</pre>
                 </div>
               )}
               
-              {/* Intelligence Preview Layer */}
-              <div className="mt-1 grid grid-cols-4 gap-1">
-                {KNOWLEDGE_BASE.slice(0, 4).map(report => (
+              {/* KNOWLEDGE ENGINE ARCHIVE (8-CARD GRID) */}
+              <div className="mt-1 grid grid-cols-4 gap-1 bg-[#1A1A1A]">
+                {KNOWLEDGE_ARCHIVE.map(report => (
                   <div 
                     key={report.id}
-                    onClick={() => openReport(report)}
-                    className="bg-[#050505] border border-[#1A1A1A] p-6 hover:bg-[#080808] cursor-pointer transition-all group"
+                    onClick={() => { setActiveReport(report); setView('report'); window.scrollTo(0,0); }}
+                    className="bg-[#050505] p-10 hover:bg-[#080808] cursor-pointer transition-all group border border-transparent hover:border-[#00FF99]/10"
                   >
-                    <span className="text-[8px] font-mono text-[#00FF99]/30 uppercase tracking-widest mb-4 block">{report.category}</span>
-                    <h4 className="text-[11px] font-black text-slate-200 uppercase tracking-tighter mb-4 line-clamp-1 group-hover:text-[#00FF99] transition-colors">{report.title}</h4>
-                    <p className="text-[9px] text-slate-700 line-clamp-2 leading-relaxed mb-6">{report.summary}</p>
-                    <div className="flex justify-between items-center text-[8px] font-mono text-slate-800 uppercase tracking-widest">
+                    <span className="text-[10px] font-mono text-[#00FF99]/40 uppercase tracking-[0.5em] mb-8 block">{report.category}</span>
+                    <h4 className="text-[15px] font-black text-slate-200 uppercase tracking-tighter mb-8 line-clamp-2 group-hover:text-[#00FF99] transition-colors leading-tight">{report.title}</h4>
+                    <p className="text-[11px] text-slate-700 line-clamp-4 leading-relaxed mb-12 font-light">{report.summary}</p>
+                    <div className="flex justify-between items-center text-[10px] font-mono text-slate-800 uppercase tracking-[0.4em]">
                       <span>{report.metric}</span>
-                      <ArrowUpRight size={10} />
+                      <ArrowUpRight size={18} />
                     </div>
                   </div>
                 ))}
@@ -372,27 +394,27 @@ const App = () => {
         )}
 
         {view === 'hub' && (
-          <div className="px-12 py-24 animate-in fade-in duration-800">
-            <div className="max-w-5xl mb-32 space-y-8">
-              <h2 className="text-7xl font-black text-white uppercase tracking-tighter metallic-text">Forensic_Archive</h2>
-              <p className="text-2xl text-slate-500 font-light leading-relaxed tracking-wide max-w-4xl">Technical repository of structural failure mechanics, forensic material modeling, and mission-critical documentation protocols.</p>
+          <div className="px-20 py-40 animate-in fade-in duration-800">
+            <div className="max-w-7xl mb-56 space-y-16">
+              <h2 className="text-9xl font-black text-white uppercase tracking-tighter italic metallic-text">Forensic_Archive</h2>
+              <p className="text-4xl text-slate-500 font-light leading-relaxed tracking-wide max-w-6xl">Professional engineering repository documenting material failure mechanics, forensic simulation logic, and mission-critical structural protocols.</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 bg-[#1A1A1A]">
-              {KNOWLEDGE_BASE.map(report => (
+              {KNOWLEDGE_ARCHIVE.map(report => (
                 <div 
                   key={report.id}
-                  onClick={() => openReport(report)}
-                  className="bg-[#050505] p-12 space-y-8 hover:bg-[#080808] cursor-pointer transition-all group"
+                  onClick={() => { setActiveReport(report); setView('report'); window.scrollTo(0,0); }}
+                  className="bg-[#050505] p-20 space-y-16 hover:bg-[#080808] cursor-pointer transition-all group"
                 >
                   <div className="flex justify-between items-start">
-                    <span className="text-[11px] font-black text-[#00FF99] uppercase tracking-[0.4em]">{report.category}</span>
-                    <span className="text-[10px] font-mono text-slate-800 tracking-widest uppercase">{report.metric}</span>
+                    <span className="text-[13px] font-black text-[#00FF99] uppercase tracking-[0.8em]">{report.category}</span>
+                    <span className="text-[12px] font-mono text-slate-800 tracking-[0.6em] uppercase">{report.metric}</span>
                   </div>
-                  <h3 className="text-2xl font-black text-white uppercase tracking-tighter group-hover:text-[#00FF99] transition-colors leading-tight">{report.title}</h3>
-                  <p className="text-sm text-slate-600 line-clamp-4 leading-relaxed font-light">{report.summary}</p>
-                  <div className="pt-10 border-t border-white/5 flex justify-between items-center text-[11px] font-mono text-slate-800 uppercase tracking-[0.4em]">
+                  <h3 className="text-4xl font-black text-white uppercase tracking-tighter group-hover:text-[#00FF99] transition-colors leading-tight">{report.title}</h3>
+                  <p className="text-xl text-slate-600 line-clamp-4 leading-relaxed font-light">{report.summary}</p>
+                  <div className="pt-16 border-t border-white/5 flex justify-between items-center text-[13px] font-mono text-slate-800 uppercase tracking-[0.7em]">
                     <span>{report.author.split(',')[0]}</span>
-                    <ArrowUpRight size={20} className="text-slate-800 group-hover:text-[#00FF99]" />
+                    <ArrowUpRight size={32} className="text-slate-800 group-hover:text-[#00FF99]" />
                   </div>
                 </div>
               ))}
@@ -401,31 +423,45 @@ const App = () => {
         )}
 
         {view === 'report' && activeReport && (
-          <div className="max-w-6xl mx-auto py-40 px-16 animate-in fade-in slide-in-from-bottom-16">
-            <button 
-              onClick={() => setView('hub')}
-              className="flex items-center gap-6 text-[#00FF99] text-[13px] font-black uppercase tracking-[0.8em] mb-32 hover:text-white transition-all group"
-            >
-              <ChevronRight size={20} className="rotate-180 group-hover:translate-x-[-6px] transition-transform" /> Back to hub archive
-            </button>
-            <div className="space-y-16">
-              <div className="flex items-center gap-8">
-                <span className="bg-[#00FF99] text-black px-6 py-1.5 text-[11px] font-black uppercase tracking-[0.3em]">{activeReport.category}</span>
-                <span className="text-slate-700 font-mono text-[11px] tracking-[0.4em] uppercase">{activeReport.author}</span>
-                <span className="text-slate-900 font-mono text-[11px] tracking-widest uppercase ml-auto">DOC_REF: {activeReport.id.toUpperCase()}</span>
+          <div className="max-w-7xl mx-auto py-64 px-24 animate-in fade-in slide-in-from-bottom-32">
+            <div className="flex justify-between items-start mb-64">
+              <button 
+                onClick={() => setView('hub')}
+                className="flex items-center gap-12 text-[#00FF99] text-[18px] font-black uppercase tracking-[1.5em] hover:text-white transition-all group"
+              >
+                <ChevronRight size={32} className="rotate-180 group-hover:translate-x-[-12px] transition-transform" /> BACK_TO_HUB
+              </button>
+              <div className="flex gap-8">
+                <button 
+                  onClick={() => copyToClipboard(activeReport.summary)}
+                  className="flex items-center gap-8 text-[#00FF99] text-[15px] font-black uppercase tracking-[0.6em] border border-[#00FF99]/20 px-12 py-5 bg-[#00FF99]/5 hover:bg-[#00FF99]/10 transition-all"
+                >
+                  <Copy size={24} /> COPY_SUMMARY
+                </button>
+                <button className="flex items-center gap-8 text-white text-[15px] font-black uppercase tracking-[0.6em] border border-white/20 px-12 py-5 bg-white/5 hover:bg-white/10 transition-all">
+                  <Download size={24} /> GENERATE_PDF
+                </button>
               </div>
-              <div className="border-l-4 border-[#1A1A1A] pl-16 py-4">
+            </div>
+            <div className="space-y-32">
+              <div className="flex items-center gap-16">
+                <span className="bg-[#00FF99] text-black px-12 py-3 text-[16px] font-black uppercase tracking-[0.6em]">{activeReport.category}</span>
+                <span className="text-slate-700 font-mono text-[16px] tracking-[1em] uppercase">{activeReport.author}</span>
+                <span className="text-slate-900 font-mono text-[16px] tracking-widest uppercase ml-auto">DOC_REF: {activeReport.id.toUpperCase()}</span>
+              </div>
+              <h1 className="text-9xl font-black uppercase tracking-tighter text-white italic metallic-text leading-none">{activeReport.title}</h1>
+              <div className="border-l-[10px] border-[#1A1A1A] pl-32 py-12">
                 {activeReport.content}
               </div>
               
-              <div className="pt-40 border-t border-[#1A1A1A] mt-40">
-                <h4 className="text-[11px] font-black uppercase tracking-[1em] text-slate-800 mb-20">Correlation Protocols</h4>
-                <div className="grid grid-cols-2 gap-10">
-                  {KNOWLEDGE_BASE.filter(r => r.id !== activeReport.id).slice(0, 2).map(r => (
-                    <div key={r.id} onClick={() => openReport(r)} className="bg-[#050505] border border-[#1A1A1A] p-12 hover:border-[#00FF99]/20 cursor-pointer transition-all">
-                      <span className="text-[9px] font-mono text-[#00FF99]/40 mb-5 block uppercase tracking-widest">{r.category}</span>
-                      <h5 className="text-xl font-black text-white uppercase tracking-tighter mb-4">{r.title}</h5>
-                      <p className="text-xs text-slate-700 line-clamp-2">{r.summary}</p>
+              <div className="pt-72 border-t border-[#1A1A1A] mt-72">
+                <h4 className="text-[16px] font-black uppercase tracking-[2em] text-slate-800 mb-32">Correlation Analysis Protocols</h4>
+                <div className="grid grid-cols-2 gap-20">
+                  {KNOWLEDGE_ARCHIVE.filter(r => r.id !== activeReport.id).slice(0, 2).map(r => (
+                    <div key={r.id} onClick={() => { setActiveReport(r); window.scrollTo(0,0); }} className="bg-[#050505] border border-[#1A1A1A] p-24 hover:border-[#00FF99]/20 cursor-pointer transition-all">
+                      <span className="text-[12px] font-mono text-[#00FF99]/40 mb-10 block uppercase tracking-[0.8em]">{r.category}</span>
+                      <h5 className="text-4xl font-black text-white uppercase tracking-tighter mb-10 italic">{r.title}</h5>
+                      <p className="text-lg text-slate-700 line-clamp-2 leading-relaxed font-light">{r.summary}</p>
                     </div>
                   ))}
                 </div>
@@ -435,60 +471,64 @@ const App = () => {
         )}
       </main>
 
-      {/* SYSTEM FOOTER */}
-      <footer className="pt-48 pb-20 px-16 border-t border-[#1A1A1A] bg-[#030303] mt-32">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-32 mb-40 max-w-[1600px] mx-auto">
-          <div className="col-span-2 space-y-12">
-            <div className="flex items-center gap-5">
-              <div className="w-12 h-12 bg-[#00FF99] flex items-center justify-center text-black font-black text-3xl">O</div>
-              <span className="text-white font-black uppercase tracking-[0.6em] text-lg">OVD Structural Bureau</span>
+      {/* ENTERPRISE FOOTER */}
+      <footer className="pt-80 pb-40 px-24 border-t border-[#1A1A1A] bg-[#030303] mt-72">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-64 mb-80 max-w-[1900px] mx-auto">
+          <div className="col-span-2 space-y-24">
+            <div className="flex items-center gap-10">
+              <div className="w-20 h-20 bg-[#00FF99] flex items-center justify-center text-black font-black text-6xl shadow-[0_0_50px_rgba(0,255,153,0.25)]">O</div>
+              <span className="text-white font-black uppercase tracking-[1.2em] text-3xl">OVD Bureau</span>
             </div>
-            <p className="text-sm text-slate-700 leading-relaxed uppercase tracking-[0.4em] max-w-md">Professional authority in structural material simulation, forensic silicate engineering, and aerospace-grade facade logic protocols.</p>
-            <div className="flex gap-10">
-              <Globe size={20} className="text-slate-800 hover:text-[#00FF99] transition-colors cursor-pointer" />
-              <Lock size={20} className="text-slate-800 hover:text-[#00FF99] transition-colors cursor-pointer" />
-              <Processor size={20} className="text-slate-800 hover:text-[#00FF99] transition-colors cursor-pointer" />
+            <p className="text-xl text-slate-700 leading-relaxed uppercase tracking-[0.6em] max-w-3xl">Global authority in structural silicate simulation and aerospace-grade facade logic. Professional high-density SaaS platform for forensic engineering verification.</p>
+            <div className="flex gap-20 pt-12">
+              <Globe size={32} className="text-slate-800 hover:text-[#00FF99] transition-colors cursor-pointer" />
+              <Lock size={32} className="text-slate-800 hover:text-[#00FF99] transition-colors cursor-pointer" />
+              <Processor size={32} className="text-slate-800 hover:text-[#00FF99] transition-colors cursor-pointer" />
             </div>
           </div>
           <div>
-            <h4 className="text-[12px] font-black text-[#00FF99] uppercase tracking-[0.6em] mb-14">Labs</h4>
-            <ul className="space-y-8 text-[11px] font-bold uppercase tracking-[0.4em] text-slate-800">
+            <h4 className="text-[18px] font-black text-[#00FF99] uppercase tracking-[1.2em] mb-24">Laboratories</h4>
+            <ul className="space-y-14 text-[16px] font-bold uppercase tracking-[0.8em] text-slate-800">
               <li className="hover:text-white cursor-pointer" onClick={() => setView('engine')}>Analysis Core</li>
-              <li className="hover:text-white cursor-pointer" onClick={() => setView('hub')}>Intelligence Hub</li>
-              <li className="hover:text-white cursor-pointer">HST Verification</li>
+              <li className="hover:text-white cursor-pointer" onClick={() => setView('hub')}>Forensic Archive</li>
+              <li className="hover:text-white cursor-pointer">Verification HST</li>
             </ul>
           </div>
           <div>
-            <h4 className="text-[12px] font-black text-[#00FF99] uppercase tracking-[0.6em] mb-14">Parity</h4>
-            <ul className="space-y-8 text-[11px] font-bold uppercase tracking-[0.4em] text-slate-800">
-              <li className="hover:text-white cursor-pointer">Security Stack</li>
-              <li className="hover:text-white cursor-pointer">ASTM Compliance</li>
-              <li className="hover:text-white cursor-pointer">Bureau Terms</li>
+            <h4 className="text-[18px] font-black text-[#00FF99] uppercase tracking-[1.2em] mb-24">Infrastructure</h4>
+            <ul className="space-y-14 text-[16px] font-bold uppercase tracking-[0.8em] text-slate-800">
+              <li className="hover:text-white cursor-pointer">Encryption_A256</li>
+              <li className="hover:text-white cursor-pointer">Compliance_ASTM</li>
+              <li className="hover:text-white cursor-pointer">Security_Protocol</li>
             </ul>
           </div>
           <div>
-            <h4 className="text-[12px] font-black text-[#00FF99] uppercase tracking-[0.6em] mb-14">Nodes</h4>
-            <div className="space-y-8">
-              <div className="flex items-center gap-4">
-                <div className="w-2 h-2 rounded-full bg-[#00FF99]" />
-                <span className="text-[11px] font-mono text-slate-800 uppercase tracking-widest">Orbital_Sync: OK</span>
+            <h4 className="text-[18px] font-black text-[#00FF99] uppercase tracking-[1.2em] mb-24">System_Nodes</h4>
+            <div className="space-y-14">
+              <div className="flex items-center gap-8">
+                <div className="w-4 h-4 rounded-full bg-[#00FF99] shadow-[0_0_20px_#00FF99]" />
+                <span className="text-[16px] font-mono text-slate-800 uppercase tracking-widest">Orbital_Sync: ACTIVE</span>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-2 h-2 rounded-full bg-[#00FF99]" />
-                <span className="text-[11px] font-mono text-slate-800 uppercase tracking-widest">Encrypt_Active: ON</span>
+              <div className="flex items-center gap-8">
+                <div className="w-4 h-4 rounded-full bg-[#00FF99] shadow-[0_0_20px_#00FF99]" />
+                <span className="text-[16px] font-mono text-slate-800 uppercase tracking-widest">ECC_Verification: ON</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row justify-between items-center pt-20 border-t border-white/5 text-[10px] font-mono text-slate-900 uppercase tracking-[1.2em] gap-12">
-          <p>© 2026 OVD Bureau Engineering. MISSION_CRITICAL_SAAS_v4.1.0_AERO_SPEC</p>
-          <div className="flex gap-20">
-            <span>NASA_SIM_AUTH</span>
-            <span>GOVT_X9_VERIFIED</span>
-            <span>LICENSE: $10k_SaaS</span>
+        <div className="max-w-[1900px] mx-auto flex flex-col md:flex-row justify-between items-center pt-40 border-t border-white/5 text-[14px] font-mono text-slate-900 uppercase tracking-[2.5em] gap-24">
+          <p>© 2026 OVD Bureau Engineering. MISSION_CRITICAL_SAAS_V4.1.0_AERO_SPEC</p>
+          <div className="flex gap-40">
+            <span>NASA_SIM_AUTH_V2</span>
+            <span>$10,000_LICENSE_STABLE</span>
           </div>
         </div>
       </footer>
+
+      {/* Global Background Grid Layer */}
+      <div className="fixed inset-0 pointer-events-none z-[-1] opacity-40">
+        <div className="absolute top-0 left-0 w-full h-full micro-grid-10" />
+      </div>
     </div>
   );
 };
