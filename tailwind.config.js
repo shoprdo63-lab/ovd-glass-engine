@@ -17,7 +17,7 @@ export default {
         'telemetry': '0.4em',
       },
       fontSize: {
-        '2xs': '10px',
+        '2xs': '8px',
       }
     },
   },
