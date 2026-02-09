@@ -4,6 +4,7 @@
 
 :root {
   --neon-mint: #00FF99;
+  --warning-red: #FF3333;
 }
 
 @layer base {
@@ -15,75 +16,73 @@
 @layer components {
   .instrumentation-grid {
     background-image: 
-      linear-gradient(rgba(0, 255, 153, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 255, 153, 0.04) 1px, transparent 1px);
-    background-size: 25px 25px;
+      linear-gradient(rgba(0, 255, 153, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 153, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
   }
 
   .scanning-line {
-    animation: scan 8s linear infinite;
+    animation: scan 6s linear infinite;
   }
 
   .bureau-slider {
     -webkit-appearance: none;
-    @apply w-full h-[2px] bg-border rounded-full outline-none;
+    @apply w-full h-[1px] bg-border rounded-full outline-none relative;
   }
 
   .bureau-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply w-2 h-5 bg-accent shadow-[0_0_20px_#00FF99] border-none;
+    @apply w-1.5 h-4 bg-accent shadow-[0_0_15px_#00FF99] border-none;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
   }
 
   .bureau-slider::-webkit-slider-thumb:hover {
-    @apply scale-125 shadow-[0_0_30px_#00FF99];
+    @apply scale-y-150 shadow-[0_0_25px_#00FF99];
   }
 
   .glass-panel {
-    @apply bg-surface/90 border border-border backdrop-blur-3xl;
+    @apply bg-surface/80 border border-border backdrop-blur-xl;
   }
 
-  .syntax-keyword { @apply text-accent font-bold; }
-  .syntax-string { @apply text-emerald-400; }
-  .syntax-number { @apply text-white font-mono; }
-
-  .logo-pulse {
-    filter: drop-shadow(0 0 15px rgba(0, 255, 153, 0.4));
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  .syntax-flicker {
+    animation: flicker 8s ease-in-out infinite;
   }
 
-  .premium-title {
-    @apply font-black uppercase tracking-[0.6em] italic;
-    background: linear-gradient(to right, #fff 20%, #00FF99 40%, #00FF99 60%, #fff 80%);
-    background-size: 200% auto;
-    color: #000;
-    background-clip: text;
-    text-fill-color: transparent;
+  .code-value-update {
+    animation: pulse-update 0.4s ease-out;
+  }
+
+  .premium-header {
+    @apply font-black uppercase tracking-[0.5em] text-white italic;
+    text-shadow: 0 0 20px rgba(255,255,255,0.1);
+  }
+
+  .metallic-heading {
+    background: linear-gradient(180deg, #fff 0%, #666 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: shine 5s linear infinite;
+    @apply font-black tracking-tighter;
   }
 }
 
 @keyframes scan {
   0% { transform: translateY(-100%); opacity: 0; }
-  10% { opacity: 0.5; }
-  90% { opacity: 0.5; }
-  100% { transform: translateY(1500%); opacity: 0; }
+  10% { opacity: 0.2; }
+  90% { opacity: 0.2; }
+  100% { transform: translateY(1000%); opacity: 0; }
 }
 
-@keyframes shine {
-  to { background-position: 200% center; }
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.95; }
 }
 
-.metallic-text {
-  background: linear-gradient(135deg, #ffffff 0%, #00FF99 50%, #ffffff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+@keyframes pulse-update {
+  0% { color: #00FF99; text-shadow: 0 0 10px #00FF99; }
+  100% { color: inherit; text-shadow: none; }
 }
 
-.custom-scroll::-webkit-scrollbar { width: 4px; }
+.custom-scroll::-webkit-scrollbar { width: 2px; }
 .custom-scroll::-webkit-scrollbar-track { @apply bg-black; }
-.custom-scroll::-webkit-scrollbar-thumb { @apply bg-border hover:bg-accent/40 rounded-full; }
+.custom-scroll::-webkit-scrollbar-thumb { @apply bg-border hover:bg-accent/40; }
