@@ -4,24 +4,30 @@
 
 :root {
   --neon-mint: #00FF99;
+  --system-red: #FF3333;
 }
 
 @layer base {
   body {
-    @apply bg-black text-slate-400 font-sans antialiased overflow-x-hidden;
+    @apply bg-[#010101] text-slate-400 font-sans antialiased overflow-x-hidden select-none;
   }
 }
 
 @layer components {
   .instrumentation-grid {
     background-image: 
-      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 
-  .scanning-line {
-    animation: scan 10s linear infinite;
+  .scientific-label {
+    @apply font-mono text-[8px] tracking-[0.4em] uppercase text-slate-600 transition-all;
+    text-shadow: 0 0 10px rgba(255,255,255,0.02);
+  }
+
+  .data-point {
+    @apply font-black italic tracking-tighter text-white transition-all duration-300;
   }
 
   .bureau-slider {
@@ -31,45 +37,60 @@
 
   .bureau-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply w-1 h-5 bg-accent shadow-[0_0_15px_#00FF99] border-none;
+    @apply w-1.5 h-4 bg-accent shadow-[0_0_15px_#00FF99] border-none;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .bureau-slider::-webkit-slider-thumb:hover {
-    @apply scale-y-125 shadow-[0_0_25px_#00FF99] bg-white;
+    @apply h-6 bg-white shadow-[0_0_25px_#00FF99];
   }
 
-  .glass-panel {
-    @apply bg-black/40 border border-white/5 backdrop-blur-2xl;
-  }
-
-  .metallic-heading {
-    background: linear-gradient(180deg, #ffffff 0%, #1a1a1a 100%);
+  .metallic-subtitle {
+    background: linear-gradient(180deg, #ffffff 0%, #444444 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8));
+    @apply font-black uppercase tracking-widest;
   }
-}
 
-@keyframes scan {
-  0% { transform: translateY(-100%); opacity: 0; }
-  10% { opacity: 0.2; }
-  90% { opacity: 0.2; }
-  100% { transform: translateY(1200%); opacity: 0; }
-}
+  .scanning-line {
+    animation: scan 8s linear infinite;
+  }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+  .glass-card {
+    @apply bg-white/[0.01] border border-white/5 backdrop-blur-3xl;
+  }
 
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(300%); }
-}
+  .scientific-content h2 {
+    @apply mt-20 mb-8 border-b border-white/5 pb-4;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  }
 
-.animate-shimmer {
-  animation: shimmer 3s infinite linear;
+  .scientific-content p {
+    @apply mb-10 leading-[1.8] text-slate-400;
+  }
+
+  @keyframes scan {
+    0% { transform: translateY(-100%); opacity: 0; }
+    10% { opacity: 0.15; }
+    90% { opacity: 0.15; }
+    100% { transform: translateY(1200%); opacity: 0; }
+  }
+
+  @keyframes spin-custom {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .animate-spin-custom {
+    animation: spin-custom 10s linear infinite;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }
 
 .custom-scroll::-webkit-scrollbar { width: 1px; }
@@ -77,5 +98,5 @@
 .custom-scroll::-webkit-scrollbar-thumb { @apply bg-white/10 hover:bg-accent/40; }
 
 input[type="range"] {
-  background: linear-gradient(to right, rgba(0,255,153,0.1) 0%, rgba(0,255,153,0) 100%);
+  background: linear-gradient(to right, rgba(0,255,153,0.05) 0%, rgba(0,255,153,0) 100%);
 }
