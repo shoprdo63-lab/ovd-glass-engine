@@ -4,65 +4,50 @@
 
 :root {
   --neon-mint: #00FF99;
-  --warning-red: #FF3333;
 }
 
 @layer base {
   body {
-    @apply bg-background text-slate-300 font-sans selection:bg-[#00FF99]/30 selection:text-white;
+    @apply bg-black text-slate-400 font-sans antialiased overflow-x-hidden;
   }
 }
 
 @layer components {
   .instrumentation-grid {
     background-image: 
-      linear-gradient(rgba(0, 255, 153, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 255, 153, 0.03) 1px, transparent 1px);
-    background-size: 30px 30px;
+      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 
   .scanning-line {
-    animation: scan 6s linear infinite;
+    animation: scan 10s linear infinite;
   }
 
   .bureau-slider {
     -webkit-appearance: none;
-    @apply w-full h-[1px] bg-border rounded-full outline-none relative;
+    @apply w-full h-[1px] bg-white/5 rounded-full outline-none relative cursor-crosshair;
   }
 
   .bureau-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply w-1.5 h-4 bg-accent shadow-[0_0_15px_#00FF99] border-none;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    @apply w-1 h-5 bg-accent shadow-[0_0_15px_#00FF99] border-none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .bureau-slider::-webkit-slider-thumb:hover {
-    @apply scale-y-150 shadow-[0_0_25px_#00FF99];
+    @apply scale-y-125 shadow-[0_0_25px_#00FF99] bg-white;
   }
 
   .glass-panel {
-    @apply bg-surface/80 border border-border backdrop-blur-xl;
-  }
-
-  .syntax-flicker {
-    animation: flicker 8s ease-in-out infinite;
-  }
-
-  .code-value-update {
-    animation: pulse-update 0.4s ease-out;
-  }
-
-  .premium-header {
-    @apply font-black uppercase tracking-[0.5em] text-white italic;
-    text-shadow: 0 0 20px rgba(255,255,255,0.1);
+    @apply bg-black/40 border border-white/5 backdrop-blur-2xl;
   }
 
   .metallic-heading {
-    background: linear-gradient(180deg, #fff 0%, #666 100%);
+    background: linear-gradient(180deg, #ffffff 0%, #1a1a1a 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    @apply font-black tracking-tighter;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8));
   }
 }
 
@@ -70,19 +55,27 @@
   0% { transform: translateY(-100%); opacity: 0; }
   10% { opacity: 0.2; }
   90% { opacity: 0.2; }
-  100% { transform: translateY(1000%); opacity: 0; }
+  100% { transform: translateY(1200%); opacity: 0; }
 }
 
-@keyframes flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.95; }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-@keyframes pulse-update {
-  0% { color: #00FF99; text-shadow: 0 0 10px #00FF99; }
-  100% { color: inherit; text-shadow: none; }
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
 }
 
-.custom-scroll::-webkit-scrollbar { width: 2px; }
-.custom-scroll::-webkit-scrollbar-track { @apply bg-black; }
-.custom-scroll::-webkit-scrollbar-thumb { @apply bg-border hover:bg-accent/40; }
+.animate-shimmer {
+  animation: shimmer 3s infinite linear;
+}
+
+.custom-scroll::-webkit-scrollbar { width: 1px; }
+.custom-scroll::-webkit-scrollbar-track { @apply bg-transparent; }
+.custom-scroll::-webkit-scrollbar-thumb { @apply bg-white/10 hover:bg-accent/40; }
+
+input[type="range"] {
+  background: linear-gradient(to right, rgba(0,255,153,0.1) 0%, rgba(0,255,153,0) 100%);
+}
