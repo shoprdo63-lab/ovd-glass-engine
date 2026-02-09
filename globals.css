@@ -8,7 +8,7 @@
 
 @layer base {
   body {
-    @apply bg-background text-slate-400 font-sans;
+    @apply bg-background text-slate-300 font-sans selection:bg-[#00FF99]/30 selection:text-white;
   }
 }
 
@@ -17,11 +17,11 @@
     background-image: 
       linear-gradient(rgba(0, 255, 153, 0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 255, 153, 0.04) 1px, transparent 1px);
-    background-size: 10px 10px;
+    background-size: 20px 20px;
   }
 
   .scanning-line {
-    animation: scan 8s linear infinite;
+    animation: scan 12s linear infinite;
   }
 
   .bureau-slider {
@@ -31,13 +31,13 @@
 
   .bureau-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    @apply w-1 h-3 bg-accent shadow-[0_0_10px_#00FF99];
+    @apply w-1.5 h-4 bg-accent shadow-[0_0_15px_#00FF99];
     cursor: pointer;
     transition: all 0.2s ease;
   }
 
   .bureau-slider::-webkit-slider-thumb:hover {
-    @apply scale-y-150 shadow-[0_0_15px_#00FF99];
+    @apply scale-y-125 shadow-[0_0_20px_#00FF99];
   }
 
   .glass-panel {
@@ -45,11 +45,23 @@
   }
 
   .syntax-flicker {
-    animation: flicker 6s ease-in-out infinite;
+    animation: flicker 8s ease-in-out infinite;
   }
 
-  .micro-telemetry {
-    @apply text-[9px] font-mono uppercase tracking-[0.4em] text-slate-700;
+  .bento-grid {
+    @apply grid gap-px bg-border border border-border;
+  }
+
+  .premium-article h2 {
+    @apply text-3xl font-black text-white uppercase tracking-tighter mt-12 mb-6 border-b border-border pb-4;
+  }
+
+  .premium-article h3 {
+    @apply text-xl font-bold text-accent uppercase tracking-widest mt-8 mb-4;
+  }
+
+  .premium-article p {
+    @apply text-lg text-slate-400 leading-relaxed mb-6 font-light;
   }
 }
 
@@ -57,14 +69,14 @@
   0% { transform: translateY(-100%); opacity: 0; }
   10% { opacity: 0.3; }
   90% { opacity: 0.3; }
-  100% { transform: translateY(800%); opacity: 0; }
+  100% { transform: translateY(1200%); opacity: 0; }
 }
 
 @keyframes flicker {
-  0%, 100% { opacity: 1; filter: brightness(1); }
-  48% { opacity: 0.98; filter: brightness(0.95); }
-  50% { opacity: 0.9; filter: brightness(0.8); }
-  52% { opacity: 0.98; filter: brightness(0.95); }
+  0%, 100% { opacity: 1; }
+  49.5% { opacity: 0.98; }
+  50% { opacity: 0.9; }
+  50.5% { opacity: 0.98; }
 }
 
 .metallic-text {
@@ -73,6 +85,6 @@
   -webkit-text-fill-color: transparent;
 }
 
-.custom-scroll::-webkit-scrollbar { width: 2px; }
+.custom-scroll::-webkit-scrollbar { width: 3px; }
 .custom-scroll::-webkit-scrollbar-track { @apply bg-black; }
-.custom-scroll::-webkit-scrollbar-thumb { @apply bg-border hover:bg-accent/40; }
+.custom-scroll::-webkit-scrollbar-thumb { @apply bg-border hover:bg-accent/40 transition-colors; }
