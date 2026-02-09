@@ -1,341 +1,388 @@
-import './globals.css';
-import React, { useState, useEffect, useRef, ReactNode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { 
-  Shield, Database, Target, Crosshair, Command,
-  Settings, Monitor, Compass, Copy, CheckCircle2,
-  Download, FileText, LayoutGrid, Terminal,
-  Cpu, Layers, Zap, ArrowUpRight, Globe, Lock,
-  Info, Maximize, Activity, Loader2
-} from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
 
-// --- TELEMETRY DEFINITIONS ---
+import './globals.css';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { createRoot } from 'react-dom/client';
+// Fix: Import GoogleGenAI as per @google/genai guidelines
+import { GoogleGenAI } from "@google/genai";
+import { 
+  Terminal, Cpu, Activity, Shield, 
+  ChevronRight, Gauge, Layers, 
+  Binary, Database, Target, Zap, 
+  RefreshCw, Radio, Cpu as CpuIcon,
+  Crosshair, Monitor, ShieldAlert, BarChart3,
+  Box, Hexagon, Wind, Thermometer
+} from 'lucide-react';
+
 const METADATA = {
-  NODE_ID: "BUREAU_ORBITAL_7X",
-  ENC: "AES-256_GCM",
-  STATUS: "PARITY_VERIFIED",
-  LATENCY: "1.24 MS",
-  LOAD_CLASS: "AERO_SPEC_S1"
+  NODE_ID: "BUREAU_7X",
+  VERSION: "v10.0_QUANTUM",
+  ENC: "QUANTUM_GCM_P2",
+  LATENCY: "0.08ms",
+  PARITY: "VERIFIED",
+  STABILITY_INDEX: "0.999994",
+  BUFFER_HEALTH: "99.8%"
 };
 
 const PARAMETERS = [
-  { key: "thermalGradient", label: "THERMAL GRADIENT COEFFICIENT", min: 0, max: 250, unit: "K", desc: "Thermal propagation across silicate layers." },
-  { key: "fractureIndex", label: "FRACTURE MECHANICS INDEX", min: 0.05, max: 2.5, step: 0.01, unit: "MPa√m", desc: "Critical stress intensity factor for failure." },
-  { key: "eigenvalueStability", label: "EIGENVALUE STABILITY FACTOR", min: 1.0, max: 10.0, step: 0.1, unit: "λ", desc: "Bifurcation threshold for slender components." },
-  { key: "stressTensor", label: "STRESS TENSOR SCALING", min: 0.1, max: 15.0, step: 0.1, unit: "σ_xx", desc: "Non-linear membrane stress multiplier." },
-  { key: "fatigueEnvelope", label: "STRUCTURAL FATIGUE ENVELOPE", min: 100, max: 10000, unit: "N_f", desc: "Cycle boundary before lattice dislocation." },
-  { key: "shearModulus", label: "VISCOELASTIC SHEAR MODULUS", min: 10, max: 300, unit: "MPa", desc: "Interlayer coupling constant at operational temp." }
+  { key: "thermalEntropy", label: "THERMAL_ENTROPY", min: 0, max: 1.0, step: 0.01, unit: "ΔS" },
+  { key: "fractureThreshold", label: "FRACTURE_THRESHOLD", min: 100, max: 5000, step: 10, unit: "MPa" },
+  { key: "eigenvalueStability", label: "EIGENVALUE_STABILITY", min: 0, max: 1.0, step: 0.001, unit: "λ" },
+  { key: "shearModulus", label: "SHEAR_MODULUS", min: 20, max: 120, step: 1, unit: "GPa" },
+  { key: "stressTensorAlpha", label: "STRESS_TENSOR_ALPHA", min: 0, max: 500, step: 5, unit: "σ" },
+  { key: "momentOfInertia", label: "MOMENT_OF_INERTIA", min: 50, max: 200, step: 1, unit: "I_z" },
+  { key: "molecularParity", label: "MOLECULAR_PARITY", min: 0.5, max: 1.0, step: 0.01, unit: "Ψ" },
+  { key: "resonanceDelta", label: "RESONANCE_DELTA", min: 0, max: 100, step: 1, unit: "Hz" }
 ];
 
-const INTELLIGENCE_REPORTS = [
-  { id: 'RPT-01', title: 'Lateral Torsional Buckling of Monumental Fins', tag: 'STRUCTURAL_STABILITY', metric: 'λ_crit: 1.44', abstract: 'Evaluation of secondary torsional instability in monolithic fins where span exceeds threshold for lateral support margins.' },
-  { id: 'RPT-02', title: 'Anisotropic Stress Mapping in Strengthened Substrates', tag: 'MATERIAL_FORENSICS', metric: 'σ_res: 45MPa', abstract: 'Forensic documentation of surface compression variance where localized cooling rates stay below operational parity.' },
-  { id: 'rpt-03', title: 'Transient Shockwave Propagation in PVB Laminates', tag: 'DEFENSE_SIM', metric: 'P_peak: 120kPa', abstract: 'Shockwave impulse modeling where duration exceeds structural envelope for standard interlayer adhesion coefficients.' },
-  { id: 'RPT-04', title: 'Seismic Drift Capacity in Unitized Facades', tag: 'KINEMATIC_ANALYSIS', metric: 'Δ_drift: 2.5%', abstract: 'Kinematic study of joint rotation where inter-story displacement exceeds tolerance threshold for unit engagement.' },
-  { id: 'RPT-05', title: 'NiS Inclusion Phase Transformation Analysis', tag: 'FAILURE_MODELING', metric: 'P_fracture: 0.98', abstract: 'Alpha-to-beta phase transition kinetics in tempered glass where internal stress remains above thermal boundary.' },
-  { id: 'RPT-06', title: 'Thermal Fracture Risk in Solar Control Coatings', tag: 'THERMAL_DYNAMICS', metric: 'ΔT_edge: 42K', abstract: 'Edge stress analysis where absorption differential exceeds structural failure envelope during transient solar cycles.' },
-  { id: 'RPT-07', title: 'Creep Mechanics in Structural Silicone Joints', tag: 'VISCOELASTICITY', metric: 'τ_sust: 0.11MPa', abstract: 'Long-term shear yield modeling where dead load duration exceeds stability envelope for 50-year service life.' },
-  { id: 'RPT-08', title: 'Membrane Action in Large-Deflection Plate Theory', tag: 'NON_LINEAR_MECHANICS', metric: 'w/t: 1.52', abstract: 'Non-linear stiffening analysis where central deflection exceeds plate thickness threshold by a factor of 1.5.' }
+// Fix: Added 'metric' property to each report object to resolve TypeScript error on line 332
+const FORENSIC_REPORTS = [
+  { id: "R-701", title: "Non-Linear Elasticity in Vacuum Environments", abstract: "Evaluation of stress-strain curves for alumino-silicate composites in zero-atmosphere high-radiation chambers. Verification required for out-of-plane parity where loading exceeds operational margin.", metric: "VERIFIED" },
+  { id: "R-702", title: "Quantum Decoherence in Optical Laminates", abstract: "Analysis of structural parity decay at sub-atomic levels during high-velocity photon bombardment simulations. Parity remains verified where stress is below cleavage threshold.", metric: "STABLE" },
+  { id: "R-703", title: "Thermal Bifurcation in Cryogenic Silicates", abstract: "Prediction of crack initiation margins when temperature gradients exceed 400K per nanosecond in layered quartz. Thermodynamic flux mapping confirms stability boundary.", metric: "NOMINAL" },
+  { id: "R-704", title: "Stochastic Vibration Modes in Hypersonic Fins", abstract: "Modeling aerodynamic fluttering frequencies where turbulence exceeds second-order damping thresholds. Simulation parity verified using icosahedral mesh optimization.", metric: "LOCKED" },
+  { id: "R-705", title: "Molecular Anisotropy Mapping in Compression Cores", abstract: "Forensic investigation into crystal lattice orientation under 40GPa static compression loads. Discrete element mapping confirms density parity is above margin.", metric: "VERIFIED" },
+  { id: "R-706", title: "Discrete Element Convergence in Fracture Nuclei", abstract: "Numerical verification of mesh density requirements for predicting atomic-level cleavage in tempered glass. Convergence factor resides below critical error threshold.", metric: "CONVERGED" },
+  { id: "R-707", title: "Multi-Physics Coupling in Thermodynamic Shields", abstract: "Integrated simulation of radiative heat transfer and structural deformation parity during atmospheric skip-entry. Thermal entropy propagation is nominal.", metric: "ACTIVE" },
+  { id: "R-708", title: "Residual Stress Parity in Vacuum-Deposited Coatings", abstract: "Measuring surface tension deltas in thin-film metallic layers where thickness exceeds 400nm operational specs. Forensic audit confirms molecular alignment is stable.", metric: "STABLE" }
 ];
 
-// --- COMPONENTS ---
+const PointCloudBackground = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-const TelemetryHeader = () => (
-  <header className="sticky top-0 z-50 glass-panel h-16 px-6 flex items-center justify-between">
-    <div className="flex items-center gap-12">
-      <div className="flex items-center gap-4">
-        <div className="w-8 h-8 bg-accent flex items-center justify-center text-black font-black text-xl shadow-[0_0_20px_#00FF99]">O</div>
-        <div className="flex flex-col">
-          <span className="text-[12px] font-black tracking-telemetry text-white leading-none">OVD BUREAU</span>
-          <span className="text-2xs font-mono text-accent/50 tracking-telemetry">FORENSIC_ENG_S4</span>
-        </div>
-      </div>
-      <nav className="hidden lg:flex gap-8">
-        {['COMMAND', 'ARCHIVE', 'SIM_NODES', 'PROTOCOLS'].map(item => (
-          <button key={item} className="text-2xs font-black tracking-telemetry text-slate-500 hover:text-white transition-colors">{item}</button>
-        ))}
-      </nav>
-    </div>
-    <div className="flex items-center gap-8">
-      <div className="flex flex-col items-end">
-        <span className="text-2xs font-mono text-slate-600 tracking-telemetry">{METADATA.ENC}</span>
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-          <span className="text-2xs font-mono text-accent tracking-telemetry uppercase">{METADATA.STATUS}</span>
-        </div>
-      </div>
-      <button className="bg-accent text-black text-2xs font-black px-6 py-2 tracking-telemetry hover:bg-white transition-all shadow-[0_0_15px_rgba(0,255,153,0.2)]">SYNC_PARITY</button>
-    </div>
-  </header>
-);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-const RadarSimulationCore = ({ stress }: { stress: number }) => {
-  const [coords, setCoords] = useState({ x: 0, y: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
+    let animationFrameId: number;
+    let particles: { x: number; y: number; z: number; speed: number }[] = [];
+    const numParticles = 100;
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    setCoords({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      particles = Array.from({ length: numParticles }).map(() => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        z: Math.random() * 100,
+        speed: 0.5 + Math.random() * 2
+      }));
+    };
 
-  return (
-    <div 
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
-      className="relative flex-grow bg-black border border-border overflow-hidden cursor-crosshair group"
-    >
-      <div className="absolute inset-0 micro-grid opacity-30 pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 w-[250%] h-[250%] radar-sweep pointer-events-none" />
-      
-      {/* Instrumentation Overlay */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-full h-[1px] bg-border/40" />
-        <div className="h-full w-[1px] bg-border/40" />
-        <div className="absolute w-[400px] h-[400px] border border-accent/10 border-dashed rounded-full" />
-        <div className="absolute w-[200px] h-[200px] border border-accent/10 border-dashed rounded-full" />
-        
-        {/* Dynamic Focus Box */}
-        <div 
-          className="absolute w-80 h-80 border border-accent/20 backdrop-blur-sm transition-transform duration-700 ease-out"
-          style={{ transform: `rotateY(${(stress - 7) * 4}deg) rotateX(${(stress - 7) * 2}deg)` }}
-        >
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
-            <span className="text-[8px] font-mono text-accent/40 tracking-widest uppercase">SCAN_SECTOR_0X4F</span>
-            <div className="w-12 h-[1px] bg-accent/40" />
-          </div>
-          <div className="absolute bottom-2 right-2 flex flex-col items-end gap-1">
-            <span className="text-[8px] font-mono text-accent/40 tracking-widest uppercase">σ_MATRIX: {(stress * 3.12).toFixed(4)}</span>
-            <div className="w-12 h-[1px] bg-accent/40" />
-          </div>
-          <Crosshair className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-accent/10" size={40} />
-          <div className="absolute top-0 w-full h-[1px] bg-accent/40 scanning-line" />
-        </div>
-      </div>
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00FF99';
+      ctx.font = '7px JetBrains Mono';
 
-      {/* Mouse Telemetry */}
-      <div 
-        className="absolute z-20 pointer-events-none flex flex-col gap-1 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
-        style={{ left: coords.x + 20, top: coords.y + 20 }}
-      >
-        <div className="bg-surface/90 border border-border p-2 flex flex-col">
-          <span className="text-[8px] font-mono text-accent tracking-telemetry">X_POS: {coords.x.toFixed(0)}</span>
-          <span className="text-[8px] font-mono text-accent tracking-telemetry">Y_POS: {coords.y.toFixed(0)}</span>
-        </div>
-      </div>
+      particles.forEach((p, i) => {
+        p.y += p.speed;
+        if (p.y > canvas.height) p.y = 0;
 
-      {/* Meta Indicators */}
-      <div className="absolute top-4 left-4 flex flex-col gap-2">
-        <div className="flex items-center gap-2 text-2xs font-mono text-slate-600 tracking-telemetry uppercase"><Monitor size={10} /> PARITY_LOCK</div>
-        <div className="flex items-center gap-2 text-2xs font-mono text-slate-600 tracking-telemetry uppercase"><Compass size={10} /> HDG: 12.04°</div>
-      </div>
-      <div className="absolute bottom-4 right-4 text-2xs font-mono text-slate-800 tracking-telemetry uppercase">{METADATA.NODE_ID}</div>
-    </div>
-  );
+        const opacity = (p.z / 100) * 0.2;
+        ctx.globalAlpha = opacity;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (i % 10 === 0) {
+          ctx.fillText(`X:${p.x.toFixed(0)} Y:${p.y.toFixed(0)} Z:${p.z.toFixed(0)}`, p.x + 5, p.y);
+        }
+      });
+
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none opacity-40" />;
 };
 
-const MetricBlock = ({ label, val, status }: { label: string, val: string, status: string }) => (
-  <div className="glass-panel p-8 flex flex-col gap-4 hover:border-accent/20 transition-all cursor-default">
-    <span className="text-2xs font-black tracking-telemetry text-slate-600 uppercase">{label}</span>
-    <span className="text-4xl italic font-black text-white metallic-text">{val}</span>
-    <div className="flex items-center gap-2">
-      <div className="w-1 h-1 rounded-full bg-accent" />
-      <span className="text-[10px] font-mono text-accent/40 tracking-telemetry uppercase">{status}</span>
-    </div>
+const TelemetryCorner = ({ label, value, position }: { label: string, value: string, position: string }) => (
+  <div className={`fixed ${position} z-[500] p-6 flex flex-col gap-0.5 pointer-events-none`}>
+    <span className="text-[7px] uppercase tracking-[0.4em] text-gray-700 font-black italic">{label}</span>
+    <span className="text-[9px] font-mono text-[#00FF99] font-black tracking-widest">{value}</span>
   </div>
 );
 
 const App = () => {
   const [settings, setSettings] = useState({
-    thermalGradient: 42,
-    fractureIndex: 0.74,
-    eigenvalueStability: 1.4,
-    stressTensor: 4.2,
-    fatigueEnvelope: 800,
-    shearModulus: 72
+    thermalEntropy: 0.42,
+    fractureThreshold: 2450,
+    eigenvalueStability: 0.992,
+    shearModulus: 76,
+    stressTensorAlpha: 142,
+    momentOfInertia: 184,
+    molecularParity: 0.98,
+    resonanceDelta: 42
   });
-  const [analyzing, setAnalyzing] = useState(false);
-  const [simLog, setSimLog] = useState<string | null>(null);
 
-  const runSimulation = async () => {
-    setAnalyzing(true);
+  // Fix: Added states for manifest generation tracking
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [manifestText, setManifestText] = useState<string | null>(null);
+
+  // Fix: Implemented handleDeploy using Gemini API to generate engineering manifests
+  const handleDeploy = async () => {
+    setIsGenerating(true);
     try {
-      // Initialize GoogleGenAI within the handler as per guidelines
+      // Create new instance before use as per guidelines
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `Perform forensic structural engineering analysis for silicate substrate. Parameters: Thermal ${settings.thermalGradient}K, Fracture ${settings.fractureIndex}, Eigenvalue ${settings.eigenvalueStability}. Output authoritative clinical telemetry report. Monospaced tech tone. No markdown headers.`;
-      
       const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview',
-        contents: prompt,
-        config: { 
-          systemInstruction: "Output mission-critical forensic engineering telemetry. Clinical, deterministic, monospaced tech tone only. Avoid comparison symbols."
+        model: 'gemini-3-flash-preview',
+        contents: `Generate a highly technical forensic manifest for a quantum engine based on these current telemetry parameters: ${JSON.stringify(settings)}. The output should be a detailed report in JSON format including summary, potential risks, and optimization steps.`,
+        config: {
+          responseMimeType: "application/json"
         }
       });
-      // Extracting text output directly from the .text property
-      setSimLog(response.text || "ERR: NULL_REPORT");
-    } catch (e) {
-      setSimLog("CRITICAL_ERROR: Parity verification failure.");
+      // Access .text property directly
+      setManifestText(response.text || "{}");
+    } catch (error) {
+      console.error("Failed to deploy manifest:", error);
     } finally {
-      setAnalyzing(false);
+      setIsGenerating(false);
     }
   };
 
+  const codeOutput = useMemo(() => {
+    // If we have a manifest from Gemini, prioritize it
+    if (manifestText) {
+      try {
+        return JSON.stringify(JSON.parse(manifestText), null, 2);
+      } catch {
+        return manifestText;
+      }
+    }
+    return JSON.stringify({
+      OS: "OVD_COMMAND_CORE_v10.0",
+      SYNC: "QUANTUM_STABLE",
+      PARITY_VERIFIED: true,
+      INPUT_MATRIX: {
+        THERMAL: settings.thermalEntropy.toFixed(4) + " ΔS",
+        FRACTURE: settings.fractureThreshold + " MPa",
+        STABILITY: settings.eigenvalueStability.toFixed(4) + " λ",
+        SHEAR: settings.shearModulus + " GPa",
+        STRESS_ALPHA: settings.stressTensorAlpha.toFixed(2) + " σ",
+        INERTIA: settings.momentOfInertia + " I_z",
+        PARITY: settings.molecularParity.toFixed(4) + " Ψ",
+        RESONANCE: settings.resonanceDelta + " Hz"
+      },
+      TELEMETRY_STREAM: {
+        LOAD_PARITY: (settings.stressTensorAlpha / 500).toFixed(6),
+        FRACTURE_RISK: settings.fractureThreshold > 4000 ? "CRITICAL" : "NOMINAL",
+        BIFURCATION_DELTA: (1 - settings.eigenvalueStability).toFixed(8),
+        ACTIVE_NODES: 4096,
+        TIMESTAMP: new Date().getTime()
+      }
+    }, null, 2);
+  }, [settings, manifestText]);
+
   return (
-    <div className="min-h-screen flex flex-col bg-black">
-      <TelemetryHeader />
+    <div className="h-screen w-screen bg-[#000000] flex flex-col overflow-hidden relative selection:bg-[#00FF99] selection:text-black cursor-crosshair">
+      <div className="absolute inset-0 instrumentation-grid opacity-10 pointer-events-none z-10" />
       
-      <main className="flex-grow grid grid-cols-12 gap-px bg-border">
-        {/* PARAMETER CONTROL LAB (Cols 1-3) */}
-        <aside className="col-span-3 bg-surface p-10 flex flex-col gap-10 overflow-y-auto custom-scroll">
-          <div className="flex items-center gap-4 border-b border-border pb-6">
-            <Settings size={18} className="text-accent" />
-            <span className="text-2xs font-black tracking-telemetry text-white uppercase">PARAMETER CONTROL LAB</span>
+      <TelemetryCorner label="SYNC_PARITY" value="1.0_LOCKED" position="top-0 left-0" />
+      <TelemetryCorner label="BUFFER_HEALTH" value={METADATA.BUFFER_HEALTH} position="top-0 right-0" />
+      <TelemetryCorner label="ENCRYPTION" value={METADATA.ENC} position="bottom-0 left-0" />
+      <TelemetryCorner label="ENGINE_PARITY" value={METADATA.PARITY} position="bottom-0 right-0" />
+
+      <header className="h-16 shrink-0 border-b border-[#1A1A1A] bg-[#000000] px-10 flex items-center justify-between z-20">
+        <div className="flex items-center gap-12">
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-black italic tracking-tighter uppercase leading-none border-b-2 border-[#00FF99]">OVD_BUREAU</h1>
+            <span className="text-[7px] font-mono text-gray-600 tracking-[0.5em] mt-2 font-bold italic underline decoration-[#1A1A1A]">QUANTUM_ENGINEERING_OS_v10.0</span>
+          </div>
+          <div className="h-6 w-px bg-[#1A1A1A] mx-2" />
+          <div className="flex gap-10">
+            <div className="flex flex-col border-l border-[#1A1A1A] pl-3 py-1">
+              <span className="text-[7px] uppercase tracking-[0.4em] text-gray-600 font-black italic">ORBITAL_SYNC</span>
+              <span className="text-[10px] font-mono text-[#00FF99] font-bold tabular-nums">7X_ULTRA</span>
+            </div>
+            <div className="flex flex-col border-l border-[#1A1A1A] pl-3 py-1">
+              <span className="text-[7px] uppercase tracking-[0.4em] text-gray-600 font-black italic">VERSION_HASH</span>
+              <span className="text-[10px] font-mono text-[#00FF99] font-bold tabular-nums">0xBF42_7X</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-10">
+          <div className="text-right">
+            <div className="text-[9px] text-[#00FF99] font-mono uppercase tracking-[0.3em] font-black italic animate-pulse">COMMAND_CORE_ACTIVE</div>
+            <div className="text-[8px] text-gray-700 font-mono font-bold tracking-widest uppercase italic">X: 104.2 // Y: 942.1 // Z: 0.08</div>
+          </div>
+          {/* Fix: Linked DEPLOY_MANIFEST button to Gemini action with loading state */}
+          <button 
+            onClick={handleDeploy}
+            disabled={isGenerating}
+            className="bg-[#00FF99] text-black px-6 py-2 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white transition-all shadow-[0_0_20px_rgba(0,255,153,0.3)] disabled:opacity-50"
+          >
+            {isGenerating ? 'ANALYZING...' : 'DEPLOY_MANIFEST'}
+          </button>
+        </div>
+      </header>
+
+      <div className="flex-grow flex overflow-hidden z-20">
+        
+        <aside className="w-80 shrink-0 border-r border-[#1A1A1A] bg-[#000000] flex flex-col overflow-hidden">
+          <div className="p-8 border-b border-[#1A1A1A] bg-[#020202]">
+            <h2 className="text-[10px] uppercase tracking-[0.5em] font-black text-gray-500 italic border-b border-[#1A1A1A] pb-4">INSTRUMENTATION_LAB</h2>
           </div>
           
-          <div className="flex flex-col gap-10">
+          <div className="flex-grow p-8 flex flex-col gap-8 overflow-y-auto custom-scroll">
             {PARAMETERS.map(param => (
-              <div key={param.key} className="flex flex-col gap-3 group">
-                <div className="flex justify-between items-center text-2xs font-mono uppercase tracking-telemetry">
-                  <label className="text-slate-500 group-hover:text-white transition-colors">{param.label}</label>
-                  <span className="text-accent">{(settings as any)[param.key]}{param.unit}</span>
+              <div key={param.key} className="group relative">
+                <div className="flex justify-between mb-2">
+                  <span className="text-[8px] text-gray-500 uppercase tracking-widest font-black group-hover:text-[#00FF99] transition-colors">{param.label}</span>
                 </div>
-                <input 
-                  type="range"
-                  min={param.min}
-                  max={param.max}
-                  step={param.step || 1}
-                  value={(settings as any)[param.key]}
-                  onChange={(e) => setSettings({...settings, [param.key]: parseFloat(e.target.value)})}
-                  className="bureau-slider"
-                />
-                <p className="text-[9px] text-slate-700 tracking-wider font-mono uppercase leading-relaxed">{param.desc}</p>
+                <div className="flex items-center gap-4">
+                  <div className="flex-grow">
+                    <input 
+                      type="range" min={param.min} max={param.max} step={param.step}
+                      value={(settings as any)[param.key]}
+                      onChange={(e) => {
+                        setManifestText(null); // Clear Gemini output when user updates parameters manually
+                        setSettings({...settings, [param.key]: parseFloat(e.target.value)});
+                      }}
+                      className="w-full h-[1px] bg-[#1A1A1A] accent-[#00FF99] appearance-none cursor-crosshair hover:bg-[#333]"
+                    />
+                  </div>
+                  <span className="w-20 text-[18px] font-mono text-[#00FF99] font-black italic tabular-nums text-right">
+                    {(settings as any)[param.key]}
+                  </span>
+                </div>
+                <div className="scientific-label !text-slate-900 !text-[6px] mt-1 text-right">{param.unit}</div>
               </div>
             ))}
           </div>
 
-          <div className="mt-auto pt-10 border-t border-border flex flex-col gap-4">
-            <div className="flex justify-between items-center text-2xs font-mono text-slate-700 tracking-telemetry">
-              <span>KERNEL_SHA_256</span>
-              <span>0XFA_44_12</span>
+          <div className="p-8 border-t border-[#1A1A1A] bg-[#020202] mt-auto">
+            <div className="flex flex-col gap-4">
+               <div className="flex justify-between items-center">
+                 <span className="text-[8px] uppercase tracking-[0.4em] text-gray-600 font-black italic">GLOBAL_PARITY</span>
+                 <span className="text-[10px] font-mono text-[#00FF99] font-bold tabular-nums">99.98%</span>
+               </div>
+               <div className="h-[2px] w-full bg-[#1A1A1A] overflow-hidden">
+                 <div className="h-full bg-[#00FF99] animate-pulse shadow-[0_0_10px_#00FF99]" style={{ width: '99.98%' }} />
+               </div>
             </div>
-            <button 
-              onClick={runSimulation}
-              disabled={analyzing}
-              className="w-full bg-accent text-black font-black py-4 text-2xs tracking-telemetry flex items-center justify-center gap-4 hover:bg-white disabled:opacity-40 transition-all"
-            >
-              {/* Fix: Loader2 is now imported and correctly used here */}
-              {analyzing ? <Loader2 size={16} className="animate-spin" /> : <Command size={16} />}
-              {analyzing ? 'ANALYZING...' : 'INITIATE SIMULATION'}
-            </button>
           </div>
         </aside>
 
-        {/* SIMULATION COMMAND CENTER (Cols 4-12) */}
-        <section className="col-span-9 bg-black flex flex-col gap-px">
-          {/* Main Visualizer Area */}
-          <div className="h-[600px] flex gap-px">
-            <RadarSimulationCore stress={settings.stressTensor} />
-          </div>
-
-          {/* Metric Authority Blocks */}
-          <div className="grid grid-cols-4 gap-px bg-border">
-            <MetricBlock label="YIELD_STRENGTH_MAX" val={`${(160 + settings.thermalGradient).toFixed(0)}MPa`} status="NOMINAL" />
-            <MetricBlock label="SHEAR_MODULUS_REF" val={`${settings.shearModulus}GPa`} status="STABLE" />
-            <MetricBlock label="RESIDUAL_RATIO" val={`${(settings.stressTensor * 4.1).toFixed(1)}%`} status="SYNCED" />
-            <MetricBlock label="BIFURCATION_λ" val={settings.eigenvalueStability.toFixed(2)} status="OPTIMAL" />
-          </div>
-
-          {/* Analysis Log */}
-          {simLog && (
-            <div className="bg-surface p-12 border-t border-border animate-in fade-in slide-in-from-bottom-4">
-              <div className="flex items-center gap-4 mb-8">
-                <Terminal size={18} className="text-accent" />
-                <span className="text-2xs font-black tracking-telemetry text-white uppercase">SIMULATION TELEMETRY REPORT</span>
-              </div>
-              <pre className="text-sm font-mono text-slate-500 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto custom-scroll pr-4">
-                {simLog}
-              </pre>
-            </div>
-          )}
-
-          {/* Intelligence Knowledge Hub */}
-          <div className="p-10 bg-black flex flex-col gap-8">
+        <main className="flex-grow flex flex-col bg-[#000000] overflow-hidden border-r border-[#1A1A1A] relative">
+          <PointCloudBackground />
+          <div className="h-10 border-b border-[#1A1A1A] px-8 flex items-center justify-between bg-[#050505] relative z-10">
             <div className="flex items-center gap-4">
-              <Database size={18} className="text-accent" />
-              <span className="text-2xs font-black tracking-telemetry text-white uppercase">INTELLIGENCE KNOWLEDGE ARCHIVE</span>
+              <Terminal size={14} className="text-[#00FF99]" />
+              <span className="text-[9px] font-mono text-gray-500 uppercase tracking-widest">COMMAND_CORE_MANIFEST_STREAM</span>
             </div>
-            <div className="grid grid-cols-4 gap-4">
-              {INTELLIGENCE_REPORTS.map(rpt => (
-                <div key={rpt.id} className="glass-panel p-6 flex flex-col gap-4 group cursor-pointer hover:border-accent/40 transition-all">
-                  <div className="flex justify-between items-start">
-                    <span className="text-[10px] font-mono text-accent/50 tracking-widest uppercase">{rpt.tag}</span>
-                    <span className="text-2xs font-mono text-slate-800">{rpt.id}</span>
-                  </div>
-                  <h3 className="text-[12px] font-black text-slate-200 uppercase tracking-tighter group-hover:text-accent transition-colors leading-tight">{rpt.title}</h3>
-                  <p className="text-[10px] text-slate-600 line-clamp-3 leading-relaxed font-light">{rpt.abstract}</p>
-                  <div className="mt-auto pt-4 border-t border-border flex justify-between items-center text-2xs font-mono text-slate-500">
-                    <span>{rpt.metric}</span>
-                    <ArrowUpRight size={14} className="text-slate-800 group-hover:text-accent" />
-                  </div>
+            <div className="flex gap-6 items-center">
+              <RefreshCw size={12} className={`text-gray-800 ${isGenerating ? 'animate-spin text-[#00FF99]' : ''}`} />
+              <span className="text-[8px] text-gray-700 font-mono font-black uppercase tracking-widest">
+                {isGenerating ? 'INJECTING_GENAI_DATA...' : 'LIVE_INJECTION: ACTIVE'}
+              </span>
+            </div>
+          </div>
+          
+          <div className="flex-grow p-10 overflow-y-auto custom-scroll font-mono relative bg-transparent z-10">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-[#00FF99]/20 scanning-line pointer-events-none" />
+            <pre className="text-[13px] leading-relaxed">
+              <code className="text-[#00FF99]">
+                {codeOutput.split('\n').map((line, i) => {
+                  let colorClass = "text-[#00FF99]/60";
+                  if (line.includes(':')) colorClass = "text-[#00FF99]";
+                  if (line.includes('{') || line.includes('}')) colorClass = "text-white/20";
+                  if (line.includes('"')) colorClass = "text-[#00FF99]";
+                  if (line.includes('true') || line.includes('OPTIMAL') || line.includes('STABLE')) colorClass = "text-[#00FF99] font-black italic";
+                  
+                  return (
+                    <div key={i} className={`flex ${colorClass}`}>
+                      <span className="w-12 shrink-0 text-gray-900 select-none italic">{(i+1).toString().padStart(4, '0')}</span>
+                      <span className="whitespace-pre-wrap">{line}</span>
+                    </div>
+                  );
+                })}
+              </code>
+            </pre>
+          </div>
+        </main>
+
+        <aside className="w-72 shrink-0 bg-[#000000] flex flex-col overflow-hidden">
+          <div className="p-8 border-b border-[#1A1A1A] space-y-12">
+            <h4 className="text-[9px] uppercase tracking-[0.4em] text-gray-500 font-black italic">NODAL_TELEMETRY</h4>
+            {[
+              { l: 'THERMAL_FLUX_ALPHA', v: (settings.thermalEntropy * 42.4).toFixed(2), u: 'kW/m²' },
+              { l: 'STRESS_PARITY_LIMIT', v: (settings.stressTensorAlpha * 1.84).toFixed(1), u: 'MPa' },
+              { l: 'FRACTURE_VELOCITY', v: (settings.fractureThreshold / 142.1).toFixed(2), u: 'm/s' },
+              { l: 'BIFURCATION_RISK', v: (1 - settings.eigenvalueStability).toFixed(5), u: 'index' }
+            ].map((m, i) => (
+              <div key={i} className="border-l border-[#1A1A1A] pl-6 space-y-2 group">
+                <p className="text-[9px] uppercase text-gray-600 font-black tracking-[0.2em] group-hover:text-[#00FF99] transition-colors">{m.l}</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-black text-white italic tracking-tighter tabular-nums drop-shadow-[0_0_10px_rgba(0,255,153,0.1)] group-hover:text-[#00FF99] transition-colors cursor-default">{m.v}</span>
+                  <span className="text-[10px] font-mono text-gray-800 uppercase font-bold">{m.u}</span>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        </section>
-      </main>
+          
+          <div className="flex-grow p-8 flex flex-col justify-end gap-6 overflow-hidden">
+             <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Radio size={12} className="text-[#00FF99] animate-pulse" />
+                  <span className="text-[9px] text-[#00FF99] font-mono uppercase tracking-[0.3em] font-black italic">LIVE_SENSOR_MATRIX</span>
+                </div>
+                <span className="text-[8px] text-gray-800 font-mono">NODE_7X: LOCKED</span>
+             </div>
+             <div className="h-40 w-full border border-[#1A1A1A] bg-[#020202] flex items-end gap-1 p-4 relative overflow-hidden">
+               <div className="absolute inset-0 instrumentation-grid opacity-5" />
+               {Array.from({ length: 30 }).map((_, i) => (
+                 <div 
+                   key={i} 
+                   className="flex-grow bg-[#00FF99]/20 hover:bg-[#00FF99] transition-all duration-300 border-t border-[#00FF99]/40 relative z-10"
+                   style={{ height: `${Math.random() * 80 + 20}%` }}
+                 />
+               ))}
+             </div>
+          </div>
+        </aside>
+      </div>
 
-      {/* ENTERPRISE FOOTER */}
-      <footer className="bg-surface border-t border-border px-12 py-16 flex flex-col gap-12">
-        <div className="grid grid-cols-4 gap-20">
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-accent flex items-center justify-center text-black font-black text-2xl">O</div>
-              <span className="text-white font-black tracking-telemetry uppercase">OVD BUREAU</span>
-            </div>
-            <p className="text-2xs uppercase tracking-[0.4em] leading-relaxed text-slate-700">Global authority in structural material simulation and aerospace-grade facade logic protocols. Mission-critical verification bureau.</p>
-            <div className="flex gap-8 text-slate-800">
-              <Globe size={18} />
-              <Lock size={18} />
-              <Cpu size={18} />
-            </div>
-          </div>
-          <div className="flex flex-col gap-6">
-            <span className="text-2xs font-black tracking-telemetry text-accent uppercase">LABORATORIES</span>
-            <ul className="flex flex-col gap-3 text-2xs font-mono text-slate-600 tracking-widest uppercase">
-              <li className="hover:text-white cursor-pointer transition-colors">Analysis_Core_v4</li>
-              <li className="hover:text-white cursor-pointer transition-colors">Forensic_Lattice</li>
-              <li className="hover:text-white cursor-pointer transition-colors">HST_Verification</li>
-            </ul>
-          </div>
-          <div className="flex flex-col gap-6">
-            <span className="text-2xs font-black tracking-telemetry text-accent uppercase">SECURITY</span>
-            <ul className="flex flex-col gap-3 text-2xs font-mono text-slate-600 tracking-widest uppercase">
-              <li className="hover:text-white cursor-pointer transition-colors">AES-256_Encryption</li>
-              <li className="hover:text-white cursor-pointer transition-colors">Parity_Verified</li>
-              <li className="hover:text-white cursor-pointer transition-colors">ASTM_Compliance</li>
-            </ul>
-          </div>
-          <div className="flex flex-col gap-6">
-            <span className="text-2xs font-black tracking-telemetry text-accent uppercase">SYSTEM_NODES</span>
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                <span className="text-2xs font-mono text-slate-700 uppercase tracking-widest">ORBITAL_SYNC: ACTIVE</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                <span className="text-2xs font-mono text-slate-700 uppercase tracking-widest">ECC_VERIFY: ON</span>
-              </div>
-            </div>
-          </div>
+      <footer className="h-72 shrink-0 border-t border-[#1A1A1A] bg-[#000000] p-8 overflow-hidden z-20 flex flex-col gap-6">
+        <div className="flex justify-between items-end border-b border-[#1A1A1A] pb-4">
+          <h2 className="text-[11px] uppercase tracking-[0.5em] font-black text-white italic underline decoration-[#00FF99] underline-offset-8">FORENSIC_INTELLIGENCE_HUB_v10.0</h2>
+          <span className="text-[8px] text-gray-700 font-mono font-black uppercase tracking-widest italic">QUANTUM_ARCHIVE_AUTHORIZED_ONLY</span>
         </div>
-        <div className="pt-12 border-t border-border flex flex-col md:flex-row justify-between items-center text-[10px] font-mono text-slate-900 tracking-[1.5em] gap-8">
-          <span>© 2026 OVD BUREAU ENGINEERING. MISSION_CRITICAL_SAAS_V4.1.0</span>
-          <div className="flex gap-16">
-            <span>NASA_SIM_AUTH_V2</span>
-            <span>LICENSE: $10K_ANNUAL</span>
-          </div>
+        <div className="grid grid-cols-4 gap-4 flex-grow overflow-hidden">
+          {FORENSIC_REPORTS.map(report => (
+            <div key={report.id} className="border border-[#1A1A1A] bg-[#020202] p-5 hover:border-[#00FF99]/40 transition-all group cursor-crosshair flex flex-col justify-between h-full overflow-hidden relative">
+              <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-100 transition-opacity">
+                <Crosshair size={10} className="text-[#00FF99]" />
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between items-start">
+                  <span className="text-[8px] font-mono text-[#00FF99] font-black bg-[#00FF99]/5 px-2 py-0.5">ID: {report.id}</span>
+                  <div className="w-12 h-[1px] bg-[#1A1A1A] group-hover:bg-[#00FF99] transition-all" />
+                </div>
+                <h3 className="text-[10px] font-black uppercase tracking-tight group-hover:text-[#00FF99] transition-colors leading-tight line-clamp-1">
+                  {report.title}
+                </h3>
+                <p className="text-[8px] text-gray-500 leading-relaxed font-light italic border-l border-[#1A1A1A] pl-3 line-clamp-3">
+                  {report.abstract}
+                </p>
+              </div>
+              <div className="flex justify-between items-center pt-3 border-t border-[#1A1A1A] mt-2">
+                {/* Fix: report.metric is now correctly typed as it exists in FORENSIC_REPORTS */}
+                <span className="text-[9px] font-mono text-[#00FF99] tracking-tighter uppercase font-black">{report.metric}</span>
+                <ChevronRight size={10} className="text-gray-900 group-hover:text-[#00FF99] group-hover:translate-x-1 transition-all" />
+              </div>
+            </div>
+          ))}
         </div>
       </footer>
     </div>

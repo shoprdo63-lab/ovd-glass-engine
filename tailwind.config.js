@@ -13,12 +13,6 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
-      letterSpacing: {
-        'telemetry': '0.3em',
-      },
-      fontSize: {
-        '2xs': '10px',
-      }
     },
   },
   plugins: [],
